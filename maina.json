@@ -1,0 +1,459 @@
+{
+  "turn": 111,
+  "subturn": 3,
+  "nextEvent": 112,
+  "islandLim": 26,
+  "bridgeCost": 8,
+  "bridgesBuilt": 1,
+  "islandCost": 4,
+  "crossed": 0,
+  "weather": {
+    "intensity": 100,
+    "type": "Fire_Damage",
+    "begin": 111,
+    "end": 111
+  },
+  "season": {
+    "intensity": 50,
+    "type": "Air_Damage",
+    "begin": 109,
+    "end": 111
+  },
+  "temperature": -29,
+  "temp": {
+    "intensity": -29,
+    "type": "ALL_DAMAGE",
+    "begin": 111,
+    "end": 111
+  },
+  "spells": [
+    [
+      {
+        "manacost": 42,
+        "rerollcost": 1,
+        "name": "Heh",
+        "rarity": "Legendary",
+        "tier": 1
+      },
+      null,
+      null,
+      null,
+      {
+        "manacost": 70,
+        "rerollcost": 1,
+        "name": "Kaboom",
+        "rarity": "Common",
+        "tier": 1
+      }
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      {
+        "manacost": 38,
+        "rerollcost": 1,
+        "name": "Goofy Ahh",
+        "rarity": "Legendary",
+        "tier": 1
+      }
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      {
+        "manacost": 58,
+        "rerollcost": 1,
+        "name": "\u003cimg src\u003da onerror\u003d\"\nopen(\u0027http://youtu.be/\ndQw4w9WgXcQ\u0027)\"\u003e",
+        "rarity": "Fabled",
+        "tier": 1
+      }
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      {
+        "manacost": 81,
+        "rerollcost": 4,
+        "name": "Googoo Gaga",
+        "rarity": "Rare",
+        "tier": 1
+      }
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      {
+        "manacost": 31,
+        "rerollcost": 4,
+        "name": "owo",
+        "rarity": "Legendary",
+        "tier": 1
+      }
+    ],
+    [
+      {
+        "manacost": 43,
+        "rerollcost": 2,
+        "name": "Meow",
+        "rarity": "Legendary",
+        "tier": 1
+      },
+      null,
+      null,
+      null,
+      {
+        "manacost": 72,
+        "rerollcost": 1,
+        "name": "Nya",
+        "rarity": "Common",
+        "tier": 1
+      }
+    ]
+  ],
+  "weapons": [
+    [
+      null,
+      {
+        "rerollcost": 1,
+        "name": "Rawr",
+        "rarity": "Rare",
+        "tier": 1
+      }
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      {
+        "rerollcost": 2,
+        "name": "UwU",
+        "rarity": "Unique",
+        "tier": 1
+      },
+      null
+    ]
+  ],
+  "arr": [
+    {
+      "gameLevel": 0,
+      "lives": 2,
+      "name": "Kenneth",
+      "lvl": 8,
+      "lvlxp": 320.95,
+      "nextlvl": 1300,
+      "abilityPoints": 0,
+      "hp": 1252.67,
+      "maxhp": 2500,
+      "hpregen": 20,
+      "mana": 37,
+      "maxmana": 100,
+      "manaregen": 1,
+      "neutraldmg": 0,
+      "spellcost": 0
+    },
+    {
+      "gameLevel": 0,
+      "lives": 2,
+      "name": "Alex",
+      "lvl": 8,
+      "lvlxp": 514.6,
+      "nextlvl": 1300,
+      "abilityPoints": 9,
+      "hp": 1839.99,
+      "maxhp": 2500,
+      "hpregen": 10,
+      "mana": 63,
+      "maxmana": 100,
+      "manaregen": 1,
+      "neutraldmg": 0,
+      "spellcost": 0
+    },
+    {
+      "gameLevel": 0,
+      "lives": 2,
+      "name": "Colin",
+      "lvl": 8,
+      "lvlxp": 802.42,
+      "nextlvl": 1300,
+      "abilityPoints": 4,
+      "hp": 1904.98,
+      "maxhp": 2500,
+      "hpregen": 76,
+      "mana": 100,
+      "maxmana": 100,
+      "manaregen": 1,
+      "neutraldmg": 0,
+      "spellcost": 0,
+      "potionBag": []
+    },
+    {
+      "gameLevel": 0,
+      "lives": 2,
+      "name": "Brian",
+      "lvl": 8,
+      "lvlxp": 222.41,
+      "nextlvl": 1300,
+      "abilityPoints": 4,
+      "hp": 1487.12,
+      "maxhp": 2500,
+      "hpregen": 10,
+      "mana": 100,
+      "maxmana": 100,
+      "manaregen": 1,
+      "neutraldmg": 0,
+      "spellcost": 0
+    },
+    {
+      "gameLevel": 0,
+      "lives": 2,
+      "name": "Fei",
+      "lvl": 7,
+      "lvlxp": 419.85,
+      "nextlvl": 1100,
+      "abilityPoints": 4,
+      "hp": 1410.28,
+      "maxhp": 2500,
+      "hpregen": 10,
+      "mana": 73,
+      "maxmana": 100,
+      "manaregen": 4,
+      "neutraldmg": 0,
+      "spellcost": 0,
+      "potionBag": []
+    },
+    {
+      "gameLevel": 0,
+      "lives": 2,
+      "name": "Daisy",
+      "lvl": 6,
+      "lvlxp": 102.84,
+      "nextlvl": 900,
+      "abilityPoints": 21,
+      "hp": 1140.99,
+      "maxhp": 2500,
+      "hpregen": 10,
+      "mana": 58,
+      "maxmana": 100,
+      "manaregen": 1,
+      "neutraldmg": 0,
+      "spellcost": 0,
+      "potionBag": []
+    }
+  ],
+  "lst": [
+    {
+      "intensity": -50,
+      "type": "Thunder_Damage",
+      "begin": 109,
+      "end": 113
+    },
+    {
+      "intensity": 50,
+      "type": "Air_Damage",
+      "begin": 109,
+      "end": 111
+    },
+    {
+      "intensity": -25,
+      "type": "Fire_Damage",
+      "begin": 110,
+      "end": 114
+    },
+    {
+      "intensity": 50,
+      "type": "Fire_Damage",
+      "begin": 111,
+      "end": 112
+    },
+    {
+      "intensity": 100,
+      "type": "Fire_Damage",
+      "begin": 111,
+      "end": 111
+    },
+    {
+      "intensity": -29,
+      "type": "ALL_DAMAGE",
+      "begin": 111,
+      "end": 111
+    }
+  ],
+  "curevent": [
+    {
+      "intensity": -50,
+      "type": "Thunder_Damage",
+      "begin": 109,
+      "end": 113
+    },
+    {
+      "intensity": -25,
+      "type": "Fire_Damage",
+      "begin": 110,
+      "end": 114
+    },
+    {
+      "intensity": 50,
+      "type": "Fire_Damage",
+      "begin": 111,
+      "end": 112
+    }
+  ],
+  "goals": [
+    {
+      "value": 0,
+      "apreward": 1,
+      "done": true
+    },
+    {
+      "value": 0,
+      "apreward": 2,
+      "done": true
+    },
+    {
+      "value": 0,
+      "apreward": 4,
+      "done": false
+    },
+    {
+      "value": 0,
+      "apreward": 8,
+      "done": false
+    },
+    {
+      "value": 0,
+      "apreward": 16,
+      "done": false
+    },
+    {
+      "value": 0,
+      "apreward": 32,
+      "done": false
+    }
+  ],
+  "bridges": [
+    [],
+    [
+      {
+        "first": 2,
+        "second": 0,
+        "third": 0
+      },
+      {
+        "first": 4,
+        "second": 0,
+        "third": 0
+      },
+      {
+        "first": 3,
+        "second": 0,
+        "third": 0
+      }
+    ],
+    [
+      {
+        "first": 1,
+        "second": 0,
+        "third": 0
+      }
+    ],
+    [
+      {
+        "first": 1,
+        "second": 0,
+        "third": 0
+      }
+    ],
+    [
+      {
+        "first": 1,
+        "second": 0,
+        "third": 0
+      }
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
+  "location": [
+    2,
+    3,
+    4,
+    2,
+    3,
+    4
+  ],
+  "eventLog": [
+    "Turn 110-3: Colin bonked Fei for 10.98 damage",
+    "Turn 110-4: Brian bonked Colin for 30.11 damage",
+    "Turn 110-4: Brian bonked Fei for 71.44 damage",
+    "Turn 110-4: Brian bonked Alex for 53.06 damage",
+    "Turn 110-4: Brian bonked Daisy for 64.23 damage",
+    "Turn 110-5: Fei attacked all players on island 2 with their spell for 47.94 damage",
+    "Turn 110-5: Fei bonked Colin for 5.68 damage",
+    "Turn 110-5: Fei bonked Brian for 23.98 damage",
+    "Turn 110-5: Fei bonked Kenneth for 30.06 damage",
+    "Turn 110-5: Fei bonked Alex for 12.35 damage",
+    "Turn 110-6: Daisy bonked Alex for 21.68 damage",
+    "Turn 110-6: Daisy attacked Kenneth with spell 1 for 71.06 damage",
+    "Turn 110-6: Daisy bonked Kenneth for 11.42 damage",
+    "Turn 110-6: Daisy bonked Brian for 10.16 damage",
+    "Turn 110-6: Daisy bonked Colin for 0.2 damage",
+    "Turn 111\u0027s WINNING NUMBERS ARE: 2 5 8!",
+    "Turn 111-1: Kenneth shot Brian for 25.32 damage",
+    "Turn 111-1: Kenneth shot Fei for 42.66 damage",
+    "Turn 111-1: Kenneth shot Alex for 33.32 damage",
+    "Turn 111-1: Kenneth shot Daisy for 51.33 damage",
+    "Turn 111-1: Kenneth shot Fei for 32.36 damage",
+    "Turn 111-1: Kenneth shot Colin for 2.09 damage",
+    "Turn 111-1: Kenneth bonked Brian for 22.29 damage",
+    "Turn 111-1: Kenneth bonked Daisy for 28.02 damage",
+    "Turn 111-1: Kenneth bonked Colin for 2.37 damage"
+  ],
+  "playersAlive": 6,
+  "potionEffects": [
+    {
+      "name": "Colin",
+      "value": 0,
+      "turns": 1
+    }
+  ]
+}

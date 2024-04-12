@@ -1,0 +1,543 @@
+{
+  "version": "2.7.9",
+  "turn": 1,
+  "subturn": 1,
+  "nextEvent": 2,
+  "islandLim": 26,
+  "bridgeCost": 2,
+  "bridgesBuilt": 0,
+  "islandCost": 1,
+  "crossed": 0,
+  "weather": {
+    "intensity": 100,
+    "type": "Fire_Damage",
+    "begin": 1,
+    "end": 1
+  },
+  "season": {
+    "intensity": 50,
+    "type": "Air_Damage",
+    "begin": 1,
+    "end": 3
+  },
+  "temperature": -21,
+  "temp": {
+    "intensity": -21,
+    "type": "ALL_DAMAGE",
+    "begin": 1,
+    "end": 1
+  },
+  "spells": [
+    [
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "weapons": [
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ]
+  ],
+  "arr": [
+    {
+      "gameLevel": 0,
+      "lives": 2,
+      "name": "Chris",
+      "lvl": 0,
+      "lvlxp": 0.0,
+      "nextlvl": 100,
+      "abilityPoints": 3,
+      "hp": 2500.0,
+      "maxhp": 2500,
+      "hpregen": 1,
+      "mana": 100,
+      "maxmana": 100,
+      "manaregen": 1,
+      "neutraldmg": 0,
+      "strength": 0,
+      "dexterity": 0,
+      "intelligence": 0,
+      "defence": 0,
+      "agility": 0,
+      "spellcost": 0,
+      "earthdef": 0,
+      "thunderdef": 0,
+      "waterdef": 0,
+      "firedef": 0,
+      "airdef": 0,
+      "rerolls": 0,
+      "lotterynums": {
+        "first": 0,
+        "second": 0,
+        "third": 0
+      },
+      "wins": 0
+    },
+    {
+      "gameLevel": 0,
+      "lives": 2,
+      "name": "Eric",
+      "lvl": 0,
+      "lvlxp": 0.0,
+      "nextlvl": 100,
+      "abilityPoints": 3,
+      "hp": 2500.0,
+      "maxhp": 2500,
+      "hpregen": 1,
+      "mana": 100,
+      "maxmana": 100,
+      "manaregen": 1,
+      "neutraldmg": 0,
+      "strength": 0,
+      "dexterity": 0,
+      "intelligence": 0,
+      "defence": 0,
+      "agility": 0,
+      "spellcost": 0,
+      "earthdef": 0,
+      "thunderdef": 0,
+      "waterdef": 0,
+      "firedef": 0,
+      "airdef": 0,
+      "rerolls": 0,
+      "lotterynums": {
+        "first": 0,
+        "second": 0,
+        "third": 0
+      },
+      "wins": 0
+    },
+    {
+      "gameLevel": 0,
+      "lives": 2,
+      "name": "Fei",
+      "lvl": 0,
+      "lvlxp": 0.0,
+      "nextlvl": 100,
+      "abilityPoints": 3,
+      "hp": 2500.0,
+      "maxhp": 2500,
+      "hpregen": 1,
+      "mana": 100,
+      "maxmana": 100,
+      "manaregen": 1,
+      "neutraldmg": 0,
+      "strength": 0,
+      "dexterity": 0,
+      "intelligence": 0,
+      "defence": 0,
+      "agility": 0,
+      "spellcost": 0,
+      "earthdef": 0,
+      "thunderdef": 0,
+      "waterdef": 0,
+      "firedef": 0,
+      "airdef": 0,
+      "rerolls": 0,
+      "lotterynums": {
+        "first": 0,
+        "second": 0,
+        "third": 0
+      },
+      "wins": 0
+    },
+    {
+      "gameLevel": 0,
+      "lives": 2,
+      "name": "Michael",
+      "lvl": 0,
+      "lvlxp": 0.0,
+      "nextlvl": 100,
+      "abilityPoints": 3,
+      "hp": 2500.0,
+      "maxhp": 2500,
+      "hpregen": 1,
+      "mana": 100,
+      "maxmana": 100,
+      "manaregen": 1,
+      "neutraldmg": 0,
+      "strength": 0,
+      "dexterity": 0,
+      "intelligence": 0,
+      "defence": 0,
+      "agility": 0,
+      "spellcost": 0,
+      "earthdef": 0,
+      "thunderdef": 0,
+      "waterdef": 0,
+      "firedef": 0,
+      "airdef": 0,
+      "rerolls": 0,
+      "lotterynums": {
+        "first": 0,
+        "second": 0,
+        "third": 0
+      },
+      "wins": 0
+    },
+    {
+      "gameLevel": -1,
+      "lives": 2,
+      "name": "Brian",
+      "lvl": 0,
+      "lvlxp": 0.0,
+      "nextlvl": 100,
+      "abilityPoints": 1000,
+      "hp": 2500.0,
+      "maxhp": 2500,
+      "hpregen": 1,
+      "mana": 100,
+      "maxmana": 100,
+      "manaregen": 1,
+      "neutraldmg": 0,
+      "strength": 0,
+      "dexterity": 0,
+      "intelligence": 0,
+      "defence": 0,
+      "agility": 0,
+      "spellcost": 0,
+      "earthdef": 0,
+      "thunderdef": 0,
+      "waterdef": 0,
+      "firedef": 0,
+      "airdef": 0,
+      "rerolls": 0,
+      "lotterynums": {
+        "first": 0,
+        "second": 0,
+        "third": 0
+      },
+      "wins": 0
+    }
+  ],
+  "lst": [
+    {
+      "intensity": 300,
+      "type": "Water_Damage",
+      "begin": 1,
+      "end": 1
+    },
+    {
+      "intensity": 50,
+      "type": "Air_Damage",
+      "begin": 1,
+      "end": 3
+    },
+    {
+      "intensity": -21,
+      "type": "ALL_DAMAGE",
+      "begin": 1,
+      "end": 1
+    },
+    {
+      "intensity": 50,
+      "type": "Neutral_Damage",
+      "begin": 1,
+      "end": 2
+    },
+    {
+      "intensity": 100,
+      "type": "Fire_Damage",
+      "begin": 1,
+      "end": 1
+    },
+    {
+      "intensity": 50,
+      "type": "Air_Damage",
+      "begin": 1,
+      "end": 3
+    },
+    {
+      "intensity": -21,
+      "type": "ALL_DAMAGE",
+      "begin": 1,
+      "end": 1
+    }
+  ],
+  "curevent": [
+    {
+      "intensity": 50,
+      "type": "Neutral_Damage",
+      "begin": 1,
+      "end": 2
+    }
+  ],
+  "status": [
+    {
+      "neutraldmg": 0.0,
+      "earthdmg": 0.0,
+      "thunderdmg": 0.0,
+      "waterdmg": 0.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 0.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 0,
+      "done": false
+    },
+    {
+      "neutraldmg": 0.0,
+      "earthdmg": 0.0,
+      "thunderdmg": 0.0,
+      "waterdmg": 0.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 0.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 0,
+      "done": false
+    },
+    {
+      "neutraldmg": 0.0,
+      "earthdmg": 0.0,
+      "thunderdmg": 0.0,
+      "waterdmg": 0.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 0.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 0,
+      "done": false
+    },
+    {
+      "neutraldmg": 0.0,
+      "earthdmg": 0.0,
+      "thunderdmg": 0.0,
+      "waterdmg": 0.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 0.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 0,
+      "done": false
+    },
+    {
+      "neutraldmg": 0.0,
+      "earthdmg": 0.0,
+      "thunderdmg": 0.0,
+      "waterdmg": 0.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 0.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 0,
+      "done": false
+    },
+    {
+      "neutraldmg": 0.0,
+      "earthdmg": 0.0,
+      "thunderdmg": 0.0,
+      "waterdmg": 0.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 0.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 0,
+      "done": false
+    },
+    {
+      "neutraldmg": 0.0,
+      "earthdmg": 0.0,
+      "thunderdmg": 0.0,
+      "waterdmg": 0.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 0.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 0,
+      "done": false
+    }
+  ],
+  "goals": [
+    {
+      "neutraldmg": 0.0,
+      "earthdmg": 0.0,
+      "thunderdmg": 50.0,
+      "waterdmg": 0.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 0.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 1,
+      "done": false
+    },
+    {
+      "neutraldmg": 100.0,
+      "earthdmg": 0.0,
+      "thunderdmg": 0.0,
+      "waterdmg": 0.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 0.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 2,
+      "done": false
+    },
+    {
+      "neutraldmg": 0.0,
+      "earthdmg": 0.0,
+      "thunderdmg": 0.0,
+      "waterdmg": 0.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 200.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 4,
+      "done": false
+    },
+    {
+      "neutraldmg": 0.0,
+      "earthdmg": 0.0,
+      "thunderdmg": 0.0,
+      "waterdmg": 400.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 0.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 8,
+      "done": false
+    },
+    {
+      "neutraldmg": 0.0,
+      "earthdmg": 800.0,
+      "thunderdmg": 0.0,
+      "waterdmg": 0.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 0.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 16,
+      "done": false
+    },
+    {
+      "neutraldmg": 0.0,
+      "earthdmg": 0.0,
+      "thunderdmg": 1600.0,
+      "waterdmg": 0.0,
+      "firedmg": 0.0,
+      "airdmg": 0.0,
+      "heal": 0.0,
+      "manause": 0.0,
+      "meleedmg": 0.0,
+      "rangeddmg": 0.0,
+      "spelldmg": 0.0,
+      "apreward": 32,
+      "done": false
+    }
+  ],
+  "bridges": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
+  "location": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "eventLog": [],
+  "tickets": 0,
+  "jackpot": 100,
+  "playersAlive": 4,
+  "potionEffects": []
+}
