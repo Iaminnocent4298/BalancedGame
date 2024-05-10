@@ -63,7 +63,7 @@ public class BalancedGame {
             switch(ans) {
                 case 1: path = "maina.json"; playerCount = 6; break;
                 case 2: path = "mainb.json"; playerCount = 6; break;
-                case 3: path = "rtpcup.json"; playerCount = 5; break;
+                case 3: path = "rtpcup.json"; playerCount = 6; break;
                 default: return;
             }
             //path = args[0];
