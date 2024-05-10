@@ -13,7 +13,6 @@ public class playerData {
     private int manaregen;
     private int neutraldmg;
     private int[][] elements;
-    private int spellcost;
     private ArrayList<potion> potionBag;
     private lockoutProgress[] status;
     public playerData(String n,ArrayList<potion> pb, int lt) {
@@ -32,7 +31,6 @@ public class playerData {
         manaregen = 1;
         neutraldmg = 0;
         elements = new int[2][5];
-        spellcost = 0;
         potionBag = pb;
         status = new lockoutProgress[lt];
     }
@@ -54,7 +52,6 @@ public class playerData {
     public int getND() {return neutraldmg;}
     public int[][] getElements() {return elements;}
     public int getElement(int i, int j) {return elements[i][j];}
-    public int getSC() {return spellcost;}
     public ArrayList<potion> getPB() {return potionBag;}
     public lockoutProgress[] getLP() {return status;}
     //SETTERS
@@ -84,7 +81,6 @@ public class playerData {
     public void addMaxMana(int v) {maxmana+=v;}
     public void addND(int v) {neutraldmg+=v;}
     public void addElement(int i, int j, int v) {elements[i][j]+=v;}
-    public void addSC(int v) {spellcost+=v;}
     //OTHERS
     public void kill() {gameLevel = -1;}
 }

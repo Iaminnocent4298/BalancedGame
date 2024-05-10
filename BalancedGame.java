@@ -1,6 +1,6 @@
 /*
 "Balanced Game" - made by Iaminnocent4298, web server made by Creative0708
-Version 2.8 - The ol' enemy
+Version 2.7 - Sniper
 */
 import java.util.*;
 import java.io.*;
@@ -9,12 +9,6 @@ import com.google.gson.GsonBuilder;
 import java.nio.file.*;
 
 import static java.lang.System.out;
-class event {
-    int intensity;
-    String type;
-    int begin;
-    int end;
-}
 class tuple {
     int first;
     int second;
@@ -63,46 +57,53 @@ public class BalancedGame {
             out.println("Which game?");
             out.println("1: Main Game A");
             out.println("2: Main Game B");
-            out.println("3: Final");
+            out.println("3: RTP Cup");
             out.println("Other to quit");
             ans = Integer.parseInt(br.readLine());
             switch(ans) {
                 case 1: path = "maina.json"; playerCount = 6; break;
                 case 2: path = "mainb.json"; playerCount = 6; break;
-                case 3: path = "finals.json"; playerCount = 5; break;
+                case 3: path = "rtpcup.json"; playerCount = 5; break;
                 default: return;
             }
             //path = args[0];
             input();
-            int menuOpt = 0;
-            out.println("Turn: "+turn+"-"+subturn+" : "+arr[subturn-1].getName());
-            out.println("1: Play turn");
-            out.println("2: Go back a turn");
-            out.println("3: Skip turn");
-            out.println("Other: Quit");
-            menuOpt = Integer.parseInt(br.readLine());
-            if (menuOpt==1) {
-                nextTurn();
-                crossed = 0;
-            }
-            else if (menuOpt==2) {
-                subturn--;
-                if (subturn<=0) {
-                    turn--;
-                    subturn = playerCount;
+            int menuOpt = 1;
+            while (menuOpt>=1 && menuOpt<=3) {
+                out.println("Turn: "+turn+"-"+subturn+" : "+arr[subturn-1].getName());
+                out.println("1: Play turn");
+                out.println("2: Go back a turn");
+                out.println("3: Skip turn");
+                out.println("Other: Quit");
+                menuOpt = Integer.parseInt(br.readLine());
+                if (menuOpt==1) {
+                    nextTurn();
+                    crossed = 0;
                 }
-            }
-            else if (menuOpt==3) {
-                subturn++;
-                if (subturn>playerCount) {
-                    turn++;
-                    subturn = 1;
+                else if (menuOpt==2) {
+                    subturn--;
+                    if (subturn<=0) {
+                        turn--;
+                        subturn = playerCount;
+                    }
                 }
+                else if (menuOpt==3) {
+                    subturn++;
+                    if (subturn>playerCount) {
+                        turn++;
+                        subturn = 1;
+                    }
+                }
+                output();
             }
-            output();
+            
         }
         br.close();
     }
+    /**
+     * Reads in the .json file.
+     * @throws IOException
+     */
     public static void input() throws IOException {
         Gson gson = new Gson();
         String content = new String(Files.readAllBytes(Paths.get(path)));
@@ -135,6 +136,10 @@ public class BalancedGame {
         game = gson.fromJson(content, gameData.class);
         potionShop = game.potionShop;
     }
+    /**
+     * Outputs the game's data to the .json file.
+     * @throws IOException
+     */
     public static void output() throws IOException {
         gameData game = new gameData();
         game.version = "2.7.10";
@@ -165,6 +170,10 @@ public class BalancedGame {
         String content = gson.toJson(game);
         Files.write(Paths.get(path),content.getBytes());
     }
+    /**
+     * Does the next turn.
+     * @throws Exception
+     */
     public static void nextTurn() throws Exception {
         char choice = ' ';
         Set<String> alreadyAttacked = new HashSet<>();
@@ -205,26 +214,28 @@ public class BalancedGame {
                     spell(bleh);
                 }
                 catch (NumberFormatException e) {
+                    int i = findPlayer(name);
                     if (name.equals(arr[subturn-1].getName())) {
                         out.println("You can't attack yourself!");
                     }
-                    else if (alreadyAttacked.contains(arr[subturn-1].getName()) && choice!=4) {
+                    else if (alreadyAttacked.contains(arr[i].getName()) && choice!=4) {
                         out.println("You already attacked that player!");
                     }
                     else {
-                        int i = findPlayer(name);
                         if (arr[i].getGL()!=arr[subturn-1].getGL()) {
                             out.println("They are in a different server!");
                             break;
                         }
                         switch (choice) {
                             case 'B': 
-                                out.print("Melee or Ranged? ");
-                                String ans = br.readLine();
-                                if (ans.equals("Melee")) {
+                                out.println("M: Melee");
+                                out.println("R: Ranged");
+                                //out.println("B: Both");
+                                char ans = br.readLine().charAt(0);
+                                if (ans=='M') {
                                     dmgCalc(i, false); 
                                 }
-                                else {
+                                else if (ans=='R') {
                                     dmgCalc(i, true);
                                 }
                                 break;
@@ -244,7 +255,7 @@ public class BalancedGame {
             turn++;
             Set<event> s = new HashSet<>();
             for (event e:lst) {
-                if (e.end<turn) {
+                if (e.getEnd()<turn) {
                     s.add(e);
                 }
             }
@@ -253,7 +264,7 @@ public class BalancedGame {
             }
             s.clear();
             for (event e:curevent) {
-                if (e.end<turn) {
+                if (e.getEnd()<turn) {
                     s.add(e);
                 }
             }
@@ -263,9 +274,11 @@ public class BalancedGame {
             if (turn==nextEvent) {
                 eventMaker();
             }
+            if (turn%10==1) lockoutGen();
             double hpmult=1+eventChecker("Health_Regen")/100.0;
             double manamult=1+eventChecker("Mana_Regen")/100.0;
             for (int i=0; i<playerCount; i++) {
+                if (arr[i].getGL()==-1) continue;
                 arr[i].addAP((turn%10>0 && turn%10<6) ? 4 : 5);
                 arr[i].setHP(r2(Math.min(arr[i].getHPRegen()*hpmult+arr[i].getHP(),arr[i].getMaxHP())));
                 for (lockoutProgress lp: arr[i].getLP()) {
@@ -300,7 +313,6 @@ public class BalancedGame {
             if (turn%3==1) seasonGen();
             tempGen();
             disasterGen();
-            if (turn%10==1) lockoutGen();
         }
         output();
     }
@@ -473,7 +485,6 @@ public class BalancedGame {
             case "Intelligence": arr[subturn-1].addElement(0, 2, x); break;
             case "Defence": arr[subturn-1].addElement(0, 3, x); break;
             case "Agility": arr[subturn-1].addElement(0, 4, x); break;
-            case "Spell Cost": arr[subturn-1].addSC(x); break;
             case "Earth Defence": arr[subturn-1].addElement(1, 0, x); break;
             case "Thunder Defence": arr[subturn-1].addElement(1, 1, x); break;
             case "Water Defence": arr[subturn-1].addElement(1, 2, x); break;
@@ -494,7 +505,7 @@ public class BalancedGame {
                 }
                 else {
                     double mc = spells[subturn-1][num-1].getMC();
-                    double sr = Math.min(80,arr[subturn-1].getSC()*2);
+                    double sr = Math.min(80,arr[subturn-1].getElement(0,2));
                     mc*=((1+eventChecker("Spell_Cost")/100.0)*(1-sr/100.0));
                     mc = Math.round(mc);
                     if (mc>arr[subturn-1].getMana()) {
@@ -524,11 +535,7 @@ public class BalancedGame {
         if (type!=1) multiplier*=-1;
         int length = (int) (Math.random()*4)+2;
         nextEvent+=((int) (Math.random()*3)+1);
-        event e = new event();
-        e.intensity = multiplier;
-        e.type = eventTypes[dmg];
-        e.begin = turn;
-        e.end = turn+length-1;
+        event e = new event(multiplier,eventTypes[dmg],turn,turn+length-1);
         lst.add(e);
         curevent.add(e);
     }
@@ -544,6 +551,7 @@ public class BalancedGame {
                 eventLog.add(arr[i].getName()+" has been sent to the gulag");
                 if (eventLog.size()>25) eventLog.remove(0);
                 arr[i] = new playerData(arr[i].getName(), arr[i].getPB(), lockoutTypes.length);
+                arr[i].setGL(-1);
                 for (int j=0; j<5; j++) {
                     spells[i][j] = null;
                 }
@@ -563,7 +571,6 @@ public class BalancedGame {
                             eventLog.add(arr[k].getName()+" HAS WON THE GAME");
                             if (eventLog.size()>25) eventLog.remove(0);
                             playersAlive = playerCount;
-                            if (eventLog.size()>25) eventLog.remove(0);
                             arr[k] = new playerData(arr[i].getName(), arr[k].getPB(), lockoutTypes.length);
                             for (int j=0; j<5; j++) {
                                 spells[k][j] = null;
@@ -585,13 +592,13 @@ public class BalancedGame {
     public static void spellCalc(int i, int j) throws Exception { //i player/island (AOE), j spell num (0-4)
         double ia = arr[subturn-1].getElement(0, 2)*1.5;
         double nd = 0;
-        if (j==4) nd = arr[i].getElement(0, 3);
+        if (j!=4) nd = arr[i].getElement(0, 3);
         double mc = spells[subturn-1][j].getMC();
         //ATTACKS
         double[] damages = spells[subturn-1][j].rollDmg();
         //DEFENCES
         double[] defences = {0,0,0,0,0};
-        if (j==4) {
+        if (j!=4) {
             for (int k=0; k<5; k++) {
                 defences[k] = arr[i].getElement(1, k);
             }
@@ -605,7 +612,7 @@ public class BalancedGame {
         defences[3]*=(1+eventChecker("Fire_Defence")/100.0);
         defences[4]*=(1+eventChecker("Air_Defence")/100.0);
         double mult = eventChecker("Spell_Damage")/100.0+eventChecker("ALL_DAMAGE")/100.0;
-        double sr = Math.min(80,arr[subturn-1].getSC()*2);
+        double sr = Math.min(80,arr[subturn-1].getElement(0,2));
         ia = Math.max(-100,ia-nd);
         mc*=((1+eventChecker("Spell_Cost")/100.0)*(1-sr/100.0)+mult);
         damages[0]*=((1+eventChecker("Neutral_Damage")/100.0)+mult);
@@ -628,7 +635,8 @@ public class BalancedGame {
         if (j==4) {
             int count = 0;
             for (int k=0; k<playerCount; k++) {
-                if (location[k]==i && k!=subturn-1 && arr[k].getGL()==0) {
+                if (location[k]==i && arr[k].getGL()==0) {
+                    if (k==subturn-1) count--;
                     s.add(k);
                     count++;
                 }
@@ -657,7 +665,7 @@ public class BalancedGame {
         }
         if (j!=4) {
             arr[i].setHP(r2(arr[i].getHP()-dmg));
-            eventLog.add("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" attacked "+arr[i].getName()+" with spell "+(j+1)+" for "+dmg+" damage");
+            eventLog.add("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" spell "+(j+1)+"'d "+arr[i].getName()+" for "+dmg+" damage");
             if (eventLog.size()>25) eventLog.remove(0);
             out.println(arr[i].getName()+" has "+arr[i].getHP()+" health remaining");
             isDead(i);
@@ -666,14 +674,14 @@ public class BalancedGame {
             for (int k:s) {
                 arr[k].setHP(r2(arr[k].getHP()-dmg));
             }
-            eventLog.add("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" attacked all players on island "+i+" with their spell for "+dmg+" damage");
+            eventLog.add("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" AOE'd island "+i+" for "+dmg+" damage");
             if (eventLog.size()>25) eventLog.remove(0);
             for (int k:s) {
                 out.println(arr[k].getName()+" has "+arr[k].getHP()+" health remaining");
                 isDead(k);
             }
         }
-        out.println(arr[subturn-1].getName()+" healed for "+damages[6]*playersHit+" health");
+        out.println(arr[subturn-1].getName()+" healed "+damages[6]*playersHit+" health");
         arr[subturn-1].setHP(r2(Math.min(arr[subturn-1].getHP()+damages[6]*playersHit,arr[subturn-1].getMaxHP()+0.0)));
         out.println(arr[subturn-1].getName()+" now has "+arr[subturn-1].getHP()+" health");
         out.println(arr[subturn-1].getName()+" used "+mc+" mana on the spell");
@@ -946,9 +954,11 @@ public class BalancedGame {
         while (dest!=100) {
             out.println("Possible locations to travel to:");
             for (tuple p:bridges[location[i]]) {
-                out.print(p.first+" ");
-                if (p.second==0) out.println("(Free)");
-                else out.println("(Toll - "+p.second+" ability points)");
+                if (p.second>=0) {
+                    out.print(p.first+" ");
+                    if (p.second==0) out.println("(Free)");
+                    else out.println("(Toll - "+p.second+" ability points)");
+                }
             }
             out.println("Which island to go to? (1-25), 100 to exit: ");
             dest = Integer.parseInt(br.readLine());
@@ -1191,8 +1201,8 @@ public class BalancedGame {
         int[] altint = {50,150};
         String[] type = {"Water_Damage","Thunder_Damage","Air_Damage","Earth_Damage","Earth_Damage","Fire_Damage"};
         String[] alttype = {"Air_Damage","Water_Damage"};
-        weather.begin = turn;
-        weather.end = turn;
+        weather.setBegin(turn);
+        weather.setEnd(turn);
         int pop = (int) (Math.random()*100)+1;
         if (pop<=25) pop = 0;
         else if (pop<=35) pop = 1;
@@ -1201,36 +1211,34 @@ public class BalancedGame {
         else if (pop<=80) pop = 4;
         else pop = 5;
         if (pop==0 && temperature<=0) {
-            weather.intensity = altint[0];
-            weather.type = alttype[0];
+            weather.setIntensity(altint[0]);
+            weather.setType(alttype[0]);
         }
         else if (pop==1 && temperature<=5) {
-            weather.intensity = altint[1];
-            weather.type = alttype[1];
+            weather.setIntensity(altint[1]);
+            weather.setType(alttype[1]);
         }
         else {
-            weather.intensity = intense[pop];
-            weather.type = type[pop];
+            weather.setIntensity(intense[pop]);
+            weather.setType(type[pop]);
         }
         lst.add(weather);
     }
     public static void seasonGen() {
-        season.begin = turn;
-        season.end = turn+2;
+        season.setBegin(turn);
+        season.setEnd(turn+2);
         int[] intense = {50,75,25};
         String[] type = {"Air_Damage","Earth_Damage","Fire_Damage","Water_Damage"};
-        if (turn%36!=0 && turn%36<=9) season.type = type[0];
-        else if (turn%36<=18) season.type = type[1];
-        else if (turn%36<=27) season.type = type[2];
-        else season.type = type[3];
-        if (turn%9!=0 && turn%9<=3) season.intensity = intense[0];
-        else if (turn%9<=6) season.intensity = intense[1];
-        else season.intensity = intense[2];
+        if (turn%36!=0 && turn%36<=9) season.setType(type[0]);
+        else if (turn%36<=18) season.setType(type[1]);
+        else if (turn%36<=27) season.setType(type[2]);
+        else season.setType(type[3]);
+        if (turn%9!=0 && turn%9<=3) season.setIntensity(intense[0]);
+        else if (turn%9<=6) season.setIntensity(intense[1]);
+        else season.setIntensity(intense[2]);
         lst.add(season);
     }
     public static void tempGen() {
-        temp.begin = turn;
-        temp.end = turn;
         int mintemp;
         int maxtemp;
         if (turn%36>=4 && turn%36<23) mintemp = -33+4*((turn-4)%36);
@@ -1238,26 +1246,22 @@ public class BalancedGame {
         maxtemp = mintemp+5;
         temperature = (int) (Math.random()*(maxtemp-mintemp+1))+mintemp;
         out.println("The temperature is "+temperature+"°C");
-        temp.intensity = temperature;
-        temp.type = "ALL_DAMAGE";
-        out.print("Current temperature effects: ");
-        if (temperature>=0) out.print("+");
-        out.println(temperature+"% ALL DAMAGE");
+        temp = new event(temperature, "ALL_DAMAGE", turn, turn);
         lst.add(temp);
     }
     public static void disasterGen() {
         event v = new event();
         disaster = v;
-        disaster.begin = turn;
-        disaster.end = turn;
+        disaster.setBegin(turn);
+        disaster.setEnd(turn);
         boolean isdisaster = false;
-        if (weather.intensity==50 && weather.type.equals("Air_Damage")) {
+        if (weather.getIntensity()==50 && weather.getType().equals("Air_Damage")) {
             int n = (int) (Math.random()*100)+1;
             if (n<=20) {
                 out.println("DISASTER: Blizzard");
                 out.println("Effects: +150% Air Damage");
-                disaster.type = "Air_Damage";
-                disaster.intensity = 150;
+                disaster.setType("Air_Damage");
+                disaster.setIntensity(150);
                 lst.add(disaster);
                 isdisaster = true;
             }
@@ -1267,19 +1271,19 @@ public class BalancedGame {
             if (n<=5) {
                 out.println("DISASTER: Earthquake");
                 out.println("Effects: +150% Earth Damage");
-                disaster.type = "Earth_Damage";
-                disaster.intensity = 150;
+                disaster.setType("Earth_Damage");
+                disaster.setIntensity(150);
                 lst.add(disaster);
                 isdisaster = true;
             }
         }
-        if (weather.intensity==50 && weather.type.equals("Water_Damage")) {
+        if (weather.getIntensity()==50 && weather.getType().equals("Water_Damage")) {
             int n = (int) (Math.random()*100)+1;
             if (n<=10) {
                 out.println("DISASTER: Tsunami");
                 out.println("Effects: +150% Air Damage");
-                disaster.type = "Water_Damage";
-                disaster.intensity = 150;
+                disaster.setType("Water_Damage");
+                disaster.setIntensity(150);
                 lst.add(disaster);
                 isdisaster = true;
             }
@@ -1289,33 +1293,29 @@ public class BalancedGame {
             if (n<=5) {
                 out.println("DISASTER: Volcano Eruption");
                 out.println("Effects: +150% Fire Damage");
-                disaster.type = "Fire_Damage";
-                disaster.intensity = 150;
+                disaster.setType("Fire_Damage");
+                disaster.setIntensity(150);
                 lst.add(disaster);
                 isdisaster = true;
             }
         }
-        if (weather.type.equals("Thunder_Damage")) {
+        if (weather.getType().equals("Thunder_Damage")) {
             int n = (int) (Math.random()*100)+1;
             if (n<=25) {
                 out.println("DISASTER: Lightning Storm");
                 out.println("Effects: +250% Thunder Damage");
-                disaster.type = "Thunder_Damage";
-                disaster.intensity = 250;
+                disaster.setType("Thunder_Damage");
+                disaster.setIntensity(250);
                 lst.add(disaster);
                 isdisaster = true;
             }
         }
         if (isdisaster) {
             for (String s:eventTypes) {
-                if (s.endsWith("_Damage") && !s.equals(disaster.type) && 
+                if (s.endsWith("_Damage") && !s.equals(disaster.getType()) && 
                 !s.equals("Melee_Damage") && !s.equals("Spell_Damage") && !s.equals("Ranged_Damage")
                 && !s.equals("Weapon_Damage")) {
-                    event e = new event();
-                    e.begin = turn;
-                    e.end = turn;
-                    e.type = s;
-                    e.intensity = -100;
+                    event e = new event(-1000,s,turn,turn);
                     lst.add(e);
                 }
             }
@@ -1367,9 +1367,6 @@ public class BalancedGame {
             for (int j=0; j<lockoutTypes.length; j++) {
                 arr[i].getLP()[j] = new lockoutProgress(lockoutTypes[j],0);
             }
-        }
-        for (int i=0; i<6; i++) {
-            
         }
         int specificdmg = 50;
         int origmana = 20;
@@ -1447,8 +1444,8 @@ public class BalancedGame {
     public static int eventChecker(String s) {
         int ans = 0;
         for (event e:lst) {
-            if (e.type.equals(s)) {
-                ans+=e.intensity;
+            if (e.getType().equals(s)) {
+                ans+=e.getIntensity();
             }
         }
         return ans;

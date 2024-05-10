@@ -27,10 +27,19 @@ public class gameData {
     potion[] potionShop;
     ArrayList<peffect> potionEffects;
     public gameData() {}
+    /**
+     * Creates the gameData object.
+     * @param p The number of players in the game.
+     * @param vers The version number.
+     * @param s The number of lockout goals
+     * @param names The names of the p players.
+     * @param lt The number of lockout types there are.
+     * @param ps The potion shop.
+     */
     public gameData(int p, String vers, int s, String[] names, int lt, potion[] ps) {
         version = vers;
         turn = 0;
-        subturn = 1;
+        subturn = p;
         nextEvent = 2;
         islandLim = 26;
         bridgeCost = 2;
@@ -57,6 +66,8 @@ public class gameData {
         potionEffects = new ArrayList<>();
         for (int i=0; i<p; i++) {
             arr[i] = new playerData(names[i], new ArrayList<>(), lt);
+            arr[i].setGL(0);
+            location[i] = 1;
         }
     }
 }
