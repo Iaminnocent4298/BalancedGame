@@ -1,7 +1,7 @@
 {
   "version": "2.7.10",
-  "turn": 0,
-  "subturn": 6,
+  "turn": 1,
+  "subturn": 1,
   "nextEvent": 2,
   "islandLim": 26,
   "bridgeCost": 2,
@@ -9,24 +9,24 @@
   "islandCost": 1,
   "crossed": 0,
   "weather": {
-    "intensity": 0,
-    "type": "",
-    "begin": -1,
-    "end": -1
+    "intensity": 100,
+    "type": "Fire_Damage",
+    "begin": 1,
+    "end": 1
   },
   "season": {
-    "intensity": 0,
-    "type": "",
-    "begin": -1,
-    "end": -1
+    "intensity": 50,
+    "type": "Air_Damage",
+    "begin": 1,
+    "end": 3
   },
-  "disaster": {
-    "intensity": 0,
-    "type": "",
-    "begin": -1,
-    "end": -1
+  "temperature": -20,
+  "temp": {
+    "intensity": -20,
+    "type": "ALL_DAMAGE",
+    "begin": 1,
+    "end": 1
   },
-  "temperature": 0,
   "spells": [
     [
       null,
@@ -95,7 +95,7 @@
       "lvl": 0,
       "lvlxp": 0.0,
       "nextlvl": 100,
-      "abilityPoints": 0,
+      "abilityPoints": 4,
       "hp": 2500.0,
       "maxhp": 2500,
       "hpregen": 10,
@@ -121,17 +121,50 @@
       ],
       "potionBag": [],
       "status": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "type": "Neutral Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Earth Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Thunder Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Water Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Fire Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Air Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Heal",
+          "value": 10.0
+        },
+        {
+          "type": "Mana",
+          "value": 0.0
+        },
+        {
+          "type": "Spell Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Melee Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Ranged Damage",
+          "value": 0.0
+        }
       ]
     },
     {
@@ -141,7 +174,7 @@
       "lvl": 0,
       "lvlxp": 0.0,
       "nextlvl": 100,
-      "abilityPoints": 0,
+      "abilityPoints": 4,
       "hp": 2500.0,
       "maxhp": 2500,
       "hpregen": 10,
@@ -167,17 +200,50 @@
       ],
       "potionBag": [],
       "status": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "type": "Neutral Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Earth Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Thunder Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Water Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Fire Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Air Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Heal",
+          "value": 10.0
+        },
+        {
+          "type": "Mana",
+          "value": 0.0
+        },
+        {
+          "type": "Spell Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Melee Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Ranged Damage",
+          "value": 0.0
+        }
       ]
     },
     {
@@ -187,7 +253,7 @@
       "lvl": 0,
       "lvlxp": 0.0,
       "nextlvl": 100,
-      "abilityPoints": 0,
+      "abilityPoints": 4,
       "hp": 2500.0,
       "maxhp": 2500,
       "hpregen": 10,
@@ -213,17 +279,50 @@
       ],
       "potionBag": [],
       "status": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "type": "Neutral Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Earth Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Thunder Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Water Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Fire Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Air Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Heal",
+          "value": 10.0
+        },
+        {
+          "type": "Mana",
+          "value": 0.0
+        },
+        {
+          "type": "Spell Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Melee Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Ranged Damage",
+          "value": 0.0
+        }
       ]
     },
     {
@@ -233,7 +332,7 @@
       "lvl": 0,
       "lvlxp": 0.0,
       "nextlvl": 100,
-      "abilityPoints": 0,
+      "abilityPoints": 4,
       "hp": 2500.0,
       "maxhp": 2500,
       "hpregen": 10,
@@ -259,17 +358,50 @@
       ],
       "potionBag": [],
       "status": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "type": "Neutral Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Earth Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Thunder Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Water Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Fire Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Air Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Heal",
+          "value": 10.0
+        },
+        {
+          "type": "Mana",
+          "value": 0.0
+        },
+        {
+          "type": "Spell Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Melee Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Ranged Damage",
+          "value": 0.0
+        }
       ]
     },
     {
@@ -279,7 +411,7 @@
       "lvl": 0,
       "lvlxp": 0.0,
       "nextlvl": 100,
-      "abilityPoints": 0,
+      "abilityPoints": 4,
       "hp": 2500.0,
       "maxhp": 2500,
       "hpregen": 10,
@@ -305,17 +437,50 @@
       ],
       "potionBag": [],
       "status": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "type": "Neutral Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Earth Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Thunder Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Water Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Fire Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Air Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Heal",
+          "value": 10.0
+        },
+        {
+          "type": "Mana",
+          "value": 0.0
+        },
+        {
+          "type": "Spell Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Melee Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Ranged Damage",
+          "value": 0.0
+        }
       ]
     },
     {
@@ -325,7 +490,7 @@
       "lvl": 0,
       "lvlxp": 0.0,
       "nextlvl": 100,
-      "abilityPoints": 0,
+      "abilityPoints": 4,
       "hp": 2500.0,
       "maxhp": 2500,
       "hpregen": 10,
@@ -351,29 +516,111 @@
       ],
       "potionBag": [],
       "status": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        {
+          "type": "Neutral Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Earth Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Thunder Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Water Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Fire Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Air Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Heal",
+          "value": 10.0
+        },
+        {
+          "type": "Mana",
+          "value": 0.0
+        },
+        {
+          "type": "Spell Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Melee Damage",
+          "value": 0.0
+        },
+        {
+          "type": "Ranged Damage",
+          "value": 0.0
+        }
       ]
     }
   ],
-  "lst": [],
+  "lst": [
+    {
+      "intensity": 100,
+      "type": "Fire_Damage",
+      "begin": 1,
+      "end": 1
+    },
+    {
+      "intensity": 50,
+      "type": "Air_Damage",
+      "begin": 1,
+      "end": 3
+    },
+    {
+      "intensity": -20,
+      "type": "ALL_DAMAGE",
+      "begin": 1,
+      "end": 1
+    }
+  ],
   "curevent": [],
   "goals": [
-    null,
-    null,
-    null,
-    null,
-    null,
-    null
+    {
+      "type": "Fire Damage",
+      "value": 50,
+      "apreward": 1,
+      "done": false
+    },
+    {
+      "type": "Heal",
+      "value": 100,
+      "apreward": 2,
+      "done": false
+    },
+    {
+      "type": "Heal",
+      "value": 200,
+      "apreward": 4,
+      "done": false
+    },
+    {
+      "type": "Heal",
+      "value": 400,
+      "apreward": 8,
+      "done": false
+    },
+    {
+      "type": "Spell Damage",
+      "value": 1600,
+      "apreward": 16,
+      "done": false
+    },
+    {
+      "type": "Heal",
+      "value": 1600,
+      "apreward": 32,
+      "done": false
+    }
   ],
   "bridges": [
     [],
@@ -413,252 +660,5 @@
   ],
   "eventLog": [],
   "playersAlive": 6,
-  "potionShop": [
-    {
-      "lvlreq": 0,
-      "type": "Health Regen",
-      "value": 20,
-      "turns": 2,
-      "cost": 2
-    },
-    {
-      "lvlreq": 0,
-      "type": "Mana Regen",
-      "value": 10,
-      "turns": 2,
-      "cost": 5
-    },
-    {
-      "lvlreq": 0,
-      "type": "Strength",
-      "value": 15,
-      "turns": 2,
-      "cost": 5
-    },
-    {
-      "lvlreq": 0,
-      "type": "Dexterity",
-      "value": 15,
-      "turns": 2,
-      "cost": 5
-    },
-    {
-      "lvlreq": 0,
-      "type": "Intelligence",
-      "value": 15,
-      "turns": 2,
-      "cost": 5
-    },
-    {
-      "lvlreq": 0,
-      "type": "Defence",
-      "value": 15,
-      "turns": 2,
-      "cost": 5
-    },
-    {
-      "lvlreq": 0,
-      "type": "Agility",
-      "value": 15,
-      "turns": 2,
-      "cost": 5
-    },
-    {
-      "lvlreq": 3,
-      "type": "Health Regen",
-      "value": 35,
-      "turns": 2,
-      "cost": 3
-    },
-    {
-      "lvlreq": 3,
-      "type": "Mana Regen",
-      "value": 15,
-      "turns": 2,
-      "cost": 7
-    },
-    {
-      "lvlreq": 3,
-      "type": "Strength",
-      "value": 22,
-      "turns": 2,
-      "cost": 8
-    },
-    {
-      "lvlreq": 3,
-      "type": "Dexterity",
-      "value": 22,
-      "turns": 2,
-      "cost": 8
-    },
-    {
-      "lvlreq": 3,
-      "type": "Intelligence",
-      "value": 22,
-      "turns": 2,
-      "cost": 8
-    },
-    {
-      "lvlreq": 3,
-      "type": "Defence",
-      "value": 22,
-      "turns": 2,
-      "cost": 8
-    },
-    {
-      "lvlreq": 3,
-      "type": "Agility",
-      "value": 22,
-      "turns": 2,
-      "cost": 8
-    },
-    {
-      "lvlreq": 6,
-      "type": "Health Regen",
-      "value": 45,
-      "turns": 32,
-      "cost": 7
-    },
-    {
-      "lvlreq": 6,
-      "type": "Mana Regen",
-      "value": 20,
-      "turns": 3,
-      "cost": 12
-    },
-    {
-      "lvlreq": 6,
-      "type": "Strength",
-      "value": 27,
-      "turns": 3,
-      "cost": 14
-    },
-    {
-      "lvlreq": 6,
-      "type": "Dexterity",
-      "value": 27,
-      "turns": 3,
-      "cost": 14
-    },
-    {
-      "lvlreq": 6,
-      "type": "Intelligence",
-      "value": 27,
-      "turns": 3,
-      "cost": 14
-    },
-    {
-      "lvlreq": 6,
-      "type": "Defence",
-      "value": 27,
-      "turns": 3,
-      "cost": 14
-    },
-    {
-      "lvlreq": 6,
-      "type": "Agility",
-      "value": 27,
-      "turns": 3,
-      "cost": 14
-    },
-    {
-      "lvlreq": 9,
-      "type": "Health Regen",
-      "value": 75,
-      "turns": 3,
-      "cost": 11
-    },
-    {
-      "lvlreq": 9,
-      "type": "Mana Regen",
-      "value": 30,
-      "turns": 3,
-      "cost": 18
-    },
-    {
-      "lvlreq": 9,
-      "type": "Strength",
-      "value": 33,
-      "turns": 3,
-      "cost": 20
-    },
-    {
-      "lvlreq": 9,
-      "type": "Dexterity",
-      "value": 33,
-      "turns": 3,
-      "cost": 20
-    },
-    {
-      "lvlreq": 9,
-      "type": "Intelligence",
-      "value": 33,
-      "turns": 3,
-      "cost": 20
-    },
-    {
-      "lvlreq": 9,
-      "type": "Defence",
-      "value": 33,
-      "turns": 3,
-      "cost": 20
-    },
-    {
-      "lvlreq": 9,
-      "type": "Agility",
-      "value": 33,
-      "turns": 3,
-      "cost": 20
-    },
-    {
-      "lvlreq": 12,
-      "type": "Health Regen",
-      "value": 105,
-      "turns": 4,
-      "cost": 20
-    },
-    {
-      "lvlreq": 12,
-      "type": "Mana Regen",
-      "value": 40,
-      "turns": 4,
-      "cost": 22
-    },
-    {
-      "lvlreq": 12,
-      "type": "Strength",
-      "value": 43,
-      "turns": 4,
-      "cost": 25
-    },
-    {
-      "lvlreq": 12,
-      "type": "Dexterity",
-      "value": 43,
-      "turns": 4,
-      "cost": 25
-    },
-    {
-      "lvlreq": 12,
-      "type": "Intelligence",
-      "value": 43,
-      "turns": 4,
-      "cost": 25
-    },
-    {
-      "lvlreq": 12,
-      "type": "Defence",
-      "value": 43,
-      "turns": 4,
-      "cost": 25
-    },
-    {
-      "lvlreq": 12,
-      "type": "Agility",
-      "value": 43,
-      "turns": 4,
-      "cost": 25
-    }
-  ],
   "potionEffects": []
 }

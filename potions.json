@@ -10,7 +10,7 @@
     {
       "lvlreq": 0,
       "type": "Mana Regen",
-      "value": 10,
+      "value": 15,
       "turns": 2,
       "cost": 5
     },
@@ -59,189 +59,189 @@
     {
       "lvlreq": 3,
       "type": "Mana Regen",
-      "value": 15,
+      "value": 25,
       "turns": 2,
       "cost": 7
     },
     {
       "lvlreq": 3,
       "type": "Strength",
-      "value": 22,
+      "value": 28,
       "turns": 2,
       "cost": 8
     },
     {
       "lvlreq": 3,
       "type": "Dexterity",
-      "value": 22,
+      "value": 28,
       "turns": 2,
       "cost": 8
     },
     {
       "lvlreq": 3,
       "type": "Intelligence",
-      "value": 22,
+      "value": 28,
       "turns": 2,
       "cost": 8
     },
     {
       "lvlreq": 3,
       "type": "Defence",
-      "value": 22,
+      "value": 28,
       "turns": 2,
       "cost": 8
     },
     {
       "lvlreq": 3,
       "type": "Agility",
-      "value": 22,
+      "value": 28,
       "turns": 2,
       "cost": 8
     },
     {
-      "lvlreq": 6,
+      "lvlreq": 7,
       "type": "Health Regen",
-      "value": 45,
+      "value": 60,
       "turns": 32,
       "cost": 7
     },
     {
-      "lvlreq": 6,
+      "lvlreq": 7,
       "type": "Mana Regen",
-      "value": 20,
+      "value": 32,
       "turns": 3,
       "cost": 12
     },
     {
-      "lvlreq": 6,
+      "lvlreq": 7,
       "type": "Strength",
-      "value": 27,
+      "value": 37,
       "turns": 3,
       "cost": 14
     },
     {
-      "lvlreq": 6,
+      "lvlreq": 7,
       "type": "Dexterity",
-      "value": 27,
+      "value": 37,
       "turns": 3,
       "cost": 14
     },
     {
-      "lvlreq": 6,
+      "lvlreq": 7,
       "type": "Intelligence",
-      "value": 27,
+      "value": 37,
       "turns": 3,
       "cost": 14
     },
     {
-      "lvlreq": 6,
+      "lvlreq": 7,
       "type": "Defence",
-      "value": 27,
+      "value": 37,
       "turns": 3,
       "cost": 14
     },
     {
-      "lvlreq": 6,
+      "lvlreq": 7,
       "type": "Agility",
-      "value": 27,
+      "value": 37,
       "turns": 3,
       "cost": 14
     },
     {
-      "lvlreq": 9,
+      "lvlreq": 12,
       "type": "Health Regen",
-      "value": 75,
+      "value": 110,
       "turns": 3,
       "cost": 11
     },
     {
-      "lvlreq": 9,
+      "lvlreq": 12,
       "type": "Mana Regen",
-      "value": 30,
+      "value": 54,
       "turns": 3,
       "cost": 18
     },
     {
-      "lvlreq": 9,
+      "lvlreq": 12,
       "type": "Strength",
-      "value": 33,
-      "turns": 3,
-      "cost": 20
-    },
-    {
-      "lvlreq": 9,
-      "type": "Dexterity",
-      "value": 33,
-      "turns": 3,
-      "cost": 20
-    },
-    {
-      "lvlreq": 9,
-      "type": "Intelligence",
-      "value": 33,
-      "turns": 3,
-      "cost": 20
-    },
-    {
-      "lvlreq": 9,
-      "type": "Defence",
-      "value": 33,
-      "turns": 3,
-      "cost": 20
-    },
-    {
-      "lvlreq": 9,
-      "type": "Agility",
-      "value": 33,
+      "value": 60,
       "turns": 3,
       "cost": 20
     },
     {
       "lvlreq": 12,
+      "type": "Dexterity",
+      "value": 60,
+      "turns": 3,
+      "cost": 20
+    },
+    {
+      "lvlreq": 12,
+      "type": "Intelligence",
+      "value": 60,
+      "turns": 3,
+      "cost": 20
+    },
+    {
+      "lvlreq": 12,
+      "type": "Defence",
+      "value": 60,
+      "turns": 3,
+      "cost": 20
+    },
+    {
+      "lvlreq": 12,
+      "type": "Agility",
+      "value": 60,
+      "turns": 3,
+      "cost": 20
+    },
+    {
+      "lvlreq": 18,
       "type": "Health Regen",
-      "value": 105,
+      "value": 175,
       "turns": 4,
       "cost": 20
     },
     {
-      "lvlreq": 12,
+      "lvlreq": 18,
       "type": "Mana Regen",
-      "value": 40,
+      "value": 55,
       "turns": 4,
       "cost": 22
     },
     {
-      "lvlreq": 12,
+      "lvlreq": 18,
       "type": "Strength",
-      "value": 43,
+      "value": 62,
       "turns": 4,
       "cost": 25
     },
     {
-      "lvlreq": 12,
+      "lvlreq": 18,
       "type": "Dexterity",
-      "value": 43,
+      "value": 62,
       "turns": 4,
       "cost": 25
     },
     {
-      "lvlreq": 12,
+      "lvlreq": 18,
       "type": "Intelligence",
-      "value": 43,
+      "value": 62,
       "turns": 4,
       "cost": 25
     },
     {
-      "lvlreq": 12,
+      "lvlreq": 18,
       "type": "Defence",
-      "value": 43,
+      "value": 62,
       "turns": 4,
       "cost": 25
     },
     {
-      "lvlreq": 12,
+      "lvlreq": 18,
       "type": "Agility",
-      "value": 43,
+      "value": 62,
       "turns": 4,
       "cost": 25
     }

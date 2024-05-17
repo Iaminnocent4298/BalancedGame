@@ -585,6 +585,21 @@ public class BalancedGame {
                         arr[k].setGL(0);
                         arr[k].setAP(0);
                     }
+                    for (peffect p:potionEffects) {
+                        int k = findPlayer(p.getName());
+                        switch(p.getType()) {
+                            case "Health Regen": arr[k].setHPRegen(arr[k].getHPRegen()-p.getValue());
+                            case "Mana Regen": arr[k].setMR(arr[k].getMR()-p.getValue());
+                            case "Strength": arr[k].setElement(0, 0, arr[k].getElement(0,0)-p.getValue());
+                            case "Dexterity": arr[k].setElement(0, 1, arr[k].getElement(0,1)-p.getValue());
+                            case "Intelligence": arr[k].setElement(0, 2, arr[k].getElement(0,2)-p.getValue());
+                            case "Defence": arr[k].setElement(0, 3, arr[k].getElement(0,3)-p.getValue());
+                            case "Agility": arr[k].setElement(0, 4, arr[k].getElement(0,4)-p.getValue());
+                        }
+                    }
+                    while (!potionEffects.isEmpty()) {
+                        potionEffects.remove(0);
+                    }
                 }
             }
         }
