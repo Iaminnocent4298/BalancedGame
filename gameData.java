@@ -65,7 +65,7 @@ public class gameData {
         potionShop = ps;
         potionEffects = new ArrayList<>();
         for (int i=0; i<p; i++) {
-            arr[i] = new playerData(names[i], new ArrayList<>(), lt);
+            arr[i] = new playerData(names[i], lt);
             arr[i].setGL(0);
             location[i] = 1;
         }

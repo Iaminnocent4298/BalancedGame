@@ -15,7 +15,12 @@ public class playerData {
     private int[][] elements;
     private ArrayList<potion> potionBag;
     private lockoutProgress[] status;
-    public playerData(String n,ArrayList<potion> pb, int lt) {
+    /**
+     * 
+     * @param n The name of the player
+     * @param lt The number of lockout types
+     */
+    public playerData(String n, int lt) {
         gameLevel = 0;
         lives = 2;
         name = n;
@@ -31,7 +36,7 @@ public class playerData {
         manaregen = 1;
         neutraldmg = 0;
         elements = new int[2][5];
-        potionBag = pb;
+        potionBag = new ArrayList<>();
         status = new lockoutProgress[lt];
     }
 

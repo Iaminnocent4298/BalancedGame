@@ -550,7 +550,7 @@ public class BalancedGame {
                 out.println(arr[i].getName()+" has lost the game L BOZO");
                 eventLog.add(arr[i].getName()+" has been sent to the gulag");
                 if (eventLog.size()>25) eventLog.remove(0);
-                arr[i] = new playerData(arr[i].getName(), arr[i].getPB(), lockoutTypes.length);
+                arr[i] = new playerData(arr[i].getName(), lockoutTypes.length);
                 arr[i].setGL(-1);
                 for (int j=0; j<5; j++) {
                     spells[i][j] = null;
@@ -562,7 +562,7 @@ public class BalancedGame {
                     lp[j] = new lockoutProgress(lockoutTypes[j], 0.0);
                 }
                 arr[i].setLP(lp);
-                playersAlive--;
+                if (arr[i].getGL()==0) playersAlive--;
                 if (playersAlive==1) {
                     out.println("THE GAME HAS ENDED!");
                     for (int k=0; k<playerCount; k++) {
@@ -571,7 +571,7 @@ public class BalancedGame {
                             eventLog.add(arr[k].getName()+" HAS WON THE GAME");
                             if (eventLog.size()>25) eventLog.remove(0);
                             playersAlive = playerCount;
-                            arr[k] = new playerData(arr[i].getName(), arr[k].getPB(), lockoutTypes.length);
+                            arr[k] = new playerData(arr[k].getName(), lockoutTypes.length);
                             for (int j=0; j<5; j++) {
                                 spells[k][j] = null;
                             }
@@ -975,7 +975,7 @@ public class BalancedGame {
                     else out.println("(Toll - "+p.second+" ability points)");
                 }
             }
-            out.println("Which island to go to? (1-25), 100 to exit: ");
+            out.println("Which island to Ago to? (1-25), 100 to exit: ");
             dest = Integer.parseInt(br.readLine());
             if (dest==100) break;
             if (dest==location[i]) {
@@ -1418,6 +1418,7 @@ public class BalancedGame {
         out.println("A: Ordering players");
         out.println("B: HP setting");
         out.println("C: Setting lives");
+        out.println("D: Reset Game");
         char x = br.readLine().charAt(0);
         if (x=='A') {
             out.print("Type order of players: ");
@@ -1441,6 +1442,11 @@ public class BalancedGame {
             arr[i].setLives(h);
             if (h==0) {
                 arr[i].kill();
+            }
+        }
+        else if (x=='D') {
+            for (int i=0; i<playerCount; i++) {
+                arr[i] = new playerData(arr[i].getName(), lockoutTypes.length);
             }
         }
     }
