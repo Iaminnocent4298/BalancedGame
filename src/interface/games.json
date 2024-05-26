@@ -1,0 +1,14 @@
+{
+    "maina": {
+        "name": "Main Game A",
+        "file": "maina.json"
+    },
+    "mainb": {
+        "name": "Main Game B",
+        "file": "mainb.json"
+    },
+    "rtpcup": {
+        "name": "RTP CUP!!",
+        "file": "rtpcup.json"
+    }
+}

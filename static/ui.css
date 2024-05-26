@@ -1,0 +1,136 @@
+
+.primary {
+    color: #34faf4;
+}
+
+.secondary {
+    color: #60da93;
+}
+
+.tertiary {
+    color: #3493fa;
+}
+
+.bad {
+    color: #ff7575;
+}
+
+.hp, .heal, .hpregen {
+    color: #ff7070;
+}
+
+.lvl {
+    color: #f09cff;
+}
+
+.ap {
+    color: #62ff00;
+}
+
+.mana {
+    color: #2efff2;
+}
+
+.manarg {
+    color: #1fd1ea;
+}
+
+.neutral {
+    color: #ffb000;
+}
+
+.earth {
+    color: #60d318;
+}
+
+.thunder {
+    color: #ffd000
+}
+
+.water {
+    color: #00ffff;
+}
+
+.fire {
+    color: #ff5330;
+}
+
+.air {
+    color: #d9dde2;
+}
+
+.misc {
+    color: #ff65ff;
+}
+
+.inactive {
+    color: #9a9a9a;
+}
+
+.slight-inactive {
+    color: #d6d6d6;
+}
+
+.common {
+    color: #d2d0cf;
+}
+
+.unique {
+    color: #fff941;
+}
+
+.rare {
+    color: #ec4fff;
+}
+
+.legendary {
+    color: #73e3ff;
+}
+
+.fabled {
+    color: #ff3333;
+}
+
+.mythic {
+    color: #bc00ff;
+}
+
+.newline {
+    height: 0.3rem;
+}
+
+input[type="checkbox"] {
+    display: inline-grid;
+    place-content: center;
+
+    appearance: none;
+    background-color: transparent;
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 1.1em;
+    height: 1.1em;
+    border: 0.1em solid #E0AAFFA0;
+    border-radius: 0.15em;
+    transform: translateY(-0.075em);
+
+    margin-right: 0.4em;
+
+    cursor: pointer;
+}
+
+input[type="checkbox"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    visibility: hidden;
+    box-shadow: inset 1em 1em #fff;
+
+    transform-origin: bottom left;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type="checkbox"]:checked::before {
+    visibility: visible;
+}
+

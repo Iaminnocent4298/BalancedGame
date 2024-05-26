@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Error 404{% endblock %}
+
+{% block basehead %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='nonviewer.css') }}">
+{% endblock %}
+
+{% block content %}
+<h1>404 Not Found</h1>
+<h6>How did we get here?</h6>
+{% endblock %}

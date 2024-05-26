@@ -1,0 +1,485 @@
+<h1>Balanced Game Forum Posts</h1>
+<h4>Rest of forum posts pre-2.3: <a href="https://docs.google.com/document/d/1hbQYPxzdUlovE6sp_TlwHXc4cTX2OxDqXXkw5Q8ymuQ/edit" target="_blank">Old Doc</a></h4>
+<br>
+<br>
+<!-- <h2><b><u>Potion Shop Prices</u></b></h2>
+<p>Posted 7:29pm on February 11, 2024</p>
+<br>
+<p>Here are the prices of all 7 types of potions available to be purchased</p>
+<h3><b>Healing</b></h3>
+<table>
+    <tr>
+        <th class="lvl">Lvl Req</th>
+        <th class="hp">Healing</th>
+        <th class="ap">AP Cost</th>
+    </tr>
+    <tr>
+        <td class="lvl">0✷</td>
+        <td class="hp"></td>
+    </tr>
+</table> -->
+<h2><b><u>Version 2.7.8 Release</u></b></h2>
+<p>Posted 10:11am on March 25, 2024</p>
+<br>
+<p>Please note that this update is waiting for the Tourney Semis to finish</p>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>You can punch people! It deals 1 neutral damage, but is affected by strength</li>
+    <li>Ranged Weapons!</li>
+    <li>Main Game 2!!</li>
+</ul>
+<h4><b>Ranged Weapons</b></h4>
+<ul>
+    <li>Shoot players from across the entire map!</li>
+    <li>Arrows deal less damage the higher the absolute value of the difference of the island numbers are</li>
+    <li>If the positive difference is 5 or greater then it does no damage</li>
+    <li>Purchasing a ranged weapon costs 35 AP</li>
+</ul>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>Each turn, you get 1 extra AP</li>
+    <li>Default max HP is now 2500</li>
+    <li>Default HP regen is now 10</li>
+    <li>Strength/Intelligence and Defence are now additive, which now cancel each other out</li>
+    <li>Strength has been un-nerfed</li>
+    <li>1 AP spent on Health Regen now gives +5 Health Regen</li>
+    <li>1 AP on Max Health now gives +50 Max Health</li>
+    <li>Buffed the "elemental" potion buffs in the potion shop (Str, Dex, Int, Def, Agi)</li>
+    <li>Purchasing a melee weapon costs 25 AP</li>
+</ul>
+<h3><b>Removals</b></h3>
+<ul>
+    <li>Officially removed gifting lives an option in the main game</li>
+    <li>Removed Justin</li>
+</ul>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-40</span>: Potions have "0 turns remaining" in the active effects section</li>
+    <li><span class="bad">BG-41</span>: Potions do not provide the last turn of effects</li>
+    <li><span class="bad">BG-42</span>: Extra damage from the elemental buffs do not get cancelled from a disaster</li>
+    <li><span class="bad">BG-43</span>: Game crashes if you try to use an AOE spell on an island number greater than the number of players in the game</li>
+    <li><span class="bad">BG-44</span>: Elemental buffs are subject to weapon and spell event buffs despite not counting as weapon/spell damage</li>
+    <li><span class="bad">BG-45</span>: Additional apostrophe after player's name in event log when they dodge an attack</li>
+</ul>
+<br>
+<h2><b><u>Version 2.7.7 Release</u></b></h2>
+<p>Posted 9:42pm on February 9, 2024</p>
+<br>
+<p>A 2-in-1 update! 2 major features added</p>
+<p>Note that this update is waiting for Tourney Group Game 1 to terminate to be released</p>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>Potions: Purchase them for temporary buffs!</li>
+    <li>AOE Spells: Cast a spell onto everyone on a single island!</li>
+</ul>
+<h4><b>Potions</b></h4>
+<ul>
+    <li>During your turn, you may purchase and consume potions whenever you want!</li>
+    <li>Potions give you temporary buffs for some amount of buffs. However, most potions have a level requirement for them to be used</li>
+    <li>You can only have one potion of each type active at once. For example, you cannot drink another healing potion if you already drank one in the previous turn</li>
+    <li>This is the only way to go above the 80 AP limit on some stats!</li>
+</ul>
+<h4><b>AOE Spells</b></h4>
+<ul>
+    <li>You can launch these spells and hit every player on the island you choose!</li>
+    <li>You deal the same amount of damage to every player on that island</li>
+    <li>Just like other spells, AOE spells cost mana to use and can only be used once per turn</li>
+</ul>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>The "extra damage" perk from Strength has been nerfed from +1% per Strength -> +0.5% per strength</li>
+    <ul>
+        <li>Note: This does NOT affect the "extra crit damage" perk from Strength - that stays the same (+1% Crit Damage per Strength)</li>
+    </ul>
+    <li>Weather has been balanced</li>
+</ul>
+<br>
+<h2><b><u>Version 2.7.6 Release</u></b></h2>
+<p>Posted 5:43pm on January 25, 2024</p>
+<br>
+<p>This took so long you don't understand</p>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>Buffed spells (previously the damage-to-mana ratio was the same no matter the spell number)</li>
+    <li>Spells have a 10% chance to have a special effect attached to it (only if the MAIN element isn't healing or neutral)</li>
+    <ul>
+        <li>Main elements are not necessarily the one that does the most average damage</li>
+    </ul>
+    <li>Modified some average dps's of lower-tier weapons & spells (otherwise common spell 1's would end up having negative dps)</li>
+    <li>Added a random multiplier for spells (they can deal between 0.5x and 1.5x the base average dps, but also take that same multiplier amount of the base mana cost)</li>
+    <li>Reverted island construction cost to the original</li>
+</ul>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-32</span>: You can attack the same player multiple times</li>
+    <li><span class="bad">BG-33</span>: Creating a spell asks for "Player?"</li>
+    <li><span class="bad">BG-34</span>: Spells have wrong average dps</li>
+    <li><span class="bad">BG-35</span>: Building a bridge crashes the game</li>
+    <li><span class="bad">BG-36</span>: Constructing a bridge does not work</li>
+    <li><span class="bad">BG-37</span>: Generating a weapon for the first time crashes the game</li>
+    <li><span class="bad">BG-38</span>: Generating a weapon does not set the tier to 1</li>
+    <li><span class="bad">BG-39</span>: Game does not check for multiple level-ups at once</li>
+</ul>
+<h3><b>Back-end Changes</b></h3>
+<ul>
+    <li>ADDED AUTOMATIC WEAPON AND SPELL GENERATION YIPPEE</li>
+    <li>Be prepared for a l o t of bugs...</li>
+    <li>Added quick resets for certain data</li>
+    <li>Changed lottery to enter all 3 numbers at once instead of 1 at a time</li>
+</ul>
+<br>
+<h2><b><u>Version 2.8 Leak</u></b></h2>
+<p>Posted 9:23pm on January 24, 2024</p>
+<br>
+<p>Now before we add the inventory system we need to add an update even bigger than 2.7</p>
+<h3><b>Potential Additions</b></h3>
+<ul>
+    <li>Seasonal hostile mobs</li>
+    <li>Regular hostile mobs</li>
+    <li>New lockout quests for these mobs</li>
+    <li>Boss altars!</li>
+    <li>Special boss drops!</li>
+    <li>Ranged weapons!</li>
+    <li>AOE spells! (COLLATERAL DAMAGE??)</li>
+    <li>Potion shop!</li>
+</ul>
+<h3><b>Potential Changes</b></h3>
+<ul>
+    <li>Level requirements on some items</li>
+    <li>Actually adding a functioning automatic spell- and weapon-creation system???</li>
+</ul>
+<br>
+<h2><b><u>Version 2.7.5 Release</u></b></h2>
+<p>Posted 5:14pm on January 23, 2024</p>
+<br>
+<p>More small features (remove the s) added that are worth an increase in the version number</p>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>Lottery: I don't think everyone gambles enough</li>
+</ul>
+<h4><b>Lottery</b></h4>
+<ul>
+    <li>There is a draw every single turn</li>
+    <li>Ticket prices are 1 ap only!!</li>
+    <li>You pick 3 (not necessarily distinct) numbers from 1 to 10, inclusive</li>
+    <li>Matching one number wins you your 1 ap back</li>
+    <li>Matching two numbers wins you 25 ap!!</li>
+    <li>And matching three numbers wins you the entire jackpot (starts at 100)</li>
+</ul>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>Balanced weather</li>
+</ul>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-30</span>: Players who didn't buy a ticket or matched 0 numbers win the jackpot</li>
+    <li><span class="bad">BG-31</span>: Event log saves arr[i], not arr[i].name</li>
+</ul>
+<br>
+<h2><b><u>Version 2.7.4 Release</u></b></h2>
+<p>Posted 9:23pm on January 22, 2024</p>
+<br>
+<p>Version 2.7.4</p>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>Added event logger so you can see who has attacked who recently</li>
+</ul>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>Made levelling slightly harder; as you level up, the xp required to the next level will increase by more than 100</li>
+</ul>
+<br>
+<h2><b><u>Version 2.7.3 Release</u></b></h2>
+<p>Posted 5:12pm on January 22, 2024</p>
+<br>
+<p>Version 2.7.3 adds some requested features and also a pity meter!</p>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>Burning bridges: You can burn a bridge for 1.5x the <u>current</u> construction cost!</li>
+    <li>Pity meter: After 150 rerolls, you are guaranteed a mythic!</li>
+</ul>
+<h4><b>Burning Bridges</b></h4>
+<ul>
+    <li>There are no contributions for burning a bridge; if someone wants to burn a bridge, they need to pay for the ENTIRE cost</li>
+    <li>Burning a bridge DOES NOT decrease the cost to rebuild/build more bridges</li>
+</ul>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-28</span>: Bridges are not connecting to the right islands</li>
+    <li><span class="bad">BG-29</span>: Bridge connects to island 0, breaking the website</li>
+</ul>
+<h3><b>Back-end Changes</b></h3>
+<ul>
+    <li>Added QOL feature that shows the dev (me) the average DPS of a weapon when rolled</li>
+</ul>
+<br>
+<h2><b><u>Version 2.7.2 Release</u></b></h2>
+<p>Posted 11:17pm on January 20, 2024</p>
+<br>
+<p>Version 2.7.2 modifies the game data on bridges and islands</p>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>Bridge and island prices have been doubled!</li>
+</ul>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-26</span>: Melee attacking when the other player has a special effect breaks the game</li>
+    <li><span class="bad">BG-27</span>: Game does not check if both players are on the same island when a player melee attacks</li>
+</ul>
+<h3><b>Back-end Changes</b></h3>
+<ul>
+    <li>Removed 2D array that checks how much AP is allocated towards funding a certain bridge</li>
+    <li>Changed "bridges" array of arraylists to use a "tuple" (first,second,third) instead of a "pair"</li>
+</ul>
+<br>
+<h2><b><u>Version 2.7.1 Release</u></b></h2>
+<p>Posted 10:14am on January 20, 2024</p>
+<br>
+<p>Version 2.7.1 balances a few changes</p>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>"Effectiveness" is no longer in the game - Strength, Dexterity, Intelligence, Defence, and Agility are now exactly 1AP -> 1% conversion for all AP up to 80% cap</li>
+    <li>Elemental defence has been doubled; that is, 1AP -> 2 less elemental damage dealt to you!</li>
+    <li>Every turn now gets +1 ability point - That is every 10 turns, 5 of them will give you <b>4</b> while the others will give you 3</li>
+</ul>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-24</span>: Weapon reroll cost does not cap at 16</li>
+    <li><span class="bad">BG-25</span>: Spell reroll cost caps at 8 times the original cost, not 16 times</li>
+</ul>
+<br>
+<h2><b><u>Version 2.7 Release</u></b></h2>
+<p>Posted 8:13pm on January 19, 2024</p>
+<br>
+<p>Version 2.7 - To the Skies! Has been released!!!</p>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>Islands: Players will start and end their turns on an island. There are a maximum of 25 islands possible (potentially more later)</li>
+    <li>Bridges: This is the only way to traverse between islands! They take up a fraction of a melee attack, which makes melee attacks deal less damage</li>
+    <li>Community Projects: As you built more islands and bridges, the cost to build more slowly increases!</li>
+</ul>
+<h4><b>Bridges</b></h4>
+<ul>
+    <li>When you build a bridge, there is a 10% chance the bridge ends up being a t(r)oll</li>
+    <li>Toll bridges cost ability points in the following formula: The minimum distance to travel between the start and end islands on <b>free</b> bridges, divided by 2, rounded up</li>
+    <li>All bridges take 0.2 turns to cross, and take away 20% from your total melee damage (additive)</li>
+    <li>You can cross a maximum of 5 bridges before you "run out of breath"</li>
+    <li>Bridges are bidirectional!</li>
+</ul>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>You can only attack a player if you are on the same island as them</li>
+    <li>You can now melee attack <b>multiple</b> players on the same turn!</li>
+    <li>The amount of xp required to level up has been reverted</li>
+    <li>Upon entering the gulag your mana regen is now set to 1</li>
+    <li>Upon entering the gulag your max health is now set to 10</li>
+</ul>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-21</span>: Game crashes when a player dies</li>
+    <li><span class="bad">BG-22</span>: Weapons and spells do not reset upon death</li>
+    <li><span class="bad">BG-23</span>: Health regen does not reset to 1 upon death</li>
+</ul>
+<br>
+<h2><b><u>Version 2.6.2 Release</u></b></h2>
+<p>Posted 12:33pm on January 19, 2024</p>
+<br>
+<p>Version 2.6.2</p>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-16</span>: Lockout challenges do not get checked for completion at the end of an attack correctly</li>
+    <li><span class="bad">BG-17</span>: Lockout goals "done" boolean does not get set to "true" when completed</li>
+    <li><span class="bad">BG-18</span>: The wrong lockout challenges are marked as "completed"</li>
+    <li><span class="bad">BG-19</span>: Players are marked as "completed" lockout quest despite not being anywhere close to completion</li>
+    <li><span class="bad">BG-20</span>: Multiple players can complete a lockout quest</li>
+</ul>
+<h3><b>Website Changes</b></h3>
+<ul>
+    <li>Current player's turn is highlighted and shown in the "Game Stats"</li>
+    <li>Disaster info shown</li>
+    <li>"Useful info" containing statistics added</li>
+    <li>Forum posts added</li>
+</ul>
+<h2><b><u>Version 2.6.1 Release</u></b></h2>
+<p>Posted 2:01pm on January 18, 2024 (Edited 10:14am on January 19, 2024)</p>
+<br>
+<p>Version 2.6.1</p>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-10</span>: Exiting the gift menu asks for "How many?"</li>
+    <li><span class="bad">BG-11</span>: Giving all except 0.01 health leaves you with 0 health but somehow alive</li>
+    <li><span class="bad">BG-12</span>: You can attack yourself</li>
+    <li><span class="bad">BG-13</span>: Healing from spells does not get added to progress in lockout challenges</li>
+    <li><span class="bad">BG-14</span>: Disaster still attempts to generate even when there is no disaster</li>
+    <li><span class="bad">BG-15</span>: Disaster generates "-100% Melee Damage" and "-100% Spell Damage" despite not being supposed to</li>
+</ul>
+<br>
+<h2><b><u>Version 2.7 Leak - MASSIVE GAME OVERHAUL</u></b></h2>
+<p>Posted 12:59pm on January 18, 2024</p>
+<br>
+<p>Version 2.7 brings along the addition of movement!</p>
+<h3><b>Upcoming Additions</b></h3>
+<ul>
+    <li>Islands: Run from island to island! Islands do NOT reset upon a new instance of the game</li>
+    <li>Bridges: The only way to cross between islands!</li>
+    <li>Community Projects: Similar to Hypixel Skyblock, the entire server must contribute to build bridges and islands!</li>
+</ul>
+<h4><b>Bridges</b></h4>
+<ul>
+    <li>There are 2 types of bridges: Regular and Toll</li>
+    <li>Regular bridges are free, and take 0.1 turns to cross</li>
+    <li>Toll bridges cost ability points to use!</li>
+</ul>
+<h4><b>Community Projects</b></h4>
+<ul>
+    <li>Building islands and roads costs a lot. These ambitious ability point costs means the entire server must come together to build them!</li>
+    <li>Building an island DOES NOT COME WITH A ROAD CONNECTION</li>
+</ul>
+<h3><b>Upcoming Changes</b></h3>
+<ul>
+    <li>Melee damage can ONLY be dealt when you are on the same island as another player</li>
+    <li>For each bridge you cross, you deal 10% less melee damage if you attack someone on that island! (Additive)</li>
+    <ul>
+        <li>Spells however, can still be used at infinite range (You can attack a player any number of islands away with spells)</li>
+    </ul>
+</ul>
+<p><b>The percentage of melee damage and number of turns it takes to cross a bridge is subject to change!</b></p>
+<br>
+<h2><b><u>Version 2.6 Release</u></b></h2>
+<p>Posted 3:10pm on January 17, 2024</p>
+<br>
+<p>Version 2.6 has been released! The bank feature has been pushed back to 2.6.1.</p>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>Made spells upgradable</li>
+    <li>Added official chances to get 1,2, or 3 elements from a roll - Chances are: </li>
+    <ul>
+        <li>60% chance for 1 element</li>
+        <li>30% chance for 2 elements</li>
+        <li>10% chance for 3 elements</li>
+        <li>Mythics are excempt from this feature since they are special children</li>
+    </ul>
+    <li>Added a new object "effects" for status effects which is different from "spell"</li>
+</ul>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>Changed xp/damage required to level up each level to require 2x less</li>
+</ul>
+<h3><b>Removals</b></h3>
+<ul>
+    <li>Removed 25 AP cost on weapon</li>
+    <li>Removed many Thread.sleep()'s in the program</li>
+    <li>Removed Justin</li>
+</ul>
+<h3><b>Website Changes</b></h3>
+<ul>
+    <li>Added roman numerals on weapon and spell tiers</li>
+    <li>Added consistency to temperature colours</li>
+</ul>
+<br>
+<h2><b><u>Version 2.6 Leak - Bank & Upgradable Spells</u></b></h2>
+<p>Posted 11:46am on January 14, 2024</p>
+<br>
+<p>Version 2.6 introduces the additions of bank and upgradable spells!</p>
+<h3><b>Upcoming Additions</b></h3>
+<ul>
+    <li>Bank: Store some ability points into the bank and gain interest while you're at it!</li>
+    <li>Upgradable Spells: Just like weapons, spells will soon be able to be upgraded!</li>
+</ul>
+<h4><b>Upgradable Spells</b></h4>
+<p>Upon levelling up, you can now upgrade your weapon or your spell or gain ability points!</p>
+<p>Levelling up will also be made easier to incite more attacking</p>
+<p>Spell upgrades are the exact same as weapons - All elements (including healing) on the spell get increased by 2 times the tier</p>
+<br>
+<h2><b><u>Version 2.5 Release</u></b></h2>
+<p>Posted 11:24pm on January 13, 2024</p>
+<br>
+<p>Update 2.5 has been released! Enjoy!</p>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>Lockout Quests: There are 6 tiers of quests, with each one being 2 times harder than the last, but give 2 times more ability points!</li>
+    <li>Gulag: When you die, you join a different "instance" of the game</li>
+</ul>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-7</span>: Health regen does not reset upon a player joining the Gulag</li>
+    <li><span class="bad">BG-8</span>: Spells and weapons do not reset upon a player joining the Gulag</li>
+    <li><span class="bad">BG-9</span>: Disasters do not generate</li>
+</ul>
+<br>
+<h2><b><u>Version 2.4.1 Release</u></b></h2>
+<p>Posted 11:05am on January 10, 2024</p>
+<br>
+<p>Version 2.4.1 comes along with a small balancing change</p>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>Removed the "/5" in mana regen; that is, mana regen is now 5x faster</li>
+    <li>Doubled all existing spell costs</li>
+    <li>Levelling up now rewards you with more; all reward options are doubled</li>
+</ul>
+<br>
+<h2><b><u>Version 2.5 Leak - Lockout Quests & Gulag</u></b></h2>
+<p>Posted 2:04pm on January 9, 2024</p>
+<br>
+<p>Version 2.5 will introduce lockout quests and the addition of the Gulag, which is a separate instance of the game!</p>
+<h3><b>Upcoming Additions</b></h3>
+<ul>
+    <li>Lockout Quests: Quests that when you complete, no other player can complete! They reset on an interval basis, and reward tons of ability points!</li>
+    <li>Gulag: When you die, you are sent to the Gulag, where you can chill and gain ability points for the next reset!</li>
+</ul>
+<br>
+<h2><b><u>Version 2.4 Release</u></b></h2>
+<p>Posted 1:36pm on January 8, 2024</p>
+<br>
+<p>Version 2.4 is now out! Enjoy!</p>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>Disasters: One type for every* element in the game! (Sorry neutral damage)</li>
+</ul>
+<h4><b>Disasters</b></h4>
+<ul>
+    <li>During a disaster, the element type of that disaster deals +150% damage!</li>
+    <li>Also during a disaster, all OTHER elements apart from the disaster element deal NO damage</li>
+</ul>
+<br>
+<h2><b><u>Version 2.4 Leak - Natural Disasters</u></b></h2>
+<p>Posted 9:54am on January 8, 2024</p>
+<br>
+<p>Version 2.4 will bring along natural disasters!</p>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>Disasters: Blizzards, Earthquakes, Tsunamis, Volcano eruptions, and Lightning storms!</li>
+    <ul>
+        <li><span class="air">Blizzard</span>: Can occur when it snows</li>
+        <li><span class="earth">Earthquake</span>: Can occur during the spring</li>
+        <li><span class="water">Tsunami</span>: Can occur when it rains</li>
+        <li><span class="fire">Volcano Eruption</span>: Can occur during the summer</li>
+        <li><span class="thunder">Lightning Storm</span>: Can occur during a thunderstorm</li>
+    </ul>
+</ul>
+<br>
+<h2><b><u>Version 2.3.1 Release</u></b></h2>
+<p>Posted 10:53am on January 3, 2024</p>
+<br>
+<p>Version 2.3.1 addresses a few glitches</p>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-5</span>: Rounding error when adding xp to a player</li>
+    <li><span class="bad">BG-6</span>: When multiple events of the same type are active, only one of them is actually accounted for</li>
+</ul>
+<h3><b>Back-end changes</b></h3>
+<ul>
+    <li>Changed data to be saved in .json instead of .txt</li>
+</ul>
+<br>
+<h2><b><u>Version 2.3 Release</u></b></h2>
+<p>Posted 3:17pm on January 2, 2024</p>
+<br>
+<p>Version 2.3 - Seasons and Weather</p>
+<p>Disasters have been delayed to a future update</p>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>Seasons</li>
+    <li>Weather</li>
+    <li>Temperature: Indicates how much extra or less damage you deal based on the temperature!</li>
+</ul>

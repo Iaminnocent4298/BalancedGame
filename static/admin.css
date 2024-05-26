@@ -1,0 +1,67 @@
+body:not(.closed) .terminal-closed-options {
+    display: none;
+}
+
+body.closed .terminal-open {
+    display: none;
+}
+
+body:not(.loaded) .terminal-container {
+    display: none;
+}
+
+body.disconnected .terminal-closed-options, body.disconnected .terminal-open {
+    display: none;
+}
+
+body:not(.disconnected) .terminal-disconnected {
+    display: none;
+}
+
+#terminal-text-container {
+    background-color: #08001a50;
+    overflow-y: scroll;
+
+    padding: 0.6rem;
+
+    width: 64rem;
+    height: 32rem;
+}
+
+#terminal-text {
+    margin: 0;
+    line-height: 1.3;
+}
+
+#terminal-input {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    color: white;
+
+    caret-color: transparent;
+}
+
+#terminal-caret {
+    display: inline-block;
+    background-color: white;
+    width: 0.8ch;
+    height: 1em;
+    margin-bottom: -0.2em;
+}
+#terminal-input[disabled] + #terminal-caret, #terminal-caret[hidden] {
+    visibility: hidden;
+}
+#terminal-start[disabled] {
+    color: #9a9a9a;
+}
+
+body.closed #terminal-input, body.closed #terminal-caret {
+    display: none;
+}
+
+#terminal-container > div > :last-child {
+    margin-block-end: 1rem;
+}

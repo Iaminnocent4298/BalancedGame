@@ -1,0 +1,9 @@
+*.json
+
+# add more json files here (preceded by a !) if the program needs it to run
+# ex.
+# !mobs.json
+# !othernongamedata.json
+# !filethatpreventssudormrfslash.json
+
+!potions.json

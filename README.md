@@ -1,4 +1,4 @@
-<img src="assets/banner.png">
+![The Balanced Game logo and title](assets/banner.png)
 
 # It's Balanced Game!
 

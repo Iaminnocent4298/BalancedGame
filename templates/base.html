@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}"Balanced Game"{% endblock %}</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='viewer.css') }}">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='balancedgame.png') }}">
+
+    <script type="text/javascript">
+        window.CSRF_TOKEN = "{{ csrf_token() }}";
+        window.BASE_URL = "";
+    </script>
+
+    {% block basehead %}{% endblock %}
+</head>
+<body>
+    <div id="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block aftercontainer %}{% endblock %}
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</body>
+</html>

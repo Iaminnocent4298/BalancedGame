@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block basehead %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='nonviewer.css') }}">
+{% endblock %}
+
+{% block content %}
+<h1>Authentication</h1>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.password.label }} {{ form.password }}
+    <br>
+    <input type="submit" value="Submit">
+</form>
+
+{% if form.password.errors %}
+    <div class="errors">
+    {% for error in form.password.errors %}
+        <div>{{ error }}</div>
+    {% endfor %}
+    </div>
+{% endif %}
+
+<a href="{{ url_for('index') }}">Go back</a>
+
+{% endblock %}

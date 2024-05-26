@@ -1,0 +1,36 @@
+{% extends "viewer.html" %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='ui.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='admin.css') }}">
+{% endblock %}
+
+{% block beforecontent %}
+<div><a href="{{ url_for('logout') }}">Logout</a></div>
+{% endblock %}
+
+{% block bottomcontainer %}
+
+<div id="terminal-container">
+    <div class="terminal-open">
+        <h3>Terminal</h3>
+    </div>
+    <div class="terminal-closed-options">
+        <h3>Program is currently stopped.</h3>
+        <button id="terminal-start">Start Program</button>
+    </div>
+    <div id="terminal-text-container">
+        <pre id="terminal-text"></pre>
+    </div>
+    <div class="terminal-disconnected">
+        <h3>Connection Closed</h3>
+        <p>Connection force-closed by another client.</p>
+        <p>Reload to try again.</p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block aftercontent %}
+<script type="module" src="{{ url_for('static', filename='admin.js') }}"></script>
+{% endblock %}

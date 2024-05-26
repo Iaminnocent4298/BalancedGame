@@ -1,0 +1,9 @@
+gevent
+flask
+flask_wtf
+wtforms
+flask_socketio
+python-dotenv
+pyinotify
+pyasyncore
+gunicorn
