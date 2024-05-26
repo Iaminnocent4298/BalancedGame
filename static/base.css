@@ -50,11 +50,16 @@ h6 {
     color: rgb(199, 119, 245)
 }
 
-input, button, td, .infobox {
+input:not([type=file]), button, td, .infobox {
     color: inherit;
     font: inherit;
     background-color: #9D4EDD60;
     border: 0.1rem solid #E0AAFFA0;
+}
+
+input {
+    color: inherit;
+    font: inherit;
 }
 
 button:disabled {
@@ -77,6 +82,10 @@ form input {
 input[type="submit"], button {
     height: 1.8em;
     line-height: 1.6em;
+}
+input[type="file"] {
+    height: 1.6em;
+    width: 80%;
 }
 
 .errors {
@@ -113,4 +122,36 @@ button:hover {
 
 ::placeholder {
     color: #ffffff70;
+}
+
+#error-container {
+    position: fixed;
+    
+    top: 0;
+    left: 0;
+    margin: 2rem;
+    padding: 2rem;
+
+    border: 1px solid #ff7676;
+
+    background-color: #af2525d0;
+    color: #ffdfdf;
+}
+#error-container > h1 {
+    margin-block-start: 0.1em;
+    margin-block-end: 1em;
+    color: inherit;
+}
+#error-container > pre {
+    line-height: 1.2;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+}
+#error-container > p {
+    font-size: 1.2em;
+    margin-block-end: 0;
+}
+
+.spacing {
+    height: 0.7rem;
 }

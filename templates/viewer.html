@@ -5,7 +5,7 @@
 
 <meta content="Balanced Game" property="og:title" />
 <meta content="It's Balanced Game!" property="og:description" />
-<meta content="/static/balancedgame.svg" property="og:image" />
+<meta content="/static/balancedgame.png" property="og:image" />
 <meta content="#550287" data-react-helmet="true" name="theme-color" />
 
 {% block head %}{% endblock %}
@@ -23,7 +23,7 @@
         <img src="/static/balancedgame.svg"><h1>Balanced Game</h1>
         <div class="separator"></div>
     </a>
-    {% for game_id, game_data in all_game_data.items() %}
+    {% for game_id, game_data in minor_game_data.items() %}
         <a href="/game/{{ game_id }}" class="game-link" data-game-id="{{ game_id }}">{{ game_data["name"] }}</a>
     {% endfor %}
 </nav>
@@ -48,17 +48,6 @@
 
 <div id="bottom-container">
     {% block bottomcontainer %}{% endblock %}
-    <div id="rng-container">
-        <h3>Random Number Generator</h3>
-        <input id="rng-min" placeholder="Minimum" type="number">
-        <input id="rng-max" placeholder="Maximum" type="number">
-        
-        <span>Inclusive</span><input id="rng-inclusive" type="checkbox" checked>
-
-        <button id="rng-generate">Generate</button>
-
-        <h3 class="inactive" id="rng-result">Result</h3>
-    </div>
 </div>
 
 <div id="changelog">

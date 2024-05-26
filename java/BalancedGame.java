@@ -176,7 +176,6 @@ public class BalancedGame {
      */
     public static void nextTurn() throws Exception {
         char choice = ' ';
-        Set<String> alreadyAttacked = new HashSet<>();
         while (choice!='Z') {
             out.println("Actions - "+(arr[subturn-1].getName()));
             out.println("Island #: "+location[subturn-1]);
@@ -218,9 +217,6 @@ public class BalancedGame {
                     if (name.equals(arr[subturn-1].getName())) {
                         out.println("You can't attack yourself!");
                     }
-                    else if (alreadyAttacked.contains(arr[i].getName()) && choice!=4) {
-                        out.println("You already attacked that player!");
-                    }
                     else {
                         if (arr[i].getGL()!=arr[subturn-1].getGL()) {
                             out.println("They are in a different server!");
@@ -242,7 +238,6 @@ public class BalancedGame {
                             case 'C': spell(i); break;
                             case 'D': gift(i); break;
                         }
-                        alreadyAttacked.add(arr[i].getName());
                     }
                 }
             }
@@ -629,7 +624,7 @@ public class BalancedGame {
         double mult = eventChecker("Spell_Damage")/100.0+eventChecker("ALL_DAMAGE")/100.0;
         double sr = Math.min(80,arr[subturn-1].getElement(0,2));
         ia = Math.max(-100,ia-nd);
-        mc*=((1+eventChecker("Spell_Cost")/100.0)*(1-sr/100.0)+mult);
+        mc*=((1+eventChecker("Spell_Cost")/100.0)*(1-sr/100.0));
         damages[0]*=((1+eventChecker("Neutral_Damage")/100.0)+mult);
         damages[1]*=((1+eventChecker("Earth_Damage")/100.0)+mult);
         damages[2]*=((1+eventChecker("Thunder_Damage")/100.0)+mult);
@@ -662,8 +657,8 @@ public class BalancedGame {
         String[] dmgTypes = {"Neutral","Earth","Thunder","Water","Fire","Air"};
         double dmg = 0;
         for (int k=0; k<6; k++) {
-            out.println(damages[j]*playersHit+" "+dmgTypes[j]);
-            dmg = r2(dmg+damages[j]*playersHit);
+            out.println(damages[k]*playersHit+" "+dmgTypes[k]);
+            dmg = r2(dmg+damages[k]*playersHit);
         }
         for (lockoutProgress lp:arr[subturn-1].getLP()) {
             switch(lp.getType()) {
@@ -1098,7 +1093,7 @@ public class BalancedGame {
     public static void fund(int i, int j) {
         if (j==-1) {
             if (islandFund==islandCost) {
-                out.println("Island"+(islandCost+1)+" has been unlocked!");
+                out.println("Island "+(islandCost+1)+" has been unlocked!");
                 islandFund = 0;
                 islandCost++;
             }

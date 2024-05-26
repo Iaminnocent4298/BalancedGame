@@ -6,8 +6,9 @@ import flask
 from flask import Flask, Response, request, session, redirect, url_for
 from functools import wraps
 
+import flask_wtf.file
 from flask_wtf import FlaskForm, CSRFProtect
-from wtforms import PasswordField
+import wtforms
 from wtforms.validators import DataRequired, ValidationError
 
 from flask_socketio import SocketIO, disconnect, send, emit
@@ -16,6 +17,7 @@ import os, os.path as path
 import interface, interface.data
 
 from globals import BASE_PATH
+import changelog
 
 from logging import info
 
@@ -32,15 +34,17 @@ app = Flask(__name__, root_path=BASE_PATH, static_folder=path.join(BASE_PATH, "s
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
 )
-app.config["REDIS_URL"] = "redis://localhost"
+# app.config["REDIS_URL"] = "redis://localhost"
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = False
+if __name__ == "__main__":
+    app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 csrf = CSRFProtect(app)
 
 sock = SocketIO(app, logger=True, async_mode="threading", cors_allowed_origins="*")
 
 def render_template(filename, **kwargs):
-    return flask.render_template(filename, **kwargs, all_game_data=interface.data.game_data)
+    return flask.render_template(filename, **kwargs, minor_game_data=interface.data.game_data)
 
 def authenticated():
     return "authenticated" in session
@@ -54,10 +58,13 @@ def redirect_for(*args, **kwargs):
 def index():
     return render_game("maina")
 
+class SetGameDataForm(FlaskForm):
+    file = wtforms.FileField("File:", validators=[flask_wtf.file.FileRequired(), flask_wtf.file.FileAllowed(["json"], "Not a valid json file!")])
+
 def render_game(game_id):
     game_data = interface.data.game_datas
     if authenticated():
-        return render_template("admin.html", game_data=game_data, game_id=game_id)
+        return render_template("admin.html", game_data=game_data, game_id=game_id, game_data_form=SetGameDataForm())
     return render_template("index.html", game_data=game_data, game_id=game_id)
 
 @app.route("/game/<game_id>")
@@ -95,15 +102,15 @@ def sock_auth_required(f):
             return f(*args, **kwargs)
     return decorator
 
-class AuthForm(FlaskForm):
-    password = PasswordField("Password:", validators=[DataRequired()])
-
-    def validate_password(form, field):
-        if field.data != ADMIN_PASSWORD:
-            raise ValidationError("Incorrect password")
-
 @app.route("/auth", methods=["GET", "POST"])
 def auth():
+    class AuthForm(FlaskForm):
+        password = wtforms.PasswordField("Password:", validators=[DataRequired()])
+
+        def validate_password(form, field):
+            if field.data != ADMIN_PASSWORD:
+                raise ValidationError("Incorrect password")
+
     form = AuthForm()
     if form.validate_on_submit():
         session["authenticated"] = 1
@@ -119,6 +126,29 @@ def logout():
 @app.route("/api/game_data", methods=["GET"])
 def game_data():
     return interface.data.game_data
+
+@app.route("/api/set_game_data/<game_id>", methods=["POST"])
+@auth_required
+def set_game_data(game_id):
+    print(game_id in interface.data.game_datas)
+    if game_id not in interface.data.game_datas:
+        return not_found()
+    
+    file = request.files["file"]
+    import json
+    try:
+        data = json.load(file)
+    except:
+        return "invalid json file >:( (amazing error page right)", 400
+    
+    interface.data.set_data(game_id, data)
+    
+    return redirect_for("index")
+
+@app.route("/api/changelog", methods=["GET"])
+def get_changelog():
+    return changelog.changelog
+    
 
 @app.route("/api/giveap", methods=["POST"])
 def giveap():
@@ -198,12 +228,19 @@ def update_game_data(game_id, data):
             "data": data,
         })
 
-interface.init()
-interface.data.set_callback(update_game_data)
+def init():
+    interface.init()
+    changelog.init()
+    interface.data.set_callback(update_game_data)
 
-atexit.register(interface.deinit)
+def deinit():
+    interface.deinit()
+    changelog.deinit()
+
+init()
+atexit.register(deinit)
 
 app.secret_key = bytes.fromhex(os.getenv("SECRET_KEY"))
 
 if __name__ == "__main__":
-    sock.run(app, host="0.0.0.0", port=3075)
+    sock.run(app, host="0.0.0.0", port=3000)

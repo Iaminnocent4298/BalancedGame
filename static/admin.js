@@ -177,6 +177,19 @@ window.addEventListener("load", () => {
         terminalEl.appendChild(el);
         inputEl.disabled = true;
     });
+
+    // document.querySelector("#upload-gamedata input[type=\"submit\"]").addEventListener("click", (e) => {
+    //     /** @type { HTMLInputElement } */
+    //     const target = e.target;
+    //     target.value = "Done!";
+    //     target.classList.add("inactive");
+    //     target.setAttribute("disabled", "");
+    //     setTimeout(() => {
+    //         target.value = "Upload";
+    //         target.classList.remove("inactive");
+    //         target.removeAttribute("disabled");
+    //     }, 1000);
+    // });
 });
 
 function send(text){

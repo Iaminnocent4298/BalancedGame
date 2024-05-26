@@ -242,18 +242,28 @@ td, .tablediv {
 }
 
 
-#bottom-container {
+#bottom-container, .vflex-container {
     display: flex;
     gap: 2.5rem;
     margin: 3rem;
     align-items: start; 
 }
 
-#bottom-container > div {
+#bottom-container > div:not(.vflex-container), .vflex-container > div {
     padding: 1rem;
     background-color: #9D4EDD60;
     border: 0.1rem solid #E0AAFFA0;
 }
+
+#bottom-container p {
+    line-height: 1.2;
+}
+
+.vflex-container {
+    flex-direction: column;
+    margin: 0;
+}
+
 
 #bottom-container h3 {
     margin-block-start: 0;

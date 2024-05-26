@@ -65,3 +65,7 @@ body.closed #terminal-input, body.closed #terminal-caret {
 #terminal-container > div > :last-child {
     margin-block-end: 1rem;
 }
+
+#upload-gamedata {
+    width: 18em;
+}

@@ -28,16 +28,16 @@ def update_game_data_undebounced(game_id, game_data_json, event):
         with open(path.join(DIST_PATH, game_data_json), "r") as file:
             content = file.read().strip()
             if not content:
-                return
-            new_game_data = json.loads(content)
+                new_game_data = None
+            else:
+                new_game_data = json.loads(content)
     except FileNotFoundError:
         warn("The file for %s (%s) doesn't exist!" % (game_id, game_data_json))
     except json.decoder.JSONDecodeError:
         warn("%s is invalid json, ignoring" % game_data_json)
         return
     
-    
-    if new_game_data == game_datas.get(game_id):
+    if game_id in game_datas and new_game_data == game_datas[game_id]:
         if event:
             info("%s marked as modified but not actually modified" % game_data_json)
         return
@@ -61,3 +61,9 @@ def init():
 def deinit():
     for game_id in game_data:
         monitor.unregister("data_" + game_id)
+
+def set_data(game_id, data):
+    game_data_file = game_data[game_id]["file"]
+    with open(path.join("dist", game_data_file), "w") as file:
+        json.dump(data, file)
+    game_datas[game_id] = data

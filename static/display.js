@@ -1,11 +1,4 @@
 
-// // hey if you crack this you deserve the ap
-// window.attempt = async function attempt(key) {
-//     const keyCheck = await import("./keycheck.js");
-//     console.log(keyCheck);
-// }
-
-
 import * as islands from "./islands.js";
 import * as rng from "./rng.js";
 import * as potions from "./potions.js";
@@ -244,7 +237,7 @@ export function updateGameDisplay(received, overwriteAll){
         game_datas[received.game_id] = received.data;
     }
 
-    const data = game_datas[window.GAME_ID];
+    const data = window.gameData = game_datas[window.GAME_ID];
 
     console.log("updating with", data);
 
@@ -379,6 +372,26 @@ export function updateGameDisplay(received, overwriteAll){
         }
     }
 
+    // The "Nick Map": a hashmap represented as a list of entries
+    // i.e.
+    // [
+    //     {"type": "Neutral Damage", "value": 0},
+    //     {"type": "Earth Damage", "value": 0},
+    //     {"type": "Thunder Damage", "value": 0},
+    //     {"type": "Water Damage", "value": 0},
+    //     {"type": "Fire Damage", "value": 0},
+    //     {"type": "Air Damage", "value": 0},
+    //     {"type": "Heal", "value": 10},
+    //     {"type": "Mana", "value": 0},
+    //     {"type": "Spell Damage", "value": 0},
+    //     {"type": "Melee Damage", "value": 0},
+    //     {"type": "Ranged Damage", "value ":0}
+    // ]
+    // instead of using a _regular_ hashmap because "hashmap syntax is so annoying". >:(
+    function nickMapGet(nickMap, key) {
+        return nickMap.find(el => el.type === key).value;
+    }
+
     function formatBuff(buff, hideTime){
         const { intensity, type, begin, end } = buff;
         return `${!hideTime && end !== undefined ? `[${begin}-${end}] ` : ""}${intensity >= 0 ? "+" : ""}${intensity}% ${prettify(type)}`;
@@ -437,23 +450,19 @@ export function updateGameDisplay(received, overwriteAll){
     ]);
 
     function lockout(lockoutData, i){
-        const arr = [];
-
-        for(const [id, format] of [
-            ["neutraldmg", "Deal %d Neutral Damage"],
-            ["earthdmg", "Deal %d Earth Damage"],
-            ["thunderdmg", "Deal %d Thunder Damage"],
-            ["waterdmg", "Deal %d Water Damage"],
-            ["firedmg", "Deal %d Fire Damage"],
-            ["airdmg", "Deal %d Air Damage"],
-            ["manause", "Use %d Mana"],
-            ["heal", "Heal %d Health"]
-        ]){
-            if(lockoutData[id] == 0)
-                continue;
-
-            arr.push(format.replace("%d", lockoutData[id]));
-        }
+        const msg = {
+            "Neutral Damage": "Deal %d Neutral Damage",
+            "Earth Damage": "Deal %d Earth Damage",
+            "Thunder Damage": "Deal %d Thunder Damage",
+            "Water Damage": "Deal %d Water Damage",
+            "Fire Damage": "Deal %d Fire Damage",
+            "Air Damage": "Deal %d Air Damage",
+            "Spell Damage": "Deal %d Spell Damage",
+            "Melee Damage": "Deal %d Melee Damage",
+            "Ranged Damage": "Deal %d Ranged Damage",
+            "Mana": "Use %d Mana",
+            "Heal": "Heal %d Health",
+        }[lockoutData.type].replace("%d", lockoutData.value);
 
         const checkboxEl = document.createElement("input");
         checkboxEl.type = "checkbox";
@@ -462,7 +471,7 @@ export function updateGameDisplay(received, overwriteAll){
 
         const el = document.createElement("span");
         el.appendChild(checkboxEl);
-        el.appendChild(classSpan(`${prettyJoin(arr)} - ${lockoutData.apreward} AP`, [
+        el.appendChild(classSpan(`${msg} - ${lockoutData.apreward} AP`, [
             "common",
             "unique",
             "rare",
@@ -600,7 +609,7 @@ export function updateGameDisplay(received, overwriteAll){
         <p>The main form of "currency" in Balanced Game</p>
         <p>You gain ability points every turn</p>
     `);
-    row("❤ Health", (player, i) => tdTooltip(`${player.hp}/${player.maxhp}`,  `${data.status[i].heal} health healed this lockout cycle`), "hp", null, `
+    row("❤ Health", (player, i) => tdTooltip(`${player.hp}/${player.maxhp}`,  `${nickMapGet(player.status, "Heal")} health healed this lockout cycle`), "hp", null, `
         <h3>Health</h3>
         <p>Health is your lifeline</p>
         <p>Make your opponent's health 0 while keeping your own health above 0</p>
@@ -610,7 +619,7 @@ export function updateGameDisplay(received, overwriteAll){
         <p>Health Regen heals you!</p>
         <p>You gain health at the end of every turn</p>
     `);
-    row("✷ Mana", (player, i) => tdTooltip(`${player.mana}/${player.maxmana}`, `${data.status[i].manause} mana used this lockout cycle`), "mana", null, `
+    row("✷ Mana", (player, i) => tdTooltip(`${player.mana}/${player.maxmana}`, `${nickMapGet(player.status, "Mana")} mana used this lockout cycle`), "mana", null, `
         <h3>Mana</h3>
         <p>Mana is used to cast spells</p>
         <p>You can also increase your mana cap!</p>
@@ -620,82 +629,62 @@ export function updateGameDisplay(received, overwriteAll){
         <p>Mana Regen refills your mana storage!</p>
         <p>You gain mana at the end of every turn</p>
     `);
-    row("✤ Neutral Damage", (player, i) => tdTooltip(player.neutraldmg, `${data.status[i].neutraldmg} neutral damage dealt this lockout cycle`), "neutral", null, `
+    row("✤ Neutral Damage", (player, i) => tdTooltip(player.neutraldmg, `${nickMapGet(player.status, "Neutral Damage")} neutral damage dealt this lockout cycle`), "neutral", null, `
         <h3>Neutral Damage</h3>
         <p>Neutral Damage is the only non-elemental damage in the game</p>
         <p>Increase Neutral Damage by allocating ability points to it!</p>
     `);
 
-    for(const [id, el, symbol, tooltip] of [
-        ["strength", "earth", "✤", `
+    for(const [index, id, el, symbol, tooltip] of [
+        [0, "strength", "earth", "✤", `
             <h3>Strength/Earth Defence</h3>
             <p>Strength increases your Earth Damage, and melee damage</p>
             <p>Earth Defence decreases the amount of Earth damage dealt to you</p>
         `],
-        ["dexterity", "thunder", "✦", `
+        [1, "dexterity", "thunder", "✦", `
             <h3>Dexterity/Thunder Defence</h3>
             <p>Dexterity increases your Thunder Damage, and provides you with a chance to crit (2x damage)!</p>
             <p>Thunder Defence decreases the amount of Thunder damage dealt to you</p>
         `],
-        ["intelligence", "water", "❉", `
+        [2, "intelligence", "water", "❉", `
             <h3>Intelligence/Water Defence</h3>
             <p>Intelligence increases your Water Damage, and deals extra spell damage!</p>
             <p>Water Defence decreases the amount of Water damage dealt to you</p>
         `],
-        ["defence", "fire", "✹", `
+        [3, "defence", "fire", "✹", `
             <h3>Defence/Fire Defence</h3>
             <p>Defence increases your Fire Damage, and decreases the amount of all damage you take</p>
             <p>Fire Defence decreases the amount of Fire damage dealt to you</p>
         `],
-        ["agility", "air", "❋", `
+        [4, "agility", "air", "❋", `
             <h3>Agility/Air Defence</h3>
             <p>Agility increases your Air Damage, and provides you with a chance to dodge the opponent's attack!</p>
             <p>Air Defence decreases the amount of Air damage dealt to you</p>
         `],
     ]){
         row(symbol + " " + prettify(id), (player, i) => tdTooltip(
-            `${symbol} ${player[id]}\n❈ ${player[el + "def"]}`,
-            `${data.status[i][el + "dmg"]} ${el} damage dealt this lockout cycle`
+            `${symbol} ${player.elements[0][index]}\n❈ ${player.elements[1][index]}`,
+            `${nickMapGet(player.status, prettify(el) + " Damage")} ${el} damage dealt this lockout cycle`
         ), el, null, tooltip);
     }
 
-    row("๑ Spell Cost", (player) => player.spellcost, "mana", null, `
-        <h3>Spell Cost</h3>
-        <p>Spell Cost reduces the amount of mana it costs to use spells!</p>
-        <p>Mana cost is rounded after percentage reduction</p>
-    `);
     row("Active Effects", (player, i) => {
         const arr = [];
-        for(const status of data.specialSpells){
-            if(status.target !== player.name)
-                continue;
-
-            if(status.eturns > 0){
-                arr.push(classDiv(`💀 Poisoned (${status.eturns} ⇆)`, "earth"));
-            }
-            if(status.fturns > 0){
-                arr.push(classDiv(`🔥 On fire (${status.fturns} ⇆)`, "fire"));
-            }
-        }
-        for(const effect of (data.potionEffects ?? [])){
+        for(const effect of data.potionEffects){
             if(effect.name !== player.name)
                 continue;
 
-            for(const [el, symbol, className] of [
-                ["hpregen", "❣", "heal"],
-                ["manaregen", "⸎", "manarg"],
-                ["strength", "✤", "earth"],
-                ["dexterity", "✦", "thunder"],
-                ["intelligence", "❉", "water"],
-                ["defence", "✹", "fire"],
-                ["agility", "❋", "air"],
-            ]){
-                const val = effect[el + "add"];
-                if(val == 0)
-                    continue;
-                
-                arr.push([classSpan(`+${symbol} ${val} `, className ?? el), classSpan(`(${effect.turns} ⇆)`, "lvl")]);
-            }
+            const [symbol, className] = {
+                "Heal": ["❣", "heal"],
+                "Mana": ["⸎", "manarg"],
+                "Strength": ["✤", "earth"],
+                "Dexterity": ["✦", "thunder"],
+                "Intelligence": ["❉", "water"],
+                "Defence": ["✹", "fire"],
+                "Agility": ["❋", "air"],
+            }[effect.type];
+            
+            arr.push([classSpan(`+${symbol} ${effect.value} `, className), classSpan(`(${effect.turns} ⇆)`, "lvl")]);
         }
         if(arr.length)
             return item(arr, { defaultTag: "td", deeperDefaultTag: "span" });
@@ -722,6 +711,40 @@ export function updateGameDisplay(received, overwriteAll){
     row = table("spells");
 
     row(element("h3", "Spells"), playerHeader);
+
+    function weapon(weapon) {
+        if(!weapon)
+            return element("td", "Not Unlocked", { className: "inactive" });
+        
+        const arr = [];
+        arr.push(classDiv(prettify(weapon.name) + " " + toRomanNumerals(weapon.tier), "underline " + weapon.rarity.toLowerCase()));
+        arr.push(newline());
+        
+        for(const [index, el, symbol] of [
+            [0, "neutral", "✤"],
+            [1, "earth", "✤"],
+            [2, "thunder", "✦"],
+            [3, "water", "❉"],
+            [4, "fire", "✹"],
+            [5, "air", "❋"],
+            [6, "heal", "❣"],
+        ]){
+            const min = weapon.damages[0][index], max = weapon.damages[1][index];
+            if(max == 0)
+                continue;
+            
+            arr.push(classDiv(`${symbol} ${min}-${max}`, el));
+        }
+
+        arr.push(newline());
+        arr.push(classDiv("✷ " + weapon.manacost, "mana"));
+        arr.push(newline());
+        arr.push(classDiv("↻ " + weapon.rerollcost, "tertiary"));
+        arr.push(newline());
+        arr.push(classDiv(prettify(weapon.rarity), weapon.rarity.toLowerCase()));
+
+        return arr;
+    }
     
     for(const [spellId, name, cost] of [
         [0, "Spell 1", 10],
@@ -730,67 +753,7 @@ export function updateGameDisplay(received, overwriteAll){
         [3, "Spell 4", 80],
         [4, "AOE Spell", 15],
     ]){
-        row([classDiv(name, "primary" ), cost != null && classDiv(`Cost: ${cost} AP`, "secondary")], (_, i) => {
-            const spell = data.spells[i][spellId];
-            if(!spell)
-                return element("td", "Not Unlocked", { className: "inactive" });
-            
-            const arr = [];
-            arr.push(classDiv(prettify(spell.name) + " " + toRomanNumerals(spell.tier), "underline " + spell.rarity.toLowerCase()));
-            arr.push(newline());
-            
-            for(const [el, symbol] of [
-                ["neutral", "✤"],
-                ["earth", "✤"],
-                ["thunder", "✦"],
-                ["water", "❉"],
-                ["fire", "✹"],
-                ["air", "❋"],
-                ["heal", "❣"],
-            ]){
-                const min = spell[el + "min"], max = spell[el + "max"];
-                if(max == 0)
-                    continue;
-                
-                arr.push(classDiv(`${symbol} ${min}-${max}`, el));
-            }
-            arr.push(newline());
-
-            for(const el of [
-                "earth",
-                // "thunder",
-                "water",
-                "fire",
-                "air",
-            ]){
-                if(!spell[el[0] + "special"])
-                    continue;
-                
-                switch(el){
-                case "earth":
-                    arr.push(classDiv(`💀 (${spell.eturns} ⇆)`, el)); 
-                    break;
-                case "water":
-                    arr.push(classDiv(`🌊 (${spell.wchance}% ↝)`, el)); 
-                    break;
-                case "fire":
-                    arr.push(classDiv(`🔥 (${spell.fturns} ⇆)`, el)); 
-                    break;
-                case "air":
-                    arr.push(classDiv(`🌪 (${spell.areflect}% ⤣)`, el)); 
-                    break;
-                }
-            }
-
-            arr.push(newline());
-            arr.push(classDiv("✷ " + spell.manacost, "mana"));
-            arr.push(newline());
-            arr.push(classDiv("↻ " + spell.rerollcost, "tertiary"));
-            arr.push(newline());
-            arr.push(classDiv(prettify(spell.rarity), spell.rarity.toLowerCase()));
-
-            return arr;
-        });
+        row([classDiv(name, "primary" ), cost != null && classDiv(`Cost: ${cost} AP`, "secondary")], (_, i) => weapon(data.spells[i][spellId]));
     }
 
     row = table("weapons");
@@ -801,36 +764,7 @@ export function updateGameDisplay(received, overwriteAll){
         row([
             [classDiv("Melee Weapon", "primary"), classDiv("25 AP", "secondary")],
             [classDiv("Ranged Weapon", "primary"), classDiv("35 AP", "secondary")],
-        ][weaponId], (_, i) => {
-            const weapon = data.weapons[i][weaponId];
-            if(!weapon)
-                return element("td", "Not Unlocked", { className: "inactive" });
-            
-            const arr = [];
-            arr.push(classDiv(prettify(weapon.name) + " " + toRomanNumerals(weapon.tier), "underline " + weapon.rarity.toLowerCase()));
-            arr.push(newline());
-            
-            for(const [el, symbol] of [
-                ["neutral", "✤"],
-                ["earth", "✤"],
-                ["thunder", "✦"],
-                ["water", "❉"],
-                ["fire", "✹"],
-                ["air", "❋"],
-            ]){
-                const min = weapon[el + "min"], max = weapon[el + "max"];
-                if(!max)
-                    continue;
-                
-                arr.push(classDiv(`${symbol} ${min}-${max}`, el));
-            }
-            arr.push(newline());
-            arr.push(classDiv("↻ " + weapon.rerollcost, "tertiary"));
-            arr.push(newline());
-            arr.push(classDiv(prettify(weapon.rarity), weapon.rarity.toLowerCase()));
-
-            return arr;
-        });
+        ][weaponId], (_, i) => weapon(data.weapons[i][weaponId]));
     }
 
     tableContainerDiv("useful-info", [
@@ -872,14 +806,6 @@ export function updateGameDisplay(received, overwriteAll){
     ]);
 
     const miscInfoGroup = tableGroup("misc");
-
-    tableContainerDiv("lottery", [
-        element("h3", "Lottery Info"),
-        classDiv([
-            classSpan(["Current Jackpot: ", classSpan(data.jackpot + " AP", "ap")]),
-            classSpan(["Number of tickets bought: ", classSpan(data.tickets, "secondary")]),
-        ], "left-align"),
-    ], miscInfoGroup);
 
     const potionData = Array(8).fill(0).map((_) => Array(6));
 

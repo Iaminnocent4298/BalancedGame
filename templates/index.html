@@ -5,7 +5,9 @@
 {% endblock %}
 
 {% block aftercontent %}
-
 <script type="module" src="{{ url_for('static', filename='client.js') }}"></script>
+{% endblock %}
 
+{% block bottomcontainer %}
+{% include 'rng.html' %}
 {% endblock %}

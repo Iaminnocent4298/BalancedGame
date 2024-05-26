@@ -73,7 +73,7 @@ public class playerData {
     public void setElement(int i, int j, int v) {elements[i][j] = v;}
     public void setLP(lockoutProgress[] lp) {status = lp;}
     //MUTATORS
-    public void addLives(int v) {lives-=v;}
+    public void addLives(int v) {lives+=v;}
     public void addLvl(int i) {lvl+=i;}
     public void addLXP(double v) {lvlxp+=v;}
     public void addNL(int i) {nextlvl+=i;}
