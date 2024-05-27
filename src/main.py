@@ -141,9 +141,11 @@ def set_game_data(game_id):
     except:
         return "invalid json file >:( (amazing error page right)", 400
     
+    info("Setting data of %s to uploaded file" % game_id)
+
     interface.data.set_data(game_id, data)
     
-    return redirect_for("index")
+    return redirect_for("game", game_id=game_id)
 
 @app.route("/api/changelog", methods=["GET"])
 def get_changelog():

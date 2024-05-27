@@ -1,0 +1,6 @@
+.git
+**/*.class
+assets
+README.md
+**/__pycache__
+log

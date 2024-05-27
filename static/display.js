@@ -736,8 +736,10 @@ export function updateGameDisplay(received, overwriteAll){
             arr.push(classDiv(`${symbol} ${min}-${max}`, el));
         }
 
-        arr.push(newline());
-        arr.push(classDiv("✷ " + weapon.manacost, "mana"));
+        if(weapon.manacost !== undefined) {
+            arr.push(newline());
+            arr.push(classDiv("✷ " + weapon.manacost, "mana"));
+        }
         arr.push(newline());
         arr.push(classDiv("↻ " + weapon.rerollcost, "tertiary"));
         arr.push(newline());
@@ -870,6 +872,11 @@ export function updateGameDisplay(received, overwriteAll){
     handleSizeChange();
 }
 
+const listeners = [];
+export function addIdChangeListener(listener) {
+    listeners.push(listener);
+}
+
 window.addEventListener("load", () => {
     loadForumPosts();
 
@@ -880,9 +887,14 @@ window.addEventListener("load", () => {
             history.pushState({ gameId }, null, gameLink.href);
             window.GAME_ID = gameId;
             updateGameDisplay(undefined, true);
-        })
+        });
     }
 });
 
+window.addEventListener("popstate", (e) => {
+    const { gameId } = e.state;
+    window.GAME_ID = gameId;
+    updateGameDisplay(undefined, true);
+});
 
 

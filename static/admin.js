@@ -127,6 +127,8 @@ function setLast(){
 
 const containerEl = document.getElementById("terminal-text-container");
 
+const fileUploadButtonEl = document.querySelector("#upload-gamedata input[type=\"submit\"]");
+
 window.addEventListener("load", () => {
     document.body.classList.add("loaded");
     containerEl.addEventListener("click", () => {
@@ -146,8 +148,6 @@ window.addEventListener("load", () => {
         socket.emit("term_start");
         terminalStartButton.disabled = true;
     });
-
-    updateGameDisplay(window.LOADED_DATA, true);
 
     window.socket = socket = io(window.location.origin, { path: window.BASE_URL + "/socket.io" });
     socket.on("data", (data) => {
@@ -178,18 +178,10 @@ window.addEventListener("load", () => {
         inputEl.disabled = true;
     });
 
-    // document.querySelector("#upload-gamedata input[type=\"submit\"]").addEventListener("click", (e) => {
-    //     /** @type { HTMLInputElement } */
-    //     const target = e.target;
-    //     target.value = "Done!";
-    //     target.classList.add("inactive");
-    //     target.setAttribute("disabled", "");
-    //     setTimeout(() => {
-    //         target.value = "Upload";
-    //         target.classList.remove("inactive");
-    //         target.removeAttribute("disabled");
-    //     }, 1000);
-    // });
+    setClosed(closed);
+
+    updateGameDisplay(window.LOADED_DATA, true);
+
 });
 
 function send(text){
@@ -201,11 +193,19 @@ function send(text){
 }
 
 function setClosed(newClosed){
-    if(newClosed == closed)
-        return;
     closed = newClosed;
-    if(newClosed)
+    if(newClosed){
         document.body.classList.add("closed");
-    else
+
+        fileUploadButtonEl.classList.remove("inactive");
+        fileUploadButtonEl.removeAttribute("disabled");
+        fileUploadButtonEl.value = "Upload";
+    }else{
         document.body.classList.remove("closed");
+
+        console.log(fileUploadButtonEl);
+        fileUploadButtonEl.classList.add("inactive");
+        fileUploadButtonEl.setAttribute("disabled", "");
+        fileUploadButtonEl.value = "Program is running";
+    }
 }

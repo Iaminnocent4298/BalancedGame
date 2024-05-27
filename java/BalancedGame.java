@@ -557,7 +557,7 @@ public class BalancedGame {
                     lp[j] = new lockoutProgress(lockoutTypes[j], 0.0);
                 }
                 arr[i].setLP(lp);
-                if (arr[i].getGL()==0) playersAlive--;
+                if (arr[i].getGL()==-1) playersAlive--;
                 if (playersAlive==1) {
                     out.println("THE GAME HAS ENDED!");
                     for (int k=0; k<playerCount; k++) {
@@ -653,12 +653,12 @@ public class BalancedGame {
             }
             playersHit = count;
         }
-        out.println("Damage dealt:");
+        out.println("Damage dealt (to each player):");
         String[] dmgTypes = {"Neutral","Earth","Thunder","Water","Fire","Air"};
         double dmg = 0;
         for (int k=0; k<6; k++) {
-            out.println(damages[k]*playersHit+" "+dmgTypes[k]);
-            dmg = r2(dmg+damages[k]*playersHit);
+            out.println(damages[k]+" "+dmgTypes[k]);
+            dmg = r2(dmg+damages[k]);
         }
         for (lockoutProgress lp:arr[subturn-1].getLP()) {
             switch(lp.getType()) {
@@ -684,7 +684,7 @@ public class BalancedGame {
             for (int k:s) {
                 arr[k].setHP(r2(arr[k].getHP()-dmg));
             }
-            eventLog.add("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" AOE'd island "+i+" for "+dmg+" damage");
+            eventLog.add("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" AOE'd island "+i+" for "+dmg+" damage each");
             if (eventLog.size()>25) eventLog.remove(0);
             for (int k:s) {
                 out.println(arr[k].getName()+" has "+arr[k].getHP()+" health remaining");
@@ -704,7 +704,7 @@ public class BalancedGame {
         completeLockout(subturn-1);
     }
     public static void gift(int i) throws IOException {
-        if (!path.equals("maina.json") || !path.equals("mainb.json")) {
+        if (!(path.equals("maina.json") || path.equals("mainb.json"))) {
             out.println("This is a tourney! You cannot gift things to other players.");
             return;
         }
@@ -1358,8 +1358,8 @@ public class BalancedGame {
                 }
                 else {
                     for (int j=0; j<7; j++) {
-                        if (weapons[i][num-1].getDmgs()[1][j]>0) {
-                            weapons[i][num-1].addDmgs(0, j, weapons[i][num-6].getTier());
+                        if (spells[i][num-1].getDmgs()[1][j]>0) {
+                            spells[i][num-1].addDmgs(0, j, spells[i][num-1].getTier());
                         }
                     }
                     out.println("Stats ↑ "+spells[i][num-1].getTier());
@@ -1401,7 +1401,7 @@ public class BalancedGame {
                 if (goals[i].getType().equals(arr[i].getLP()[k].getType()) 
                 && arr[i].getLP()[k].getValue()>goals[i].getValue()
                 && !goals[i].getDone()) {
-                    System.out.println(arr[i].getName()+" completed goal "+j);
+                    System.out.println(arr[i].getName()+" completed goal "+k);
                     arr[i].addAP(goals[i].getAPR());
                     goals[i].setDone(true);
                 }
