@@ -20,6 +20,7 @@ public class mob {
         this.name = name;
     }
     //ACCESSORS
+    public String getName() {return name;}
     public boolean isDead() {return hp<=0.0;}
     public int getIsland() {return island;}
     //MUTATORS

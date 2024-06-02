@@ -9,21 +9,23 @@ import com.google.gson.GsonBuilder;
 import java.nio.file.*;
 
 import static java.lang.System.out;
-class tuple {
+class pair {
+    /**
+     * The other vertex of the bridge
+     */
     int first;
+    /**
+     * The cost to cross the bridge
+     */
     int second;
-    int third;
 }
 public class BalancedGame {
     static int turn;
     static int subturn;
     static int playerCount;
     static int islandLim = 26;
-    static int bridgeCost;
-    static int bridgesBuilt;
     static int islandCost;
     static int islandFund;
-    static int crossed;
     static int nextEvent;
     static spell[][] spells;
     static weapon[][] weapons;
@@ -36,7 +38,7 @@ public class BalancedGame {
     static int temperature;
     static event temp = new event();
     static event disaster = new event();
-    static ArrayList<tuple>[] bridges;
+    static ArrayList<pair>[] bridges;
     static int[] location;
     static ArrayList<String> eventLog = new ArrayList<>();
     static int playersAlive;
@@ -50,7 +52,6 @@ public class BalancedGame {
     static int[] spelldps = {28,35,48,65,85,112}; //base spell 1
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static String path;
-    //@SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
         int ans = 1;
         while (ans>=1 && ans<=8) {
@@ -66,7 +67,6 @@ public class BalancedGame {
                 case 3: path = "rtpcup.json"; playerCount = 6; break;
                 default: return;
             }
-            //path = args[0];
             input();
             int menuOpt = 1;
             while (menuOpt>=1 && menuOpt<=3) {
@@ -78,7 +78,6 @@ public class BalancedGame {
                 menuOpt = Integer.parseInt(br.readLine());
                 if (menuOpt==1) {
                     nextTurn();
-                    crossed = 0;
                 }
                 else if (menuOpt==2) {
                     subturn--;
@@ -111,10 +110,7 @@ public class BalancedGame {
         turn = game.turn;
         subturn = game.subturn;
         islandLim = game.islandLim;
-        bridgeCost = game.bridgeCost;
-        bridgesBuilt = game.bridgesBuilt;
         islandCost = game.islandCost;
-        crossed = game.crossed;
         season = game.season;
         weather = game.weather;
         temperature = game.temperature;
@@ -146,10 +142,7 @@ public class BalancedGame {
         game.turn = turn;
         game.subturn = subturn;
         game.islandLim = islandLim;
-        game.bridgeCost = bridgeCost;
-        game.bridgesBuilt = bridgesBuilt;
         game.islandCost = islandCost;
-        game.crossed = crossed;
         game.season = season;
         game.weather = weather;
         game.temperature = temperature;
@@ -175,37 +168,33 @@ public class BalancedGame {
      * @throws Exception
      */
     public static void nextTurn() throws Exception {
-        char choice = ' ';
-        while (choice!='Z') {
+        int choice = 0;
+        while (choice!=-1) {
             out.println("Actions - "+(arr[subturn-1].getName()));
             out.println("Island #: "+location[subturn-1]);
-            out.println("A: AP usage");
-            out.println("B: Weapon attack");
-            out.println("C: Spell attack");
-            out.println("D: Gifting");
-            out.println("E: (Re)Rolling");
-            out.println("F: Potion Menu");
-            out.println("G: Island Travel");
-            out.println("H: Build Island/Bridge");
-            out.println("I: Burn Bridge");
-            out.println("X: Dev Modify");
-            out.println("Y: Pause and save current turn");
-            out.println("Z: End turn");
-            choice = br.readLine().charAt(0);
+            out.println("1: AP usage");
+            out.println("2: Weapon attack");
+            out.println("3: Spell attack");
+            out.println("4: Gifting");
+            out.println("5: (Re)Rolling");
+            out.println("6: Potion Menu");
+            out.println("7: Map Menu");
+            out.println("100: Dev Modify");
+            out.println("0: Pause and save current turn");
+            out.println("-1: End turn");
+            choice = Integer.parseInt(br.readLine());
             switch (choice) {
-                case 'A': usePts(); break;
-                case 'E': attackGen(subturn-1); break;
-                case 'F': potionMenu(subturn-1); break;
-                case 'G': traverse(subturn-1); break;
-                case 'H': mapFund(subturn-1); break;
-                case 'I': destroy(subturn-1); break;
-                case 'X': devMode(); break;
+                case 1: usePts(); break;
+                case 5: attackGen(subturn-1); break;
+                case 6: potionMenu(subturn-1); break;
+                case 7: mapMenu(subturn-1); break;
+                case 100: devMode(); break;
                 default: break;
             }
-            if (choice=='Y') {
+            if (choice==0) {
                 return;
             }
-            else if (choice>'A' && choice<'E') {
+            else if (choice>1 && choice<5) {
                 out.print("Player/Island? ");
                 String name = br.readLine();
                 try {
@@ -223,20 +212,20 @@ public class BalancedGame {
                             break;
                         }
                         switch (choice) {
-                            case 'B': 
-                                out.println("M: Melee");
-                                out.println("R: Ranged");
-                                //out.println("B: Both");
-                                char ans = br.readLine().charAt(0);
-                                if (ans=='M') {
-                                    dmgCalc(i, false); 
-                                }
-                                else if (ans=='R') {
-                                    dmgCalc(i, true);
+                            case 2: 
+                                out.println("1: Melee");
+                                out.println("2: Ranged");
+                                out.println("3: Both");
+                                int ans = Integer.parseInt(br.readLine());
+                                if (ans==1) melee(i);
+                                else if (ans==2) ranged(i);
+                                else if (ans==3) {
+                                    melee(i);
+                                    ranged(i);
                                 }
                                 break;
-                            case 'C': spell(i); break;
-                            case 'D': gift(i); break;
+                            case 3: spell(i); break;
+                            case 4: gift(i); break;
                         }
                     }
                 }
@@ -311,6 +300,11 @@ public class BalancedGame {
         }
         output();
     }
+    /**
+     * User selects which potion to consume.
+     * @param i The ID of the player in the array
+     * @throws IOException
+     */
     public static void usePotion(int i) throws IOException {
         if (arr[i].getPB()==null) {
             out.println("Your potion bag is empty!");
@@ -349,30 +343,116 @@ public class BalancedGame {
         arr[i].getPB().remove(num);
     }
 
-    public static void dmgCalc(int i, boolean ranged) throws Exception {
-        if (location[subturn-1]!=location[i] && !ranged) {
+    public static void melee(int i) throws IOException {
+        if (location[subturn-1]!=location[i]) {
             out.println("You cannot attack them since they are on a different island!");
             return;
         }
         out.println("Attacking "+arr[i].getName());
-        double sa = arr[subturn-1].getElement(0, 0);
-        double da = arr[subturn-1].getElement(0, 1);
-        double dd = arr[i].getElement(0, 3);
-        double ag = arr[i].getElement(0, 4);
+        double sa = Math.min(arr[subturn-1].getElement(0, 0),80);
+        double da = Math.min(arr[subturn-1].getElement(0, 1),80);
+        double dd = Math.min(arr[i].getElement(0, 3),80);
+        double ag = Math.min(arr[i].getElement(0, 4),80);
         double mult = eventChecker("ALL_DAMAGE")/100.0+eventChecker("Weapon_Damage")/100.0;
         sa*=(1+eventChecker("Strength")/100.0);
         da*=(1+eventChecker("Dexterity")/100.0);
         dd*=(1+eventChecker("Defence")/100.0);
         ag*=(1+eventChecker("Agility")/100.0);
-        if (!ranged) mult+=eventChecker("Melee_Damage")/100.0;
-        else mult+=eventChecker("Ranged_Damage")/100.0;
+        mult+=eventChecker("Ranged_Damage")/100.0;
         sa = Math.max(-100,sa-dd);
         //ATTACKS
         double[] damages = {1,0,0,0,0,0};
-        if (!ranged && weapons[subturn-1][0]!=null) {
+        if (weapons[subturn-1][0]!=null) {
             damages = weapons[subturn-1][0].rollDmg();
         }
-        else if (ranged && weapons[subturn-1][1]!=null) {
+        //DEFENCES
+        int[] temp = arr[i].getElements()[1];
+        double[] defences = new double[5];
+        for (int j=0; j<5; j++) {
+            defences[j] = temp[j];
+        }
+        double cdmg = 1;
+        int dodge = (int) (Math.random()*100)+1;
+        if (dodge<=ag) {
+            out.println("The opponent dodged!");
+            eventLog.add("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" dodged "+arr[subturn-1].getName()+"'s attack");
+            if (eventLog.size()>25) eventLog.remove(0);
+            return;
+        }
+        int crit = (int) (Math.random()*100)+1;
+        if (crit<=da) {
+            out.println("Critical Hit!");
+            cdmg=(2+sa/100.0);
+        }
+        //CALCULATIONS
+        defences[0]*=(1+eventChecker("Earth_Defence")/100.0);
+        defences[1]*=(1+eventChecker("Thunder_Defence")/100.0);
+        defences[2]*=(1+eventChecker("Water_Defence")/100.0);
+        defences[3]*=(1+eventChecker("Fire_Defence")/100.0);
+        defences[4]*=(1+eventChecker("Air_Defence")/100.0);
+        damages[0]*=((1+eventChecker("Neutral_Damage")/100.0)+mult);
+        damages[1]*=((1+eventChecker("Earth_Damage")/100.0)+mult);
+        damages[2]*=((1+eventChecker("Thunder_Damage")/100.0)+mult);
+        damages[3]*=((1+eventChecker("Water_Damage")/100.0)+mult);
+        damages[4]*=((1+eventChecker("Fire_Damage")/100.0)+mult);
+        damages[5]*=((1+eventChecker("Air_Damage")/100.0)+mult);
+        damages[0] = (damages[0]+arr[i].getND())*(1+sa/100.0)*cdmg;
+        for (int j=1; j<6; j++) {
+            damages[j] = (damages[j]+arr[i].getElement(0, j-1))*(1+sa/100.0)*cdmg;
+        }
+        damages[0] = Math.max(0,damages[0]);
+        for (int j=1; j<6; j++) {
+            damages[j] = Math.max(0,r2(damages[j]-defences[j-1]*2));
+        }
+        out.println("Damage dealt:");
+        String[] dmgTypes = {"Neutral","Earth","Thunder","Water","Fire","Air"};
+        double dmg = 0;
+        for (int j=0; j<6; j++) {
+            out.println(damages[j]+" "+dmgTypes[j]);
+            dmg = r2(dmg+damages[j]);
+        }
+        for (lockoutProgress lp:arr[subturn-1].getLP()) {
+            switch(lp.getType()) {
+                case "Neutral Damage": lp.setValue(r2(lp.getValue()+damages[0])); break;
+                case "Earth Damage": lp.setValue(r2(lp.getValue()+damages[1])); break;
+                case "Thunder Damage": lp.setValue(r2(lp.getValue()+damages[2])); break;
+                case "Water Damage": lp.setValue(r2(lp.getValue()+damages[3])); break;
+                case "Fire Damage": lp.setValue(r2(lp.getValue()+damages[4])); break;
+                case "Air Damage": lp.setValue(r2(lp.getValue()+damages[5])); break;
+                case "Melee Damage": lp.setValue(r2(lp.getValue()+dmg)); break;
+            }
+        }
+        arr[i].setHP(r2(arr[i].getHP()-dmg));
+        eventLog.add("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" bonked "+arr[i].getName()+" for "+dmg+" damage");
+        if (eventLog.size()>25) eventLog.remove(0);
+        out.println(arr[i].getName()+" has "+arr[i].getHP()+" health remaining");
+        arr[subturn-1].setLXP(r2(arr[subturn-1].getLXP()+dmg));
+        out.println(arr[subturn-1].getName()+" gained "+dmg+" xp");
+        out.println("Level "+arr[subturn-1].getLvl()+": "+arr[subturn-1].getLXP()+"/"+arr[subturn-1].getNL()+" xp");
+        levelUp(subturn-1);
+        isDead(i);
+        completeLockout(subturn-1);
+    }
+    public static void ranged(int i) throws Exception {
+        if (weapons[subturn-1][1]==null) {
+            out.println("You don't own a ranged weapon!");
+            return;
+        }
+        out.println("Attacking "+arr[i].getName());
+        double sa = Math.min(arr[subturn-1].getElement(0, 0),80);
+        double da = Math.min(arr[subturn-1].getElement(0, 1),80);
+        double dd = Math.min(arr[i].getElement(0, 3),80);
+        double ag = Math.min(arr[i].getElement(0, 4),80);
+        double mult = eventChecker("ALL_DAMAGE")/100.0+eventChecker("Weapon_Damage")/100.0;
+        sa*=(1+eventChecker("Strength")/100.0);
+        da*=(1+eventChecker("Dexterity")/100.0);
+        dd*=(1+eventChecker("Defence")/100.0);
+        ag*=(1+eventChecker("Agility")/100.0);
+        mult+=eventChecker("Ranged_Damage")/100.0;
+        sa = Math.max(-100,sa-dd);
+        //ATTACKS
+        double[] damages = {1,0,0,0,0,0};
+        if (weapons[subturn-1][1]!=null) {
             damages = weapons[subturn-1][1].rollDmg();
         }
         //DEFENCES
@@ -410,15 +490,8 @@ public class BalancedGame {
         for (int j=1; j<6; j++) {
             damages[j] = (damages[j]+arr[i].getElement(0, j-1))*(1+sa/100.0)*cdmg;
         }
-        if (!ranged) {
-            for (int j=0; j<6; j++) {
-                damages[j]*=(1-(crossed*20.0)/100.0);
-            }
-        }
-        else {
-            for (int j=0; j<6; j++) {
-                damages[j]*=(1-(Math.abs(location[i]-location[subturn-1])*20.0)/100.0);
-            }
+        for (int j=0; j<6; j++) {
+            damages[j]*=(1-(Math.abs(location[i]-location[subturn-1])*20.0)/100.0);
         }
         damages[0] = Math.max(0,damages[0]);
         for (int j=1; j<6; j++) {
@@ -439,15 +512,11 @@ public class BalancedGame {
                 case "Water Damage": lp.setValue(r2(lp.getValue()+damages[3])); break;
                 case "Fire Damage": lp.setValue(r2(lp.getValue()+damages[4])); break;
                 case "Air Damage": lp.setValue(r2(lp.getValue()+damages[5])); break;
-                case "Melee Damage":
-                    if (!ranged) lp.setValue(r2(lp.getValue()+dmg)); break;
-                case "Ranged Damage":
-                    if (ranged) lp.setValue(r2(lp.getValue()+dmg)); break;
+                case "Ranged Damage": lp.setValue(r2(lp.getValue()+dmg)); break;
             }
         }
         arr[i].setHP(r2(arr[i].getHP()-dmg));
-        if (!ranged) eventLog.add("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" bonked "+arr[i].getName()+" for "+dmg+" damage");
-        else eventLog.add("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" shot "+arr[i].getName()+" for "+dmg+" damage");
+        eventLog.add("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" shot "+arr[i].getName()+" for "+dmg+" damage");
         if (eventLog.size()>25) eventLog.remove(0);
         out.println(arr[i].getName()+" has "+arr[i].getHP()+" health remaining");
         arr[subturn-1].setLXP(r2(arr[subturn-1].getLXP()+dmg));
@@ -489,35 +558,27 @@ public class BalancedGame {
         out.println(arr[subturn-1].getAP()+" AP remaining");
     }
     public static void spell(int i) throws Exception {
-        int num = 0;
-        Set<Integer> s = new HashSet<>();
-        while (num!=100) {
-            out.println("Which spell to use? (1-5, 100 to quit) ");
-            num = Integer.parseInt(br.readLine());
-            if (num>0 && num<6) {
-                if (spells[subturn-1][num-1] == null) {
-                    out.println("This spell has not been unlocked yet!");
+        out.println("Which spell to use? (1-5, -1 to quit) ");
+        int num = Integer.parseInt(br.readLine());
+        if (num==-1) return;
+        else if (num>0 && num<6) {
+            if (spells[subturn-1][num-1] == null) {
+                out.println("This spell has not been unlocked yet!");
+            }
+            else {
+                double mc = spells[subturn-1][num-1].getMC();
+                double sr = Math.min(80,arr[subturn-1].getElement(0,2));
+                mc*=((1+eventChecker("Spell_Cost")/100.0)*(1-sr/100.0));
+                mc = Math.round(mc);
+                if (mc>arr[subturn-1].getMana()) {
+                    out.println("You do not have enough mana to use this spell!");
                 }
                 else {
-                    double mc = spells[subturn-1][num-1].getMC();
-                    double sr = Math.min(80,arr[subturn-1].getElement(0,2));
-                    mc*=((1+eventChecker("Spell_Cost")/100.0)*(1-sr/100.0));
-                    mc = Math.round(mc);
-                    if (mc>arr[subturn-1].getMana()) {
-                        out.println("You do not have enough mana to use this spell!");
-                    }
-                    else if (s.contains(num)) {
-                        out.println("You already used this spell!");
+                    if (num!=5) {
+                        spellCalc(i,num-1);
                     }
                     else {
-                        if (num!=5) {
-                            spellCalc(i,num-1);
-                            s.add(num);
-                        }
-                        else {
-                            spellCalc(i,4);
-                            s.add(5);
-                        }
+                        spellCalc(i,4);
                     }
                 }
             }
@@ -529,12 +590,12 @@ public class BalancedGame {
         int dmg = (int) (Math.random()*eventTypes.length);
         if (type!=1) multiplier*=-1;
         int length = (int) (Math.random()*4)+2;
-        nextEvent+=((int) (Math.random()*3)+1);
+        nextEvent+=1;
         event e = new event(multiplier,eventTypes[dmg],turn,turn+length-1);
         lst.add(e);
         curevent.add(e);
     }
-    public static void isDead(int i) throws InterruptedException {
+    public static void isDead(int i) {
         if (arr[i].getHP()<=0) {
             out.println(arr[i].getName()+" has died!");
             eventLog.add(arr[i].getName()+" has died");
@@ -711,29 +772,29 @@ public class BalancedGame {
         int choice = 0;
         while (choice!=100) {
             out.println("You have:");
-            out.println(arr[subturn-1].getAP()+" ability points");
+            out.println(arr[subturn-1].getAP()+" AP");
             out.println(arr[subturn-1].getHP()+" hp");
             out.println(arr[subturn-1].getMana()+" mana");
             out.println("----------");
             out.println("What would you like to gift? ");
-            out.println("1 for ability points");
+            out.println("1 for AP");
             out.println("2 for hp");
             out.println("3 for mana");
-            out.println("100 to exit");
+            out.println("-1 to exit");
             choice = Integer.parseInt(br.readLine());
-            if (choice==100) return;
+            if (choice==-1) return;
             else if (choice==1) {
                 out.print ("How many? ");
                 int count = Integer.parseInt(br.readLine());
                 if (count>arr[subturn-1].getAP()) {
-                    out.println("You do not have enough ability points to do that");
+                    out.println("You do not have enough AP to do that");
                 }
                 else {
-                    out.println("Gifted "+count+" ability points to "+arr[i].getName());
+                    out.println("Gifted "+count+" AP to "+arr[i].getName());
                     arr[subturn-1].setAP(arr[subturn-1].getAP()-count);
                     arr[i].addAP(count);
-                    out.println(arr[subturn-1].getName()+" has "+arr[subturn-1].getAP()+" ability points remaining");
-                    out.println(arr[i].getName()+" has "+arr[i].getAP()+" ability points remaining");
+                    out.println(arr[subturn-1].getName()+" has "+arr[subturn-1].getAP()+" AP remaining");
+                    out.println(arr[i].getName()+" has "+arr[i].getAP()+" AP remaining");
                 }
             }
             else if (choice==2) {
@@ -789,7 +850,7 @@ public class BalancedGame {
             char ans = br.readLine().charAt(0);
             if (ans=='y') {
                 if (arr[i].getAP()<cost) {
-                    out.println("You do not have ability points to do this!");
+                    out.println("You do not have AP to do this!");
                 }
                 else {
                     arr[i].setAP(arr[i].getAP()-cost);
@@ -814,7 +875,7 @@ public class BalancedGame {
             char ans = br.readLine().charAt(0);
             if (ans=='y') {
                 if (arr[i].getAP()<cost) {
-                    out.println("You do not have ability points to do this!");
+                    out.println("You do not have AP to do this!");
                 }
                 else {
                     arr[i].setAP(arr[i].getAP()-cost);
@@ -845,11 +906,11 @@ public class BalancedGame {
                 else spells[i][num-1].setRC(Math.min(16*num,cost*2));
             }
             else if (ans=='y' && arr[i].getAP()<cost) {
-                out.println("You do not have ability points to do this!");
+                out.println("You do not have AP to do this!");
             }
         }
     }
-    public static void generator(int x) throws IOException { //true = spell, false = weapon
+    public static void generator(int x) throws IOException { //1-5 = spell, 6-7 = weapon
         String[] rarityName = {"Common","Unique","Rare","Legendary","Fabled","Mythic"};
         int[] dmgmult = {1,3,5,7};
         int[] manamult = {1,2,3,4};
@@ -947,7 +1008,7 @@ public class BalancedGame {
             return;
         }
         if (potionShop[index+(num-1)*7].getCost()>arr[i].getAP()) {
-            out.println("You do not have enough ability points to purchase this item!");
+            out.println("You do not have enough AP to purchase this item!");
         }
         else if (potionShop[index+(num-1)*7].getLvlReq()>arr[i].getLvl()) {
             out.println("You do not meet the level requirements to purchase this item!");
@@ -958,28 +1019,45 @@ public class BalancedGame {
             arr[i].setAP(arr[i].getAP()-potionShop[index+(num-1)*7].getCost());
         }
     }
+    public static void mapMenu(int i) throws IOException {
+        out.println("Options:");
+        out.println("1: Travel");
+        out.println("2: Build");
+        out.println("3: Burn");
+        int choice = Integer.parseInt(br.readLine());
+        switch (choice) {
+            case 1: traverse(i); break;
+            case 2: build(i); break;
+            case 3: destroy(i); break;
+        }
+    }
+    /**
+     * Travel to other islands
+     * @param i The index of the current player
+     * @throws IOException
+     */
     public static void traverse(int i) throws IOException {
         out.println("You are on island "+location[i]);
         int dest = 0;
         while (dest!=100) {
             out.println("Possible locations to travel to:");
-            for (tuple p:bridges[location[i]]) {
+            for (pair p:bridges[location[i]]) {
                 if (p.second>=0) {
                     out.print(p.first+" ");
                     if (p.second==0) out.println("(Free)");
-                    else out.println("(Toll - "+p.second+" ability points)");
+                    else out.println("(Toll - "+p.second+" AP)");
                 }
             }
-            out.println("Which island to Ago to? (1-25), 100 to exit: ");
+            out.println("Destination? -1 to exit: ");
             dest = Integer.parseInt(br.readLine());
-            if (dest==100) break;
+            if (dest==-1) break;
             if (dest==location[i]) {
                 out.println("You are already on this island!");
             }
             else {
                 boolean exists = false;
-                tuple bridge = new tuple();
-                for (tuple b:bridges[location[i]]) {
+                pair bridge = new pair();
+                for (pair b:bridges[location[i]]) {
                     if (b.first==dest && b.second!=-1) {
                         bridge = b;
                         exists = true;
@@ -990,153 +1068,115 @@ public class BalancedGame {
                     out.println("There is no bridge connecting directly to it!");
                 }
                 else {
-                    out.println("This traversal will cost "+bridge.second+" ability points!");
-                    out.print("Would u like to travel? (y/n): ");
-                    char ans = br.readLine().charAt(0);
-                    if (ans=='y') {
-                        if (arr[i].getAP()<bridge.second) {
-                            out.println("Ew you're too poor to travel");
-                        }
-                        else if (crossed==5) {
-                            out.println("You already reached your bridge crossing limit!");
-                        }
-                        else {
-                            arr[i].setAP(arr[i].getAP()-bridge.second);
-                            out.println("Travelled to island "+bridge.first);
-                            location[i] = bridge.first;
-                            crossed++;
-                        }
+                    int staminaCost = Math.abs(location[i]-dest);
+                    if (arr[i].getAP()<bridge.second) {
+                        out.println("You're too poor to travel");
                     }
-                }
-            }
-        }
-    }
-    public static void mapFund(int i) throws IOException {
-        int choice = 0;
-        while (choice!=100) {
-            out.println("What would you like to fund?");
-            out.println("Press 1 for island");
-            out.println("Press 2 for bridge");
-            out.println("Press 100 to exit");
-            choice = Integer.parseInt(br.readLine());
-            if (choice==1) {
-                out.println("You are currently funding island "+(islandCost+1));
-                out.println("There is currently "+islandFund+"/"+(islandCost)+" ability points already funded");
-                out.println("How many AP would you like to fund towards the island? ");
-                int amt = Integer.parseInt(br.readLine());
-                if (amt>arr[i].getAP()) {
-                    out.println("You do not have enough ability points!");
-                }
-                else if (amt>islandCost-islandFund) {
-                    out.println("You are funding too much!");
-                }
-                else {
-                    arr[i].setAP(arr[i].getAP()-amt);
-                    out.println("You have donated "+amt+" ability points to the island funding!");
-                    islandFund+=amt;
-                    fund(islandCost+1,-1);
-                }
-            }
-            else if (choice==2) {
-                int one = 0, two = 0;
-                out.print("Enter the two numbers (or -1 to quit): ");
-                StringTokenizer st = new StringTokenizer(br.readLine());
-                while (st.hasMoreTokens()) {
-                    one = Integer.parseInt(st.nextToken());
-                    if (one==-1) return;
-                    two = Integer.parseInt(st.nextToken());
-                }
-                int smol = 0;
-                int big = 0;
-                if (one<two) {
-                    smol = one;
-                    big = two;
-                }
-                else {
-                    smol = two;
-                    big = one;
-                }
-                int index = -1;
-                for (int j=0; j<bridges[smol].size(); j++) {
-                    if (bridges[smol].get(j).first==big) {
-                        index = j;
-                        break;
-                    }
-                }
-                if (index==-1) {
-                    tuple t = new tuple();
-                    t.first = big;
-                    t.second = -1;
-                    t.third = 0;
-                    bridges[smol].add(t);
-                    index = bridges[smol].size()-1;
-                }
-                out.println("You are currently funding a bridge connecting islands "+smol+" and "+big);
-                out.println("There is currently "+bridges[smol].get(index).third+"/"+bridgeCost+" ability points already funded");
-                out.println("How many AP would you like to fund towards the island? ");
-                int amt = Integer.parseInt(br.readLine());
-                if (amt>arr[i].getAP()) {
-                    out.println("You do not have enough ability points!");
-                }
-                else if (amt>bridgeCost-bridges[smol].get(index).third) {
-                    out.println("You are funding too much!");
-                }
-                else {
-                    arr[i].setAP(arr[i].getAP()-amt);
-                    out.println("You have donated "+amt+" ability points to the island funding!");
-                    bridges[smol].get(index).third+=amt;
-                    fund(smol, big);
-                }
-            }
-        }
-    }
-    public static void fund(int i, int j) {
-        if (j==-1) {
-            if (islandFund==islandCost) {
-                out.println("Island "+(islandCost+1)+" has been unlocked!");
-                islandFund = 0;
-                islandCost++;
-            }
-        }
-        else {
-            for (int x=0; x<bridges[i].size(); x++) {
-                if (bridges[i].get(x).first==j && bridges[i].get(x).second==-1 && bridges[i].get(x).third==bridgeCost) {
-                    out.println("Bridge connecting islands "+i+" and "+j+" has been connected!");
-                    bridges[i].get(x).second = 0;
-                    bridges[i].get(x).third = 0;
-                    tuple c = new tuple();
-                    c.first = i;
-                    c.second = 0;
-                    c.third = 0;
-                    int toll = (int) (Math.random()*10)+1;
-                    if (toll==10) {
-                        out.println("This bridge is a toll bridge!");
-                        int price = (int) Math.ceil(bfs(i,j)/2.0);
-                        out.println("The price is "+price+" ap to cross!");
-                        bridges[i].get(x).second = price;
-                        c.second = price;
+                    else if (arr[i].getStamina()<staminaCost) {
+                        out.println("You're too tired to travel!");
                     }
                     else {
-                        out.println("This bridge is a free bridge!");
+                        arr[i].setAP(arr[i].getAP()-bridge.second);
+                        out.println("Travelled to island "+bridge.first);
+                        location[i] = bridge.first;
+                        arr[i].addStamina(staminaCost*-1);
                     }
-                    bridges[j].add(c);
-                    bridgesBuilt++;
-                    if (bridgesBuilt==bridgeCost/2) {
-                        bridgesBuilt = 0;
-                        bridgeCost+=2;
-                    }
+                }
+            }
+        }
+    }
+    public static void build(int i) throws IOException {
+        int choice = 0;
+        out.println("What would you like to build?");
+        out.println("Press 1 for island");
+        out.println("Press 2 for bridge");
+        out.println("Other to exit");
+        choice = Integer.parseInt(br.readLine());
+        if (choice==1) {
+            out.println("You are currently building island "+(islandCost+1));
+            out.println("There is currently "+islandFund+"/"+(islandCost)+" AP already funded");
+            out.println("How many AP would you like to fund towards the island? ");
+            int amt = Integer.parseInt(br.readLine());
+            if (amt>arr[i].getAP()) {
+                out.println("You do not have enough AP!");
+            }
+            else if (amt>islandCost-islandFund) {
+                out.println("You are funding too much!");
+            }
+            else {
+                arr[i].setAP(arr[i].getAP()-amt);
+                out.println("You have donated "+amt+" AP to the island funding!");
+                islandFund+=amt;
+                if (islandFund==islandCost) {
+                    out.println("Island "+(islandCost+1)+" has been unlocked!");
+                    islandFund = 0;
+                    islandCost++;
+                }
+            }
+        }
+        else if (choice==2) {
+            int one = 0, two = 0;
+            out.print("Enter the two numbers (or -1 to quit): ");
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            while (st.hasMoreTokens()) {
+                one = Integer.parseInt(st.nextToken());
+                if (one==-1) return;
+                two = Integer.parseInt(st.nextToken());
+            }
+            int smol = 0;
+            int big = 0;
+            if (one<two) {
+                smol = one;
+                big = two;
+            }
+            else {
+                smol = two;
+                big = one;
+            }
+            int index = -1;
+            for (int j=0; j<bridges[smol].size(); j++) {
+                if (bridges[smol].get(j).first==big) {
+                    index = j;
                     break;
                 }
+            }
+            if (index==-1) {
+                pair t = new pair();
+                t.first = big;
+                t.second = -1;
+                bridges[smol].add(t);
+                index = bridges[smol].size()-1;
+            }
+            out.println("You are currently building a bridge connecting islands "+smol+" and "+big);
+            out.println("The cost is 6 AP for free, 12 AP for toll");
+            out.print("Free or toll? ");
+            String option = br.readLine().toLowerCase();
+            int cost = 0;
+            if (option.equals("free")) cost = 6;
+            else if (option.equals("toll")) cost = 12;
+            if (cost>arr[i].getAP()) {
+                out.println("Insufficient AP!");
+            }
+            else {
+                arr[i].setAP(arr[i].getAP()-cost);
+                out.println("Bridge connecting islands "+smol+" and "+big+" has been connected!");
+                pair a = new pair();
+                a.first = big;
+                a.second = (cost==12) ? (int) Math.ceil(bfs(smol, big)/2.0) : 0;
+                pair b = new pair();
+                b.first = smol;
+                b.second = a.second;
+                bridges[smol].add(a);
+                bridges[big].add(b);
             }
         }
     }
     public static void destroy(int i) throws IOException {
         out.println("You are burning a bridge!");
-        int destroycost = bridgeCost*3/2;
-        out.println("This will cost "+destroycost+" ability points");
+        int destroycost = 9;
+        out.println("This will cost "+destroycost+" AP");
         if (arr[i].getAP()<destroycost) {
-            out.println("You do not have enough ability points to burn a bridge!");
-            out.println("You need "+destroycost+" ability points!");
+            out.println("You do not have enough AP to burn a bridge!");
             return;
         }
         int one = 0, two = 0;
@@ -1150,7 +1190,7 @@ public class BalancedGame {
             }
             two = Integer.parseInt(st.nextToken());
             boolean connected = false;
-            for (tuple p:bridges[one]) {
+            for (pair p:bridges[one]) {
                 if (p.first==two && p.second!=-1) {
                     connected = true;
                     break;
@@ -1167,7 +1207,7 @@ public class BalancedGame {
             }
         }
         out.println("You will be burning the bridge between islands "+one+" and "+two);
-        out.println("Cost is: "+destroycost+" ability points!");
+        out.println("Cost is: "+destroycost+" AP!");
         out.print("Confirm to burn (y/n): ");
         char s = br.readLine().charAt(0);
         if (s=='y') {
@@ -1197,7 +1237,7 @@ public class BalancedGame {
         dist[start] = 0;
         while (!q.isEmpty()) {
             int v = q.poll();
-            for (tuple u:bridges[v]) {
+            for (pair u:bridges[v]) {
                 if (dist[u.first]==-1 && u.second==0) {
                     dist[u.first] = dist[v]+1;
                 }
@@ -1340,9 +1380,9 @@ public class BalancedGame {
             arr[i].addLvl(1);
             arr[i].setLXP(r2(arr[i].getLXP()-arr[i].getNL()));
             arr[i].addNL(200*(arr[i].getLvl()/5+1));
-            out.println("Would you like to upgrade your weapon by 1 tier or gain ability points?");
+            out.println("Would you like to upgrade your weapon by 1 tier or gain AP?");
             out.println("1 for +1 tier to weapon/spell");
-            out.println("2 to gain ability points");
+            out.println("2 to gain AP");
             int ans = Integer.parseInt(br.readLine());
             if (ans==1) {
                 out.print("1-5 for spell, 6 for melee weapon, 7 for ranged weapon: ");
@@ -1395,7 +1435,7 @@ public class BalancedGame {
             totaldmg*=2;
         }
     }
-    public static void completeLockout(int i) throws InterruptedException {
+    public static void completeLockout(int i) {
         for (int j=0; j<6; j++) {
             for (int k=0; k<lockoutTypes.length; k++) {
                 if (goals[i].getType().equals(arr[i].getLP()[k].getType()) 

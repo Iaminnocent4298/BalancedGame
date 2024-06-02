@@ -20,7 +20,7 @@ public class gameData {
     ArrayList<event> lst;
     ArrayList<event> curevent;
     lockoutGoal[] goals;
-    ArrayList<tuple>[] bridges;
+    ArrayList<pair>[] bridges;
     int[] location;
     ArrayList<String> eventLog;
     int playersAlive;
@@ -49,8 +49,8 @@ public class gameData {
         weather = new event();
         season = new event();
         disaster = new event();
-        spells = new spell[5][p];
-        weapons = new weapon[2][p];
+        spells = new spell[p][5];
+        weapons = new weapon[p][2];
         arr = new playerData[p];
         lst = new ArrayList<>();
         curevent = new ArrayList<>();
