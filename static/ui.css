@@ -99,6 +99,19 @@
     height: 0.3rem;
 }
 
+.stamina {
+    color: #00fd7f;
+}
+.stamina-1 {
+    color: #f2f531;
+}
+.stamina-2 {
+    color: #ff9e03;
+}
+.stamina-3 {
+    color: #f73a24;
+}
+
 input[type="checkbox"] {
     display: inline-grid;
     place-content: center;

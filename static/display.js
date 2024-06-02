@@ -629,6 +629,31 @@ export function updateGameDisplay(received, overwriteAll){
         <p>Mana Regen refills your mana storage!</p>
         <p>You gain mana at the end of every turn</p>
     `);
+
+    row("🗲 Stamina", (player, i) => {
+        let className;
+        let staminaRatio = player.stamina / player.maxstamina * 100;
+        if(staminaRatio >= 75){
+            className = null;
+        } else if(staminaRatio >= 50) {
+            className = "stamina-1";
+        } else if(staminaRatio >= 25) {
+            className = "stamina-2";
+        } else {
+            className = "stamina-3";
+        }
+        return classSpan(`${player.stamina}/${player.maxstamina}`, className);
+    }, "stamina", null, `
+        <h3>Stamina</h3>
+        <p>Stamina is used to cross bridges</p>
+        <p>You can increase your max stamina with AP!</p>
+    `);
+    row("◆ Stamina Regen", (player) => player.manaregen, "stamina", null, `
+        <h3>Stamina Regen</h3>
+        <p>Stamina Regen replenishes your stamina after every turn!</p>
+        <p>You get tired pretty quickly</p>
+    `);
+
     row("✤ Neutral Damage", (player, i) => tdTooltip(player.neutraldmg, `${nickMapGet(player.status, "Neutral Damage")} neutral damage dealt this lockout cycle`), "neutral", null, `
         <h3>Neutral Damage</h3>
         <p>Neutral Damage is the only non-elemental damage in the game</p>
@@ -697,11 +722,9 @@ export function updateGameDisplay(received, overwriteAll){
             item([
                 element("h4", "Island Info"),
                 list([
-                    [classSpan("Bridges built: ", "secondary"), classSpan(data.bridgesBuilt, "primary")],
                     [classSpan("Number of islands: ", "secondary"), classSpan(data.islandCost, "primary")],
                     [classSpan("Island limit: ", "secondary"), classSpan(data.islandLim-1, "primary")],
                     [classSpan("Island build cost: ", "secondary"), classSpan(data.islandCost, "primary")],
-                    [classSpan("Bridge build cost: ", "secondary"), classSpan(data.bridgeCost, "primary")],
                 ])
             ]),
             item(element("canvas", null, { id: "island-canvas" }), { id: "island-canvas-container" }),
