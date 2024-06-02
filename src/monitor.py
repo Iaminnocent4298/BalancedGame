@@ -7,9 +7,10 @@ from logging import warn, debug
 
 class EventHandler(ProcessEvent):
     def process_IN_MODIFY(self, event):
-        pathname = os.path.relpath(event.pathname, globals.BASE_PATH)
-        if not pathname.startswith("log") and not pathname.startswith("dist"):
-            debug("%s modified" % pathname)
+        pathname = os.path.abspath(event.pathname)
+        if pathname.startswith("log"):
+            return
+        debug("%s modified" % pathname)
         for path, callback in hooks.values():
             if pathname == path:
                 callback(event)
@@ -25,7 +26,7 @@ def init():
     
     notifier = ThreadedNotifier(wm, EventHandler())
     notifier.start()
-    wdd = wm.add_watch(globals.BASE_PATH, pyinotify.IN_MODIFY, rec=True)
+    wdd = wm.add_watch(os.path.join(globals.BASE_PATH, "dist"), pyinotify.IN_MODIFY, rec=True)
 
 def deinit():
     global notifier, wdd
@@ -40,6 +41,8 @@ def register(id, path, callback):
     if id in hooks:
         warn(f"hook id {id} already registered, overwriting")
     
+    debug(f"Registering hook {id} for {path}")
+
     hooks[id] = (path, callback)
 
 def unregister(id):

@@ -16,6 +16,8 @@ import os, os.path as path
 
 import interface, interface.data
 
+from threading import Thread
+
 from globals import BASE_PATH
 import changelog
 
@@ -68,14 +70,17 @@ def render_game(game_id):
     return render_template("index.html", game_data=game_data, game_id=game_id)
 
 @app.route("/game/<game_id>")
-def get_game(game_id):
+def game(game_id):
     if game_id not in interface.data.game_datas:
         return not_found()
     return render_game(game_id)
 
 @app.route("/balancedgameinfo")
 def info_redir():
-    return redirect("https://docs.google.com/spreadsheets/d/1PGaQ40GtAoWpAUI7J8gqUTi9pyk8zkza6wVBtjtjOfg/edit#gid=0", )
+    return redirect("https://docs.google.com/spreadsheets/d/1PGaQ40GtAoWpAUI7J8gqUTi9pyk8zkza6wVBtjtjOfg/edit")
+@app.route("/mobwiki")
+def mobwiki_redir():
+    return redirect("https://docs.google.com/document/d/1RxGX2aEl6rdOKYhA1VFyinZkzsneSiQcoNvKSMtUSmE/edit")
 
 @app.errorhandler(404)
 def not_found(*args):
@@ -125,12 +130,17 @@ def logout():
 
 @app.route("/api/game_data", methods=["GET"])
 def game_data():
-    return interface.data.game_data
+    return interface.data.game_datas
+
+@app.route("/api/game_data/<game_id>", methods=["GET"])
+def game_data_with_id(game_id):
+    if game_id not in interface.data.game_datas:
+        return not_found()
+    return interface.data.game_datas[game_id]
 
 @app.route("/api/set_game_data/<game_id>", methods=["POST"])
 @auth_required
 def set_game_data(game_id):
-    print(game_id in interface.data.game_datas)
     if game_id not in interface.data.game_datas:
         return not_found()
     
@@ -150,7 +160,6 @@ def set_game_data(game_id):
 @app.route("/api/changelog", methods=["GET"])
 def get_changelog():
     return changelog.changelog
-    
 
 @app.route("/api/giveap", methods=["POST"])
 def giveap():
@@ -163,13 +172,16 @@ def send_communication_data(text):
     
     if interface.process is None:
         emit("error", { "code": "process_not_started" })
+
+    def func():
+        stdout, stderr = interface.communicate(text)
+        sock.emit("term_data", {
+            "stdout": stdout,
+            "stderr": stderr,
+            "closed": interface.process is None,
+        })
     
-    stdout, stderr = interface.communicate(text)
-    emit("term_data", {
-        "stdout": stdout,
-        "stderr": stderr,
-        "closed": interface.process is None,
-    })
+    Thread(target=func).start()
 
 @sock.on("term_start")
 @sock_auth_required
@@ -180,9 +192,11 @@ def start_process():
 
     info("Starting process")
 
-    interface.start_process()
+    def func():
+        interface.start_process()
+        send_communication_data("")
 
-    send_communication_data("")
+    Thread(target=func).start()
 
 @sock.on("term_last")
 @sock_auth_required

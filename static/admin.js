@@ -1,4 +1,4 @@
-import { getGameData, updateGameDisplay } from "./display.js";
+import { updateGameDisplay, addIdChangeListener } from "./display.js";
 
 let socket = null;
 
@@ -129,6 +129,13 @@ const containerEl = document.getElementById("terminal-text-container");
 
 const fileUploadButtonEl = document.querySelector("#upload-gamedata input[type=\"submit\"]");
 
+const uploadGameDataEl = document.getElementById("upload-gamedata");
+
+addIdChangeListener((gameId) => {
+    uploadGameDataEl.querySelector("form").action = `/api/set_game_data/${gameId}`;
+    uploadGameDataEl.querySelector("b").textContent = `${gameId}.json`;
+});
+
 window.addEventListener("load", () => {
     document.body.classList.add("loaded");
     containerEl.addEventListener("click", () => {
@@ -175,7 +182,8 @@ window.addEventListener("load", () => {
         el.textContent = "--- Connection closed ---";
         el.className = "inactive";
         terminalEl.appendChild(el);
-        inputEl.disabled = true;
+        if(inputEl)
+            inputEl.disabled = true;
     });
 
     setClosed(closed);

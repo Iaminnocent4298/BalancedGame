@@ -4,3 +4,5 @@ assets
 README.md
 **/__pycache__
 log
+dist/main*.json
+dist/rtpcup.json

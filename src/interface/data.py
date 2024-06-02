@@ -56,7 +56,7 @@ def init():
     for game_id, data in game_data.items():
         game_data_file = data["file"]
         update_game_data_undebounced(game_id, game_data_file, None)
-        monitor.register("data_" + game_id, path.join("dist", game_data_file), functools.partial(util.debounce(0.1)(update_game_data_undebounced), game_id, game_data_file))
+        monitor.register("data_" + game_id, path.join(DIST_PATH, game_data_file), functools.partial(util.debounce(0.1)(update_game_data_undebounced), game_id, game_data_file))
 
 def deinit():
     for game_id in game_data:
@@ -64,6 +64,6 @@ def deinit():
 
 def set_data(game_id, data):
     game_data_file = game_data[game_id]["file"]
-    with open(path.join("dist", game_data_file), "w") as file:
+    with open(path.join(DIST_PATH, game_data_file), "w") as file:
         json.dump(data, file)
     game_datas[game_id] = data

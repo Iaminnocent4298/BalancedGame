@@ -883,18 +883,25 @@ window.addEventListener("load", () => {
     for(const gameLink of document.getElementsByClassName("game-link")) {
         gameLink.addEventListener("click", (e) => {
             e.preventDefault();
-            let gameId = gameLink.dataset.gameId;
+            const gameId = gameLink.dataset.gameId;
             history.pushState({ gameId }, null, gameLink.href);
             window.GAME_ID = gameId;
             updateGameDisplay(undefined, true);
-        });
+            for(const listener of listeners) {
+                listener(gameId);
+            }
+        });;
     }
 });
 
 window.addEventListener("popstate", (e) => {
-    const { gameId } = e.state;
+    let { gameId } = e.state ?? {};
+    gameId = gameId ?? "maina";
     window.GAME_ID = gameId;
     updateGameDisplay(undefined, true);
+    for(const listener of listeners) {
+        listener(gameId);
+    }
 });
 
 

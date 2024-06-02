@@ -75,27 +75,45 @@ def stop_process():
             compile_queued = False
             compile()
 
-def communicate(s, timeout=0.1):
+def communicate(s, wait=4, timeout=0.05):
     global process
 
     with mutex:
-        if s:
-            try:
-                process.stdin.write(s)
-                process.stdin.flush()
-                text_queue.append((0, s))
-                time.sleep(timeout)
-            except BrokenPipeError:
-                pass
-        
         stdouts, stderrs = [], []
 
+        if s:
+            try:
+                text_queue.append((0, s))
+                process.stdin.write(s)
+                process.stdin.flush()
+            except BrokenPipeError:
+                pass
+            else:
+                for i in range(wait * 20):
+                    if process.poll() is not None:
+                        break
+                    try:
+                        stdouts.append(str(os.read(stdout_fd, 4096), "utf-8"))
+                        break
+                    except BlockingIOError:
+                        pass
+                    try:
+                        stderrs.append(str(os.read(stderr_fd, 4096), "utf-8"))
+                        break
+                    except BlockingIOError:
+                        pass
+                    time.sleep(0.05)
+        
+        time.sleep(timeout)
+        
         try:
-            stdouts.append(str(os.read(stdout_fd, 4096), "utf-8"))
+            while True:
+                stdouts.append(str(os.read(stdout_fd, 4096), "utf-8"))
         except BlockingIOError:
             pass
         try:
-            stderrs.append(str(os.read(stderr_fd, 4096), "utf-8"))
+            while True:
+                stderrs.append(str(os.read(stderr_fd, 4096), "utf-8"))
         except BlockingIOError:
             pass
         
