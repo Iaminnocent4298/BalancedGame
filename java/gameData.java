@@ -5,8 +5,6 @@ public class gameData {
     int subturn;
     int nextEvent;
     int islandLim;
-    int bridgeCost;
-    int bridgesBuilt;
     int islandCost;
     int crossed;
     event weather;
@@ -42,8 +40,6 @@ public class gameData {
         subturn = p;
         nextEvent = 2;
         islandLim = 26;
-        bridgeCost = 2;
-        bridgesBuilt = 0;
         islandCost = 1;
         crossed = 0;
         weather = new event();

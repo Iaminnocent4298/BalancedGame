@@ -138,7 +138,7 @@ public class BalancedGame {
      */
     public static void output() throws IOException {
         gameData game = new gameData();
-        game.version = "2.7.10";
+        game.version = "2.7.11";
         game.turn = turn;
         game.subturn = subturn;
         game.islandLim = islandLim;
@@ -1133,20 +1133,6 @@ public class BalancedGame {
                 smol = two;
                 big = one;
             }
-            int index = -1;
-            for (int j=0; j<bridges[smol].size(); j++) {
-                if (bridges[smol].get(j).first==big) {
-                    index = j;
-                    break;
-                }
-            }
-            if (index==-1) {
-                pair t = new pair();
-                t.first = big;
-                t.second = -1;
-                bridges[smol].add(t);
-                index = bridges[smol].size()-1;
-            }
             out.println("You are currently building a bridge connecting islands "+smol+" and "+big);
             out.println("The cost is 6 AP for free, 12 AP for toll");
             out.print("Free or toll? ");
@@ -1238,7 +1224,7 @@ public class BalancedGame {
         while (!q.isEmpty()) {
             int v = q.poll();
             for (pair u:bridges[v]) {
-                if (dist[u.first]==-1 && u.second==0) {
+                if (dist[u.first]==-1) {
                     dist[u.first] = dist[v]+1;
                 }
             }
