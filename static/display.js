@@ -648,7 +648,7 @@ export function updateGameDisplay(received, overwriteAll){
         <p>Stamina is used to cross bridges</p>
         <p>You can increase your max stamina with AP!</p>
     `);
-    row("◆ Stamina Regen", (player) => player.manaregen, "stamina", null, `
+    row("◆ Stamina Regen", (player) => player.staminaregen, "stamina", null, `
         <h3>Stamina Regen</h3>
         <p>Stamina Regen replenishes your stamina after every turn!</p>
         <p>You get tired pretty quickly</p>
