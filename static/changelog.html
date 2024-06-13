@@ -1,23 +1,144 @@
-<h1>Balanced Game Forum Posts</h1>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body><h1>Balanced Game Patch Notes</h1>
 <h4>Rest of forum posts pre-2.3: <a href="https://docs.google.com/document/d/1hbQYPxzdUlovE6sp_TlwHXc4cTX2OxDqXXkw5Q8ymuQ/edit" target="_blank">Old Doc</a></h4>
 <br>
 <br>
-<!-- <h2><b><u>Potion Shop Prices</u></b></h2>
-<p>Posted 7:29pm on February 11, 2024</p>
+<h2><b><u>2.7.11-hf1 Hotfix</u></b></h2>
+<p>Posted 9:11pm on June 7, 2024</p>
 <br>
-<p>Here are the prices of all 7 types of potions available to be purchased</p>
-<h3><b>Healing</b></h3>
-<table>
-    <tr>
-        <th class="lvl">Lvl Req</th>
-        <th class="hp">Healing</th>
-        <th class="ap">AP Cost</th>
-    </tr>
-    <tr>
-        <td class="lvl">0✷</td>
-        <td class="hp"></td>
-    </tr>
-</table> -->
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-72</span>: Stamina regen does not work</li>
+    <li><span class="bad">BG-73</span>: You cannot allocate AP to max stamina or stamina regen</li>
+    <li><span class="bad">BG-74</span>: Lockout challenges do not complete</li>
+    <li><span class="bad">BG-75</span>: Lockout challenges do not give the correct amount of AP upon completion</li>
+    <li><span class="bad">BG-76</span>: Disasters do not generate despite the debuffs occuring</li>
+</ul>
+<h2><b><u>2.7.11 Release</u></b></h2>
+<p>Posted 1:36pm on June 1, 2024</p>
+<br>
+<p>You're about to have the same stamina stats as me irl</p>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>Stamina: Instead of a bridge crossing limit, there is now a stamina bar! Crossing islands costs the absolute value of the difference of the island numbers</li>
+    <ul>
+        <li>Stamina regen and max stamina are stats that can be upgraded</li>
+    </ul>
+</ul>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>You can now use the same spell multiple times</li>
+    <li>Removed cap on allocatable AP to elements, but the EFFECT of those elements are capped at 80%</li>
+    <li>Bridge building costs 6 AP flat rate for free bridges, and 12 AP for a toll</li>
+    <li>Burning a bridge costs 9 AP</li>
+    <li>You can no longer fund bridges partially, you must build it all yourself</li>
+    <li>New events now appear EVERY turn</li>
+    <li>There is NO MORE melee damage reduction from crossing bridges</li>
+</ul>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-71</span>: Game still allows you to deal ranged damage despite not having a ranged weapon</li>
+</ul>
+<br>
+<h2><b><u>2.7.10 Release</u></b></h2>
+<p>Posted 8:55pm on May 16, 2024</p>
+<br>
+<p>Complete revamp of the the code</p>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>Added separate java files to the code</li>
+    <li>Intelligence buff reverted (back to 1:1 ratio)</li>
+    <li>1 AP to Intelligence also provides -1% Spell Cost (Capped at 80%)</li>
+    <li>AOE spells hit the player who cast it if they are on the same island</li>
+    <li>Changed potion effects and level requirements</li>
+    <li>Upon a new game, all players will be reset to island 1</li>
+</ul>
+<h3>Removals</h3>
+<ul>
+    <li>Spell Cost</li>
+</ul>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-66</span>: Players gain AP while in the Gulag</li>
+    <li><span class="bad">BG-67</span>: Defence potions remove health instead of defence when effect ends</li>
+    <li><span class="bad">BG-68</span>: Potion effects do not disappear upon new game</li>
+    <li><span class="bad">BG-69</span>: Potion bag does not reset upon a new game</li>
+    <li><span class="bad">BG-70</span>: Missing space in between "island" and the island number when successfully building an island</li>
+</ul>
+<h2><b><u>2.7.9-hf4 Hotfix</u></b></h2>
+<p>Posted 11:26am on May 4, 2024</p>
+<br>
+<p>WE ARE SO BACK</p>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-63</span>: Incorrect comparison in if statement causing game crash</li>
+    <li><span class="bad">BG-64</span>: Dev modification HP setting only allows integer values</li>
+    <li><span class="bad">BG-65</span>: Player does not die when all lives are lost</li>
+</ul>
+<h2><b><u>2.7.9-hf3 Hotfix</u></b></h2>
+<p>Posted 9:55pm on April 12, 2024</p>
+<br>
+<p>Ok wow I keep having errors</p>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-58</span>: Players STILL deal +100% base weapon damage</li>
+    <li><span class="bad">BG-59</span>: Players STILL deal +100% base spell damage</li>
+    <li><span class="bad">BG-60</span>: Lockout progress incorrect when a spell is used</li>
+    <li><span class="bad">BG-61</span>: Game crashes when loading name</li>
+    <li><span class="bad">BG-62</span>: Player name set to the game path upon death</li>
+</ul>
+<h2><b><u>2.7.9-hf2 Hotfix</u></b></h2>
+<p>Posted 10:00am on April 9, 2024</p>
+<br>
+<p>Me when negative mana</p>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-57</span>: Unintented spell damage multiplier applied to mana cost</li>
+</ul>
+<br>
+<h2><b><u>2.7.9-hf1 Hotfix</u></b></h2>
+<p>Posted 7:50pm on April 6, 2024</p>
+<br>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>Intelligence is now a 1:1.5 AP to bonus spell damage ratio</li>
+</ul>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-52</span>: Players dealt +200% extra base weapon damage</li>
+    <li><span class="bad">BG-53</span>: Players dealt +100% extra base spell damage</li>
+    <li><span class="bad">BG-54</span>: Lockout progress does not reset upon a new game</li>
+    <li><span class="bad">BG-55</span>: Entire weapons 2D array set to null instead of the individual 1D arrays</li>
+    <li><span class="bad">BG-56</span>: AOE spells do not reset upon death</li>
+</ul>
+<br>
+<h2><b><u>Version 2.7.9 Release</u></b></h2>
+<p>Posted 8:19pm on April 5, 2024</p>
+<br>
+<h3><b>Additions</b></h3>
+<ul>
+    <li>3 new lockout challenges!</li>
+    <li>2 new events!</li>
+</ul>
+<h3><b>Changes</b></h3>
+<ul>
+    <li>The "Melee Damage" events now only effect melee weapons and not the ranged ones</li>
+    <li>AOE spells bypass defence!</li>
+    <li>Slight changes to spell DPS (you must reroll to receive these new DPSes)</li>
+    <li>A few more events have become additive to each other instead of multiplicative</li>
+</ul>
+<h3><b>Removals</b></h3>
+<ul>
+    <li>Special Spell Attacks 😞</li>
+</ul>
+<h3><b>Fixes</b></h3>
+<ul>
+    <li><span class="bad">BG-47</span>: Event log shows ranged attacks as melee ones</li>
+    <li><span class="bad">BG-48</span>: Additional damage from elemental buffs bypass defence</li>
+    <li><span class="bad">BG-49</span>: Negative neutral damage can be dealt</li>
+    <li><span class="bad">BG-50</span>: Spells do not remove mana from your mana storage</li>
+    <li><span class="bad">BG-51</span>: XP gained display is incorrect in terminal</li>
+</ul>
+<br>
 <h2><b><u>Version 2.7.8 Release</u></b></h2>
 <p>Posted 10:11am on March 25, 2024</p>
 <br>
@@ -42,7 +163,8 @@
     <li>Default HP regen is now 10</li>
     <li>Strength/Intelligence and Defence are now additive, which now cancel each other out</li>
     <li>Strength has been un-nerfed</li>
-    <li>1 AP spent on Health Regen now gives +5 Health Regen</li>
+    <li>1 AP spent on Health Regen now gives +2 Health Regen</li>
+    <li>1 AP spent on Neutral Damage now gives +2 Neutral Damage</li>
     <li>1 AP on Max Health now gives +50 Max Health</li>
     <li>Buffed the "elemental" potion buffs in the potion shop (Str, Dex, Int, Def, Agi)</li>
     <li>Purchasing a melee weapon costs 25 AP</li>
@@ -60,6 +182,7 @@
     <li><span class="bad">BG-43</span>: Game crashes if you try to use an AOE spell on an island number greater than the number of players in the game</li>
     <li><span class="bad">BG-44</span>: Elemental buffs are subject to weapon and spell event buffs despite not counting as weapon/spell damage</li>
     <li><span class="bad">BG-45</span>: Additional apostrophe after player's name in event log when they dodge an attack</li>
+    <li><span class="bad">BG-46</span>: "Zap" spell attack does 0 damage</li>
 </ul>
 <br>
 <h2><b><u>Version 2.7.7 Release</u></b></h2>
@@ -87,7 +210,7 @@
 </ul>
 <h3><b>Changes</b></h3>
 <ul>
-    <li>The "extra damage" perk from Strength has been nerfed from +1% per Strength -> +0.5% per strength</li>
+    <li>The "extra damage" perk from Strength has been nerfed from +1% per Strength -&gt; +0.5% per strength</li>
     <ul>
         <li>Note: This does NOT affect the "extra crit damage" perk from Strength - that stays the same (+1% Crit Damage per Strength)</li>
     </ul>
@@ -105,7 +228,7 @@
     <ul>
         <li>Main elements are not necessarily the one that does the most average damage</li>
     </ul>
-    <li>Modified some average dps's of lower-tier weapons & spells (otherwise common spell 1's would end up having negative dps)</li>
+    <li>Modified some average dps's of lower-tier weapons &amp; spells (otherwise common spell 1's would end up having negative dps)</li>
     <li>Added a random multiplier for spells (they can deal between 0.5x and 1.5x the base average dps, but also take that same multiplier amount of the base mana cost)</li>
     <li>Reverted island construction cost to the original</li>
 </ul>
@@ -238,8 +361,8 @@
 <p>Version 2.7.1 balances a few changes</p>
 <h3><b>Changes</b></h3>
 <ul>
-    <li>"Effectiveness" is no longer in the game - Strength, Dexterity, Intelligence, Defence, and Agility are now exactly 1AP -> 1% conversion for all AP up to 80% cap</li>
-    <li>Elemental defence has been doubled; that is, 1AP -> 2 less elemental damage dealt to you!</li>
+    <li>"Effectiveness" is no longer in the game - Strength, Dexterity, Intelligence, Defence, and Agility are now exactly 1AP -&gt; 1% conversion for all AP up to 80% cap</li>
+    <li>Elemental defence has been doubled; that is, 1AP -&gt; 2 less elemental damage dealt to you!</li>
     <li>Every turn now gets +1 ability point - That is every 10 turns, 5 of them will give you <b>4</b> while the others will give you 3</li>
 </ul>
 <h3><b>Fixes</b></h3>
@@ -377,7 +500,7 @@
     <li>Added consistency to temperature colours</li>
 </ul>
 <br>
-<h2><b><u>Version 2.6 Leak - Bank & Upgradable Spells</u></b></h2>
+<h2><b><u>Version 2.6 Leak - Bank &amp; Upgradable Spells</u></b></h2>
 <p>Posted 11:46am on January 14, 2024</p>
 <br>
 <p>Version 2.6 introduces the additions of bank and upgradable spells!</p>
@@ -418,7 +541,7 @@
     <li>Levelling up now rewards you with more; all reward options are doubled</li>
 </ul>
 <br>
-<h2><b><u>Version 2.5 Leak - Lockout Quests & Gulag</u></b></h2>
+<h2><b><u>Version 2.5 Leak - Lockout Quests &amp; Gulag</u></b></h2>
 <p>Posted 2:04pm on January 9, 2024</p>
 <br>
 <p>Version 2.5 will introduce lockout quests and the addition of the Gulag, which is a separate instance of the game!</p>
@@ -482,4 +605,4 @@
     <li>Seasons</li>
     <li>Weather</li>
     <li>Temperature: Indicates how much extra or less damage you deal based on the temperature!</li>
-</ul>
+</ul><span id="PING_CONTENT_ANNOTATION" style="display: none;"></span></body></html>

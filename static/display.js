@@ -65,7 +65,7 @@ function prettify(str){
         return str;
 
     const words = str.toLowerCase().split(/[ _]+/);
-    return words.map(x => x[0].toUpperCase() + x.substring(1)).join(" ");
+    return words.map(x => x && x[0].toUpperCase() + x.substring(1)).join(" ");
 }
 
 function prettyJoin(arr){

@@ -138,7 +138,7 @@ public class BalancedGame {
      */
     public static void output() throws IOException {
         gameData game = new gameData();
-        game.version = "2.7.11";
+        game.version = "2.7.11-hf1";
         game.turn = turn;
         game.subturn = subturn;
         game.islandLim = islandLim;
@@ -146,6 +146,7 @@ public class BalancedGame {
         game.season = season;
         game.weather = weather;
         game.temperature = temperature;
+        game.disaster = disaster;
         game.temp = temp;
         game.nextEvent = nextEvent;
         game.curevent = curevent;
@@ -271,6 +272,7 @@ public class BalancedGame {
                     }
                 }
                 arr[i].setMana((int) Math.round(Math.min(arr[i].getMana()+arr[i].getMR()*manamult,arr[i].getMaxMana())));
+                arr[i].setStamina(Math.min(arr[i].getMaxStamina(),arr[i].getStamina()+arr[i].getStaminaRegen()));
                 completeLockout(i);
             }
             Set<peffect> curEffects = new HashSet<>();
@@ -396,11 +398,11 @@ public class BalancedGame {
         damages[3]*=((1+eventChecker("Water_Damage")/100.0)+mult);
         damages[4]*=((1+eventChecker("Fire_Damage")/100.0)+mult);
         damages[5]*=((1+eventChecker("Air_Damage")/100.0)+mult);
-        damages[0] = (damages[0]+arr[i].getND())*(1+sa/100.0)*cdmg;
+        damages[0] = (damages[0]+arr[subturn-1].getND())*(1+sa/100.0)*cdmg;
         for (int j=1; j<6; j++) {
-            damages[j] = (damages[j]+arr[i].getElement(0, j-1))*(1+sa/100.0)*cdmg;
+            damages[j] = (damages[j]+arr[subturn-1].getElement(0, j-1))*(1+sa/100.0)*cdmg;
         }
-        damages[0] = Math.max(0,damages[0]);
+        damages[0] = r2(Math.max(0,damages[0]));
         for (int j=1; j<6; j++) {
             damages[j] = Math.max(0,r2(damages[j]-defences[j-1]*2));
         }
@@ -486,14 +488,14 @@ public class BalancedGame {
         damages[3]*=((1+eventChecker("Water_Damage")/100.0)+mult);
         damages[4]*=((1+eventChecker("Fire_Damage")/100.0)+mult);
         damages[5]*=((1+eventChecker("Air_Damage")/100.0)+mult);
-        damages[0] = (damages[0]+arr[i].getND())*(1+sa/100.0)*cdmg;
+        damages[0] = (damages[0]+arr[subturn-1].getND())*(1+sa/100.0)*cdmg;
         for (int j=1; j<6; j++) {
-            damages[j] = (damages[j]+arr[i].getElement(0, j-1))*(1+sa/100.0)*cdmg;
+            damages[j] = (damages[j]+arr[subturn-1].getElement(0, j-1))*(1+sa/100.0)*cdmg;
         }
         for (int j=0; j<6; j++) {
             damages[j]*=(1-(Math.abs(location[i]-location[subturn-1])*20.0)/100.0);
         }
-        damages[0] = Math.max(0,damages[0]);
+        damages[0] = r2(Math.max(0,damages[0]));
         for (int j=1; j<6; j++) {
             damages[j] = Math.max(0,r2(damages[j]-defences[j-1]*2));
         }
@@ -543,6 +545,8 @@ public class BalancedGame {
             case "Health Regen": arr[subturn-1].addHPRegen(2*x); break;
             case "Mana": arr[subturn-1].addMaxMana(5*x); break;
             case "Mana Regen": arr[subturn-1].addMR(x); break;
+            case "Stamina": arr[subturn-1].addMaxStamina(5*x); break;
+            case "Stamina Regen": arr[subturn-1].addStaminaRegen(x); break;
             case "Neutral Damage": arr[subturn-1].addND(2*x); break;
             case "Strength": arr[subturn-1].addElement(0, 0, x); break;
             case "Dexterity": arr[subturn-1].addElement(0, 1, x); break;
@@ -588,6 +592,7 @@ public class BalancedGame {
         int type = (int) (Math.random()*2)+1;
         int multiplier = ((int) (Math.random()*4)+1)*25;
         int dmg = (int) (Math.random()*eventTypes.length);
+        if (eventTypes[dmg].equals("Spell_Cost")) {multiplier = ((int) (Math.random()*3)+1)*25;}
         if (type!=1) multiplier*=-1;
         int length = (int) (Math.random()*4)+2;
         nextEvent+=1;
@@ -976,8 +981,8 @@ public class BalancedGame {
     }
     public static void potionMenu(int i) throws IOException {
         out.println("Options:");
-        out.println("D: Drink potion");
-        out.println("S: Potion shop");
+        out.println("1: Drink potion");
+        out.println("2: Potion shop");
         char opt = br.readLine().charAt(0);
         if (opt=='D') {
             usePotion(i);
@@ -1377,6 +1382,7 @@ public class BalancedGame {
                     for (int j=0; j<6; j++) {
                         if (weapons[i][num-6].getDmgs()[1][j]>0) {
                             weapons[i][num-6].addDmgs(0, j, weapons[i][num-6].getTier());
+                            weapons[i][num-6].addDmgs(1, j, weapons[i][num-6].getTier());
                         }
                     }
                     out.println("Stats ↑ "+weapons[i][num-6].getTier());
@@ -1386,6 +1392,7 @@ public class BalancedGame {
                     for (int j=0; j<7; j++) {
                         if (spells[i][num-1].getDmgs()[1][j]>0) {
                             spells[i][num-1].addDmgs(0, j, spells[i][num-1].getTier());
+                            spells[i][num-1].addDmgs(1, j, spells[i][num-1].getTier());
                         }
                     }
                     out.println("Stats ↑ "+spells[i][num-1].getTier());
@@ -1424,12 +1431,12 @@ public class BalancedGame {
     public static void completeLockout(int i) {
         for (int j=0; j<6; j++) {
             for (int k=0; k<lockoutTypes.length; k++) {
-                if (goals[i].getType().equals(arr[i].getLP()[k].getType()) 
-                && arr[i].getLP()[k].getValue()>goals[i].getValue()
-                && !goals[i].getDone()) {
-                    System.out.println(arr[i].getName()+" completed goal "+k);
-                    arr[i].addAP(goals[i].getAPR());
-                    goals[i].setDone(true);
+                if (goals[j].getType().equals(arr[i].getLP()[k].getType()) 
+                && arr[i].getLP()[k].getValue()>goals[j].getValue()
+                && !goals[j].getDone()) {
+                    System.out.println(arr[i].getName()+" completed goal "+(j+1));
+                    arr[i].addAP(goals[j].getAPR());
+                    goals[j].setDone(true);
                 }
             }
         }
@@ -1440,6 +1447,7 @@ public class BalancedGame {
         out.println("B: HP setting");
         out.println("C: Setting lives");
         out.println("D: Reset Game");
+        out.println("E: Add Stamina");
         char x = br.readLine().charAt(0);
         if (x=='A') {
             out.print("Type order of players: ");
@@ -1469,6 +1477,13 @@ public class BalancedGame {
             for (int i=0; i<playerCount; i++) {
                 arr[i] = new playerData(arr[i].getName(), lockoutTypes.length);
             }
+        }
+        else if (x=='E') {
+            out.print("Player name: ");
+            int i = findPlayer(br.readLine());
+            out.print("Add stamina: ");
+            int s = Integer.parseInt(br.readLine());
+            arr[i].addStamina(s);
         }
     }
     public static int findPlayer(String s) {
