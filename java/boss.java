@@ -2,8 +2,8 @@ public class boss extends mob {
     spell ultimate;
     int cooldown;
     int untilnextattack;
-    public boss(int maxhp, double hp, int[][] dmg, int[] def, Object[] loot, double[] rates, String name, spell spells, int cd) {
-        super(maxhp, hp, dmg, def, loot, rates, name);
+    public boss(int maxhp, int[][] dmg, int[] def, String name, spell spells, int cd) {
+        super(maxhp, dmg, def, name, true);
         ultimate = spells;
         cooldown = cd;
         untilnextattack = 0;

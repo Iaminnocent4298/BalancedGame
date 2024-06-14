@@ -24,6 +24,8 @@ public class gameData {
     int playersAlive;
     potion[] potionShop;
     ArrayList<peffect> potionEffects;
+    ArrayList<mob>[] mobLocations;
+    ArrayList<mob> mobList;
     public gameData() {}
     /**
      * Creates the gameData object.
@@ -34,6 +36,7 @@ public class gameData {
      * @param lt The number of lockout types there are.
      * @param ps The potion shop.
      */
+    @SuppressWarnings("unchecked")
     public gameData(int p, String vers, int s, String[] names, int lt, potion[] ps) {
         version = vers;
         turn = 0;
@@ -60,10 +63,15 @@ public class gameData {
         playersAlive = p;
         potionShop = ps;
         potionEffects = new ArrayList<>();
+        mobLocations = new ArrayList[26];
+        for (int i=0; i<26; i++) {
+            mobLocations[i] = new ArrayList<>();
+        }
         for (int i=0; i<p; i++) {
             arr[i] = new playerData(names[i], lt);
             arr[i].setGL(0);
             location[i] = 1;
         }
+        mobList = new ArrayList<>();
     }
 }

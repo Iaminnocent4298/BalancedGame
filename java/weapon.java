@@ -14,6 +14,8 @@ public class weapon {
     //GETTERS
     public int[][] getDmgs() {return damages;}
     public int getRC() {return rerollcost;}
+    public String getName() {return name;}
+    public String getRarity() {return rarity;}
     public int getTier() {return tier;}
     //SETTERS
     public void setRC(int i) {rerollcost = i;}

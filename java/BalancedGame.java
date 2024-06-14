@@ -31,8 +31,8 @@ public class BalancedGame {
     static weapon[][] weapons;
     static playerData[] arr;
     static lockoutGoal[] goals;
-    static ArrayList<event> lst = new ArrayList<>();
-    static ArrayList<event> curevent = new ArrayList<>();
+    static ArrayList<event> lst;
+    static ArrayList<event> curevent;
     static event weather = new event();
     static event season = new event();
     static int temperature;
@@ -40,16 +40,19 @@ public class BalancedGame {
     static event disaster = new event();
     static ArrayList<pair>[] bridges;
     static int[] location;
-    static ArrayList<String> eventLog = new ArrayList<>();
+    static ArrayList<String> eventLog;
     static int playersAlive;
     static int potionnum = 35; //lvls 0-12
     static potion[] potionShop;
-    static ArrayList<peffect> potionEffects = new ArrayList<>();
+    static ArrayList<peffect> potionEffects;
+    static ArrayList<mob>[] mobLocations = new ArrayList[islandCost];
+    static ArrayList<mob> mobList = new ArrayList<>();
     static String[] eventTypes = {"Spell_Damage","Neutral_Damage","Melee_Damage","Ranged_Damage","Weapon_Damage","Health_Regen","Mana_Regen","Spell_Cost",
     "ALL_DAMAGE","Earth_Damage","Earth_Defence","Thunder_Damage","Thunder_Defence","Water_Damage","Water_Defence","Fire_Damage","Fire_Defence","Air_Damage","Air_Defence"};
     static String[] lockoutTypes = {"Neutral Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage","Heal","Mana","Spell Damage","Melee Damage","Ranged Damage"};
     static int[] weapondps = {14,19,27,40,55,75}; //base
     static int[] spelldps = {28,35,48,65,85,112}; //base spell 1
+    static String[] rarityName = {"Common","Unique","Rare","Legendary","Fabled","Mythic"};
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static String path;
     public static void main(String[] args) throws Exception {
@@ -128,6 +131,10 @@ public class BalancedGame {
         eventLog = game.eventLog;
         playersAlive = game.playersAlive;
         potionEffects = game.potionEffects;
+        mobLocations = game.mobLocations;
+        content = new String(Files.readAllBytes(Paths.get("mobs.json")));
+        game = gson.fromJson(content, gameData.class);
+        //mobList = game.mobList;
         content = new String(Files.readAllBytes(Paths.get("potions.json")));
         game = gson.fromJson(content, gameData.class);
         potionShop = game.potionShop;
@@ -160,9 +167,15 @@ public class BalancedGame {
         game.eventLog = eventLog;
         game.playersAlive = playersAlive;
         game.potionEffects = potionEffects;
+        game.mobLocations = mobLocations;
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String content = gson.toJson(game);
         Files.write(Paths.get(path),content.getBytes());
+        game = new gameData();
+        game.mobList = mobList;
+        gson = new GsonBuilder().setPrettyPrinting().create();
+        content = gson.toJson(game);
+        Files.write(Paths.get("mobs.json"),content.getBytes());
     }
     /**
      * Does the next turn.
@@ -185,7 +198,7 @@ public class BalancedGame {
             out.println("-1: End turn");
             choice = Integer.parseInt(br.readLine());
             switch (choice) {
-                case 1: usePts(); break;
+                case 1: useAP(); break;
                 case 5: attackGen(subturn-1); break;
                 case 6: potionMenu(subturn-1); break;
                 case 7: mapMenu(subturn-1); break;
@@ -528,7 +541,7 @@ public class BalancedGame {
         isDead(i);
         completeLockout(subturn-1);
     }
-    public static void usePts() throws IOException {
+    public static void useAP() throws IOException {
         out.println(arr[subturn-1].getAP()+" AP owned");
         out.print("How much AP to use? ");
         int x = 1000000000;
@@ -546,7 +559,6 @@ public class BalancedGame {
             case "Mana": arr[subturn-1].addMaxMana(5*x); break;
             case "Mana Regen": arr[subturn-1].addMR(x); break;
             case "Stamina": arr[subturn-1].addMaxStamina(5*x); break;
-            case "Stamina Regen": arr[subturn-1].addStaminaRegen(x); break;
             case "Neutral Damage": arr[subturn-1].addND(2*x); break;
             case "Strength": arr[subturn-1].addElement(0, 0, x); break;
             case "Dexterity": arr[subturn-1].addElement(0, 1, x); break;
@@ -859,7 +871,7 @@ public class BalancedGame {
                 }
                 else {
                     arr[i].setAP(arr[i].getAP()-cost);
-                    generator(num);
+                    weapons[i][1] = weaponGen(rarityGen(0), (weapons[i][1]!=null) ? weapons[i][1].getRC() : 0);
                     if (weapons[i][1].getRC()==0) weapons[i][1].setRC(1);
                     else weapons[i][1].setRC(Math.min(16,weapons[i][1].getRC()*2));
                 }
@@ -884,7 +896,7 @@ public class BalancedGame {
                 }
                 else {
                     arr[i].setAP(arr[i].getAP()-cost);
-                    generator(num);
+                    weapons[i][0] = weaponGen(rarityGen(0), (weapons[i][0]!=null) ? weapons[i][0].getRC() : 0);
                     if (weapons[i][0].getRC()==0) weapons[i][0].setRC(1);
                     else weapons[i][0].setRC(Math.min(16,weapons[i][0].getRC()*2));
                 }
@@ -906,7 +918,7 @@ public class BalancedGame {
             char ans = br.readLine().charAt(0);
             if (ans=='y' && arr[i].getAP()>=cost) {
                 arr[i].setAP(arr[i].getAP()-cost);
-                generator(num);
+                spells[i][num-1] = spellGen(rarityGen(0),num, (spells[i][num-1]!=null) ? spells[i][num-1].getRC() : 0);
                 if (spells[i][num-1].getRC()==0) spells[i][num-1].setRC((num!=5) ? num : 1);
                 else spells[i][num-1].setRC(Math.min(16*num,cost*2));
             }
@@ -915,36 +927,43 @@ public class BalancedGame {
             }
         }
     }
-    public static void generator(int x) throws IOException { //1-5 = spell, 6-7 = weapon
-        String[] rarityName = {"Common","Unique","Rare","Legendary","Fabled","Mythic"};
+    /**
+     * Rolls a spell
+     * @param rarityType The rarity of the spell
+     * @param spellNum The number of the spell (1-5)
+     * @param curRerollCost The current reroll cost of the spell
+     * @throws IOException
+     */
+    public static spell spellGen(String rarityType, int spellNum, int curRerollCost) throws IOException {
         int[] dmgmult = {1,3,5,7};
         int[] manamult = {1,2,3,4};
-        int rarity = (int) (Math.random()*100)+1;
-        int dps; int manacost;
-        if (rarity<=35)  rarity = 0;
-        else if (rarity<=65) rarity = 1;
-        else if (rarity<=85) rarity = 2;
-        else if (rarity<=95) rarity = 3;
-        else if (rarity<=99) rarity = 4;
-        else rarity = 5;
+        int dps = 0; 
+        int manacost = 0;
+        int rarity = -1;
+        switch(rarityType) {
+            case "Common": rarity = 0; break;
+            case "Unique": rarity = 1; break;
+            case "Rare": rarity = 2; break;
+            case "Legendary": rarity = 3; break;
+            case "Fabled": rarity = 4; break;
+            case "Mythic": rarity = 5; break;
+        }
         out.print("Name: ");
         String name = br.readLine();
-        if (x<=4) {
-            dps = spelldps[rarity]*dmgmult[x-1];
+        if (spellNum<=4) {
+            dps = spelldps[rarity]*dmgmult[spellNum-1];
         }
-        else if (x==5) {
+        else if (spellNum==5) {
             dps = spelldps[rarity];
         }
-        else dps = weapondps[rarity];
-        if (x<=4) {
-            manacost = 40*manamult[x-1];
+        if (spellNum<=4) {
+            manacost = 40*manamult[spellNum-1];
         }
-        else if (x==5) {
+        else if (spellNum==5) {
             manacost = 60;
         }
-        else manacost = 0;
         double multiplier = Math.random()*1+0.5;
-        if (x<=5) dps = (int) (Math.round(dps*multiplier));
+        dps = (int) (Math.round(dps*multiplier));
         manacost = (int) (Math.round(manacost*multiplier));
         int elements = (int) (Math.random()*10)+1;
         if (elements<=6) elements = 1;
@@ -958,7 +977,7 @@ public class BalancedGame {
             dps-=avgdps;
             int dmgtype;
             while (true) {
-                int limit = (x<=5) ? 7 : 6;
+                int limit = 7;
                 dmgtype = (int) (Math.random()*limit);
                 if (base==-1) base = dmgtype;
                 if (minmax[1][dmgtype]==0) break;
@@ -968,16 +987,52 @@ public class BalancedGame {
             minmax[1][dmgtype] = avgdps+range;
         }
         out.println("Number of elements: "+elements);
-        out.println("Rarity: "+rarityName[rarity]);
-        int reroll = 0;
-        if (x<=5) {
-            if (spells[subturn-1][x-1]!=null) reroll = spells[subturn-1][x-1].getRC();
-            spells[subturn-1][x-1] = new spell(minmax,manacost,reroll,name,rarityName[rarity]);
+        out.println("Rarity: "+rarityType);
+        return new spell(minmax,manacost,Math.min(curRerollCost*2,16*spellNum),name,rarityName[rarity]);
+    }
+    /**
+     * Rolls a weapon
+     * @param rarityType The rarity of the weapon
+     * @param curRerollCost The current reroll cost of the weapon
+     * @throws IOException
+     */
+    public static weapon weaponGen(String rarityType, int curRerollCost) throws IOException {
+        int rarity = -1;
+        switch(rarityType) {
+            case "Common": rarity = 0; break;
+            case "Unique": rarity = 1; break;
+            case "Rare": rarity = 2; break;
+            case "Legendary": rarity = 3; break;
+            case "Fabled": rarity = 4; break;
+            case "Mythic": rarity = 5; break;
         }
-        else {
-            if (weapons[subturn-1][x-6]!=null) reroll = weapons[subturn-1][x-6].getRC();
-            weapons[subturn-1][x-6] = new weapon(minmax,reroll,name,rarityName[rarity]);
+        out.print("Name: ");
+        String name = br.readLine();
+        int dps = weapondps[rarity];
+        int elements = (int) (Math.random()*10)+1;
+        if (elements<=6) elements = 1;
+        else if (elements<=9) elements = 2;
+        else elements = 3;
+        dps-=(elements-1)*5;
+        int[][] minmax = new int[2][6];
+        int base = -1;
+        for (int a=elements-1; a>=0; a--) {
+            int avgdps = (a==0) ? dps : (int) (Math.random()*(dps-a))+1;
+            dps-=avgdps;
+            int dmgtype;
+            while (true) {
+                int limit = 6;
+                dmgtype = (int) (Math.random()*limit);
+                if (base==-1) base = dmgtype;
+                if (minmax[1][dmgtype]==0) break;
+            }
+            int range = (int) (Math.random()*avgdps);
+            minmax[0][dmgtype] = avgdps-range;
+            minmax[1][dmgtype] = avgdps+range;
         }
+        out.println("Number of elements: "+elements);
+        out.println("Rarity: "+rarityType);
+        return new weapon(minmax,Math.min(16,curRerollCost*2),name,rarityName[rarity]);
     }
     public static void potionMenu(int i) throws IOException {
         out.println("Options:");
@@ -1374,6 +1429,7 @@ public class BalancedGame {
             out.println("Would you like to upgrade your weapon by 1 tier or gain AP?");
             out.println("1 for +1 tier to weapon/spell");
             out.println("2 to gain AP");
+            out.println("3 to increase stamina regen");
             int ans = Integer.parseInt(br.readLine());
             if (ans==1) {
                 out.print("1-5 for spell, 6 for melee weapon, 7 for ranged weapon: ");
@@ -1402,6 +1458,10 @@ public class BalancedGame {
             else if (ans==2) {
                 arr[i].addAP(arr[i].getLvl()*2);
                 out.println("+"+(arr[i].getLvl()*2)+" AP");
+            }
+            else if (ans==3) {
+                arr[i].addStaminaRegen(1);
+                out.println("+ 1 Stamina Regen");
             }
         }
     }
@@ -1443,27 +1503,28 @@ public class BalancedGame {
     }
     public static void devMode() throws IOException {
         out.println("Options");
-        out.println("A: Ordering players");
-        out.println("B: HP setting");
-        out.println("C: Setting lives");
-        out.println("D: Reset Game");
-        out.println("E: Add Stamina");
-        char x = br.readLine().charAt(0);
-        if (x=='A') {
+        out.println("1: Ordering players");
+        out.println("2: HP setting");
+        out.println("3: Setting lives");
+        out.println("4: Reset Game");
+        out.println("5: Add Stamina");
+        out.println("6: Add Mob");
+        int x = Integer.parseInt(br.readLine());
+        if (x==1) {
             out.print("Type order of players: ");
             StringTokenizer st = new StringTokenizer(br.readLine());
             for (int i=0; i<playerCount; i++) {
                 arr[i].setName(st.nextToken());
             }
         }
-        else if (x=='B') {
+        else if (x==2) {
             out.print("Player name: ");
             int i = findPlayer(br.readLine());
             out.print("Set new HP: ");
             double h = Double.parseDouble(br.readLine());
             arr[i].setHP(h);
         }
-        else if (x=='C') {
+        else if (x==3) {
             out.print("Player name: ");
             int i = findPlayer(br.readLine());
             out.print("Set new lives (0 = Gulag): ");
@@ -1473,17 +1534,39 @@ public class BalancedGame {
                 arr[i].kill();
             }
         }
-        else if (x=='D') {
+        else if (x==4) {
             for (int i=0; i<playerCount; i++) {
                 arr[i] = new playerData(arr[i].getName(), lockoutTypes.length);
             }
         }
-        else if (x=='E') {
+        else if (x==5) {
             out.print("Player name: ");
             int i = findPlayer(br.readLine());
             out.print("Add stamina: ");
             int s = Integer.parseInt(br.readLine());
             arr[i].addStamina(s);
+        }
+        else if (x==6) {
+            out.print("Mob name: ");
+            String name = br.readLine();
+            out.print("Mob level: ");
+            int level = Integer.parseInt(br.readLine());
+            out.print("Max Health: ");
+            int maxhp = Integer.parseInt(br.readLine());
+            int[][] dmg = new int[2][6];
+            String[] elements = {"neutral", "earth", "thunder", "water", "fire", "air"};
+            for (int i=0; i<6; i++) {
+                out.print("Min and max "+elements[i]+" damage (1 space apart): ");
+                StringTokenizer st = new StringTokenizer(br.readLine());
+                dmg[0][i] = Integer.parseInt(st.nextToken());
+                dmg[1][i] = Integer.parseInt(st.nextToken());
+            }
+            int[] def = new int[5];
+            for (int i=1; i<6; i++) {
+                out.print(elements[i]+" defence: ");
+                def[i-1] = Integer.parseInt(br.readLine());
+            }
+            mobList.add(new mob(maxhp, level, dmg, def, name));
         }
     }
     public static int findPlayer(String s) {
@@ -1493,6 +1576,20 @@ public class BalancedGame {
             }
         }
         return -1;
+    }
+    /**
+     * 
+     * @param amplifierNum
+     * @return A string representing the rarity
+     */
+    public static String rarityGen(int amplifierNum) {
+        int rarity = (int) (Math.random()*100)+1;
+        if (rarity<=35) return "Common";
+        else if (rarity<=65) return "Unique";
+        else if (rarity<=85) return "Rare";
+        else if (rarity<=95) return "Legendary";
+        else if (rarity<=99) return "Fabled";
+        else return "Mythic";
     }
     public static double r2(double n) {
         n = ((int) (n*100))/100.0;
