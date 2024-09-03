@@ -1,15 +1,17 @@
-{% extends "viewer.html" %}
-
-{% block head %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='ui.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='admin.css') }}">
-{% endblock %}
-
-{% block beforecontent %}
+{% extends "viewer.html" %} {% block head %}
+<link
+    rel="stylesheet"
+    type="text/css"
+    href="{{ url_for('static', filename='ui.css') }}"
+/>
+<link
+    rel="stylesheet"
+    type="text/css"
+    href="{{ url_for('static', filename='admin.css') }}"
+/>
+{% endblock %} {% block beforecontent %}
 <div><a href="{{ url_for('logout') }}">Logout</a></div>
-{% endblock %}
-
-{% block bottomcontainer %}
+{% endblock %} {% block bottomcontainer %}
 
 <div id="terminal-container">
     <div class="terminal-open">
@@ -33,18 +35,26 @@
     {% include 'rng.html' %}
     <div id="upload-gamedata">
         <h3>Game Data</h3>
-        <p>You are replacing <b>{{ minor_game_data[game_id]["file"] }}</b>. Be careful!</p>
-        <form action="/api/set_game_data/{{ game_id }}" method="post" enctype="multipart/form-data">
-            {{ game_data_form.hidden_tag() }}
-            {{ game_data_form.file.label }} {{ game_data_form.file(accept=".json") }}
+        <p>
+            You are replacing <b>{{ minor_game_data[game_id]["file"] }}</b>. Be
+            careful!
+        </p>
+        <form
+            action="/api/set_game_data/{{ game_id }}"
+            method="post"
+            enctype="multipart/form-data"
+        >
+            {{ game_data_form.hidden_tag() }} {{ game_data_form.file.label }} {{
+            game_data_form.file(accept=".json") }}
             <div class="spacing"></div>
-            <input type="submit" value="Upload">
+            <input type="submit" value="Upload" />
         </form>
     </div>
 </div>
 
-{% endblock %}
-
-{% block aftercontent %}
-<script type="module" src="{{ url_for('static', filename='admin.js') }}"></script>
+{% endblock %} {% block aftercontent %}
+<script
+    type="module"
+    src="{{ url_for('static', filename='admin.js') }}"
+></script>
 {% endblock %}

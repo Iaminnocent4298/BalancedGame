@@ -1,12 +1,11 @@
-{% extends "base.html" %}
-
-{% block title %}Oh no!{% endblock %}
-
-{% block basehead %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='nonviewer.css') }}">
-{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Oh no!{% endblock %} {% block
+basehead %}
+<link
+    rel="stylesheet"
+    type="text/css"
+    href="{{ url_for('static', filename='nonviewer.css') }}"
+/>
+{% endblock %} {% block content %}
 <h1>500 Internal Server Error</h1>
 <h6>Well this isn't good. Ping Colin on Discord; this error has been logged</h6>
 

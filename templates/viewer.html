@@ -1,7 +1,9 @@
-{% extends "base.html" %}
-
-{% block basehead %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='ui.css') }}">
+{% extends "base.html" %} {% block basehead %}
+<link
+    rel="stylesheet"
+    type="text/css"
+    href="{{ url_for('static', filename='ui.css') }}"
+/>
 
 <meta content="Balanced Game" property="og:title" />
 <meta content="It's Balanced Game!" property="og:description" />
@@ -15,16 +17,17 @@
     window.GAME_ID = "{{ game_id }}";
 </script>
 
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <nav>
     <a id="nav-logo-container" href="/" class="game-link" data-game-id="maina">
-        <img src="/static/balancedgame.svg"><h1>Balanced Game</h1>
+        <img src="/static/balancedgame.svg" />
+        <h1>Balanced Game</h1>
         <div class="separator"></div>
     </a>
     {% for game_id, game_data in minor_game_data.items() %}
-        <a href="/game/{{ game_id }}" class="game-link" data-game-id="{{ game_id }}">{{ game_data["name"] }}</a>
+    <a href="/game/{{ game_id }}" class="game-link" data-game-id="{{ game_id }}"
+        >{{ game_data["name"] }}</a
+    >
     {% endfor %}
 </nav>
 
@@ -33,7 +36,7 @@
         <h1>"Balanced Game"</h1>
         <p id="splash-text"></p>
         <h6>Brought to you by Nick & Colin</h6>
-        <p class="inactive">Version <span id="version" class="inactive">Loading...</span></p>
+        <p>Version <span id="version" class="inactive">Loading...</span></p>
         {% block beforecontent %}{% endblock %}
     </div>
     <div class="infobox" id="event-log-container">
@@ -46,19 +49,19 @@
 
 {% block aftercontent %}{% endblock %}
 
-<div id="bottom-container">
-    {% block bottomcontainer %}{% endblock %}
-</div>
+<div id="bottom-container">{% block bottomcontainer %}{% endblock %}</div>
 
 <div id="changelog">
     <h1>Balanced Game Forum Posts</h1>
     <p class="inactive">Forum posts loading...</p>
 </div>
 
-<script src="https://cdn.socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
+<script
+    src="https://cdn.socket.io/4.7.4/socket.io.min.js"
+    integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4"
+    crossorigin="anonymous"
+></script>
 
-{% endblock %}
-
-{% block aftercontainer %}
+{% endblock %} {% block aftercontainer %}
 <div id="tooltip" hidden></div>
 {% endblock %}

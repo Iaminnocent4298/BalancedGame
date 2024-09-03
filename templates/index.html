@@ -1,13 +1,9 @@
-{% extends "viewer.html" %}
-
-{% block beforecontent %}
+{% extends "viewer.html" %} {% block beforecontent %}
 <div><a href="{{ url_for('auth') }}">Admin panel</a></div>
-{% endblock %}
-
-{% block aftercontent %}
-<script type="module" src="{{ url_for('static', filename='client.js') }}"></script>
-{% endblock %}
-
-{% block bottomcontainer %}
-{% include 'rng.html' %}
-{% endblock %}
+{% endblock %} {% block aftercontent %}
+<script
+    type="module"
+    src="{{ url_for('static', filename='client.js') }}"
+></script>
+{% endblock %} {% block bottomcontainer %} {% include 'rng.html' %} {% endblock
+%}

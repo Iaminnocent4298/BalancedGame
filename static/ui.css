@@ -1,4 +1,3 @@
-
 .primary {
     color: #34faf4;
 }
@@ -15,7 +14,9 @@
     color: #ff7575;
 }
 
-.hp, .heal, .hpregen {
+.hp,
+.heal,
+.hpregen {
     color: #ff7070;
 }
 
@@ -44,7 +45,7 @@
 }
 
 .thunder {
-    color: #ffd000
+    color: #ffd000;
 }
 
 .water {
@@ -123,7 +124,7 @@ input[type="checkbox"] {
     color: currentColor;
     width: 1.1em;
     height: 1.1em;
-    border: 0.1em solid #E0AAFFA0;
+    border: 0.1em solid #e0aaffa0;
     border-radius: 0.15em;
     transform: translateY(-0.075em);
 
@@ -146,4 +147,3 @@ input[type="checkbox"]::before {
 input[type="checkbox"]:checked::before {
     visibility: visible;
 }
-

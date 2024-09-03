@@ -10,7 +10,8 @@ body:not(.loaded) .terminal-container {
     display: none;
 }
 
-body.disconnected .terminal-closed-options, body.disconnected .terminal-open {
+body.disconnected .terminal-closed-options,
+body.disconnected .terminal-open {
     display: none;
 }
 
@@ -51,14 +52,16 @@ body:not(.disconnected) .terminal-disconnected {
     height: 1em;
     margin-bottom: -0.2em;
 }
-#terminal-input[disabled] + #terminal-caret, #terminal-caret[hidden] {
+#terminal-input[disabled] + #terminal-caret,
+#terminal-caret[hidden] {
     visibility: hidden;
 }
 #terminal-start[disabled] {
     color: #9a9a9a;
 }
 
-body.closed #terminal-input, body.closed #terminal-caret {
+body.closed #terminal-input,
+body.closed #terminal-caret {
     display: none;
 }
 

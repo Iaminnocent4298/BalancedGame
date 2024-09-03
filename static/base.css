@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
 
@@ -12,21 +13,31 @@ html {
 
 * {
     border-radius: 0;
+    scrollbar-color: #d1c8e1 #560b80;
+    scrollbar-width: thin;
 }
 
 body {
     box-sizing: border-box;
-    background-image: linear-gradient(137deg, #2a0045, #000010);
+    background: #050a0f;
     background-attachment: fixed;
 
-    color: #ffffff;
+    font-family: "Roboto", sans-serif;
 
-    font-family: 'Space Grotesk', sans-serif;
-
-    line-height: 2.0em;
+    line-height: 2em;
 }
 
-h1, h2, h3, h4, h5, h6 {
+body,
+.normal {
+    color: #ffffff;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     margin-block: 0.5em;
 }
 
@@ -41,20 +52,29 @@ h4 {
 }
 
 h1 {
-    color: #E0AAFF;
+    color: #e0aaff;
 }
 
 h6 {
     font-size: inherit;
     font-style: italic;
-    color: rgb(199, 119, 245)
+    color: #c777f5;
 }
 
-input:not([type=file]), button, td, .infobox {
+input:not([type="file"]),
+button,
+td,
+nav,
+#changelog,
+.tablediv,
+.infobox,
+#tooltip,
+#bottom-container > div:not(.vflex-container),
+.vflex-container > div {
     color: inherit;
     font: inherit;
-    background-color: #9D4EDD60;
-    border: 0.1rem solid #E0AAFFA0;
+    background: #0d0221;
+    border: 1px solid #560b80;
 }
 
 input {
@@ -66,7 +86,8 @@ button:disabled {
     color: #ddd;
 }
 
-ul, ol {
+ul,
+ol {
     color: #c3c3c3;
 }
 
@@ -79,7 +100,8 @@ form input {
     height: 1.3em;
 }
 
-input[type="submit"], button {
+input[type="submit"],
+button {
     height: 1.8em;
     line-height: 1.6em;
 }
@@ -98,7 +120,7 @@ input[type="file"] {
 }
 
 a {
-    color: #E0AAFF;
+    color: #e0aaff;
 }
 a:hover {
     color: rgb(255, 215, 255);
@@ -126,7 +148,7 @@ button:hover {
 
 #error-container {
     position: fixed;
-    
+
     bottom: 0;
     right: 0;
     margin: 2rem;
@@ -143,7 +165,7 @@ button:hover {
 }
 #error-container > pre {
     line-height: 1.2;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
     margin: 0;
 }
 #error-container > p {

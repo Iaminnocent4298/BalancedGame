@@ -1,45 +1,68 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}"Balanced Game"{% endblock %}</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{% block title %}"Balanced Game"{% endblock %}</title>
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='viewer.css') }}">
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+            rel="stylesheet"
+        />
 
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static', filename='base.css') }}"
+        />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static', filename='viewer.css') }}"
+        />
 
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='balancedgame.png') }}">
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+        />
 
-    <script type="text/javascript">
-        window.CSRF_TOKEN = "{{ csrf_token() }}";
-        window.BASE_URL = "";
-    </script>
+        <link
+            rel="icon"
+            type="image/png"
+            href="{{ url_for('static', filename='balancedgame.png') }}"
+        />
 
-    <script type="module" src="{{ url_for('static', filename='base.js') }}"></script>
+        <script type="text/javascript">
+            window.CSRF_TOKEN = "{{ csrf_token() }}";
+            window.BASE_URL = "";
+        </script>
 
-    {% block basehead %}{% endblock %}
-</head>
-<body>
-    <div id="container">
-        {% block content %}{% endblock %}
-    </div>
+        <script
+            type="module"
+            src="{{ url_for('static', filename='base.js') }}"
+        ></script>
 
-    {% block aftercontainer %}{% endblock %}
+        {% block basehead %}{% endblock %}
+    </head>
+    <body>
+        <div id="container">{% block content %}{% endblock %}</div>
 
-    <div id="error-container" hidden>
-        <h1> Javascript Error :( </h1>
-        <pre></pre>
-        <p>This is a bug, please report it!</p>
+        {% block aftercontainer %}{% endblock %}
 
-        <button>Close</button>
-    </div>
+        <div id="error-container" hidden>
+            <h1>Javascript Error :(</h1>
+            <pre></pre>
+            <p>This is a bug, please report it!</p>
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-</body>
+            <button>Close</button>
+        </div>
+
+        <script
+            type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/toastify-js"
+        ></script>
+    </body>
 </html>
