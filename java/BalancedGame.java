@@ -31,6 +31,7 @@ public class BalancedGame {
     static int islandCost;
     static int islandFund;
     static int nextEvent;
+    static int lockoutReset;
     static spell[][] spells;
     static weapon[][] weapons;
     static playerData[] arr;
@@ -122,6 +123,7 @@ public class BalancedGame {
         disaster = game.disaster;
         temp = game.temp;
         nextEvent = game.nextEvent;
+        lockoutReset = game.lockoutReset;
         curevent = game.curevent;
         spells = game.spells;
         weapons = game.weapons;
@@ -154,6 +156,7 @@ public class BalancedGame {
         game.disaster = disaster;
         game.temp = temp;
         game.nextEvent = nextEvent;
+        game.lockoutReset = lockoutReset;
         game.curevent = curevent;
         game.spells = spells;
         game.weapons = weapons;
@@ -264,7 +267,10 @@ public class BalancedGame {
             if (turn==nextEvent) {
                 eventMaker();
             }
-            if (turn%10==1) lockoutGen();
+            if (turn==lockoutReset) {
+                lockoutGen();
+                lockoutReset+=10;
+            }
             double hpmult=1+eventChecker("Health_Regen")/100.0;
             double manamult=1+eventChecker("Mana_Regen")/100.0;
             for (int i=0; i<playerCount; i++) {
@@ -665,6 +671,7 @@ public class BalancedGame {
                     while (!potionEffects.isEmpty()) {
                         potionEffects.remove(0);
                     }
+                    lockoutReset = turn+10;
                 }
             }
         }
@@ -1574,6 +1581,7 @@ public class BalancedGame {
         out.println("C: Setting lives");
         out.println("D: Reset Game");
         out.println("E: Add Stamina");
+        out.println("F: Set Mana");
         char x = br.readLine().charAt(0);
         if (x=='A') {
             out.print("Type order of players: ");
@@ -1603,6 +1611,7 @@ public class BalancedGame {
             for (int i=0; i<playerCount; i++) {
                 arr[i] = new playerData(arr[i].getName(), lockoutTypes.length);
             }
+            lockoutGen();
         }
         else if (x=='E') {
             out.print("Player name: ");
@@ -1610,6 +1619,13 @@ public class BalancedGame {
             out.print("Add stamina: ");
             int s = Integer.parseInt(br.readLine());
             arr[i].addStamina(s);
+        }
+        else if (x=='F') {
+            out.print("Player name: ");
+            int i = findPlayer(br.readLine());
+            out.print("Set new Mana: ");
+            int h = Integer.parseInt(br.readLine());
+            arr[i].setMana(h);
         }
     }
     public static int findPlayer(String s) {

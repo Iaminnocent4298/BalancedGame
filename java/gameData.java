@@ -6,7 +6,7 @@ public class gameData {
     int nextEvent;
     int islandLim;
     int islandCost;
-    int crossed;
+    int lockoutReset;
     event weather;
     event season;
     event disaster;
@@ -42,7 +42,7 @@ public class gameData {
         nextEvent = 2;
         islandLim = 26;
         islandCost = 1;
-        crossed = 0;
+        lockoutReset = 10;
         weather = new event();
         season = new event();
         disaster = new event();
