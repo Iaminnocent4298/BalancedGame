@@ -204,7 +204,8 @@ public class BalancedGame {
                 return;
             }
             else if (choice>1 && choice<5) {
-                out.print("Player/Island? ");
+                if (choice!=3) out.print("Player/Island? ");
+                else out.print("Player? ");
                 String name = br.readLine();
                 try {
                     int bleh = Integer.parseInt(name);
@@ -399,7 +400,7 @@ public class BalancedGame {
             cdmg=(2+sa/100.0);
         }
         //CALCULATIONS
-        damages[0] = (damages[0]+arr[subturn-1].getND())*(1+sa/100.0)*cdmg;
+        damages[0] = (damages[0]+arr[subturn-1].getND()*1.5)*(1+sa/100.0)*cdmg;
         for (int j=1; j<6; j++) {
             damages[j] = (damages[j]+arr[subturn-1].getElement(0, j-1))*(1+sa/100.0)*cdmg;
         }
@@ -488,7 +489,7 @@ public class BalancedGame {
             cdmg=(2+sa/100.0);
         }
         //CALCULATIONS
-        damages[0] = (damages[0]+arr[subturn-1].getND())*(1+sa/100.0)*cdmg;
+        damages[0] = (damages[0]+arr[subturn-1].getND()*1.5)*(1+sa/100.0)*cdmg;
         for (int j=1; j<6; j++) {
             damages[j] = (damages[j]+arr[subturn-1].getElement(0, j-1))*(1+sa/100.0)*cdmg;
         }
@@ -556,7 +557,7 @@ public class BalancedGame {
             case "Health Regen": arr[subturn-1].addHPRegen(2*x); break;
             case "Mana Regen": arr[subturn-1].addMR(x); break;
             case "Stamina": arr[subturn-1].addMaxStamina(5*x); break;
-            case "Neutral Damage": arr[subturn-1].addND(2*x); break;
+            case "Neutral Damage": arr[subturn-1].addND(x); break;
             case "Strength": arr[subturn-1].addElement(0, 0, x); break;
             case "Dexterity": arr[subturn-1].addElement(0, 1, x); break;
             case "Intelligence": arr[subturn-1].addElement(0, 2, x); break;
@@ -655,6 +656,7 @@ public class BalancedGame {
                     for (int k=0; k<playerCount; k++) {
                         arr[k].setAlive(true);
                         arr[k].setAP(0);
+                        location[k] = 1;
                     }
                     for (peffect p:potionEffects) {
                         int k = findPlayer(p.getName());
@@ -678,6 +680,7 @@ public class BalancedGame {
     }
     public static void spellCalc(int i, int j) throws Exception { //i player/island (AOE), j spell num (0-4)
         double ia = arr[subturn-1].getElement(0, 2)*1.5;
+        double da = Math.min(arr[subturn-1].getElement(0, 1),80);
         double nd = 0;
         double opponentAgility = 0;
         if (j!=4) nd = arr[i].getElement(0, 3);
@@ -719,8 +722,9 @@ public class BalancedGame {
         }
         //CALCULATIONS
         ia*=(1+eventChecker("Intelligence")/100.0);
+        da*=(1+eventChecker("Dexterity")/100.0);
         nd*=(1+eventChecker("Defence")/100.0);
-
+        double cdmg = 1;
         if (j!=4) {
             int dodge = (int) (Math.random()*100)+1;
             if (dodge<=opponentAgility) {
@@ -729,6 +733,11 @@ public class BalancedGame {
                 if (eventLog.size()>25) eventLog.remove(0);
                 return;
             }
+        }
+        int crit = (int) (Math.random()*100)+1;
+        if (crit<=da) {
+            out.println("Critical Hit!");
+            cdmg=(2+sa/100.0);
         }
         defences[0]*=(1+eventChecker("Earth_Defence")/100.0);
         defences[1]*=(1+eventChecker("Thunder_Defence")/100.0);
@@ -739,10 +748,10 @@ public class BalancedGame {
         double sr = Math.min(80,arr[subturn-1].getElement(0,2));
         ia = Math.max(-100,ia-nd);
         mc*=((1+eventChecker("Spell_Cost")/100.0)*(1-sr/100.0));
-        damages[0] = (damages[0]+arr[subturn-1].getND())*(1+ia/100.0);
+        damages[0] = (damages[0]+arr[subturn-1].getND()*1.5)*(1+ia/100.0)*cdmg;
         for (int k=0; k<5; k++) {
             damages[k+1]+=arr[subturn-1].getElement(0, k);
-            damages[k+1]*=(1+ia/100.0);
+            damages[k+1]*=(1+ia/100.0)*cdmg;
         }
         damages[0]*=((1+eventChecker("Neutral_Damage")/100.0)+mult);
         damages[1]*=((1+eventChecker("Earth_Damage")/100.0)+mult);
