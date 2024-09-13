@@ -441,8 +441,8 @@ public class BalancedGame {
         eventLog.add("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" bonked "+arr[i].getName()+" for "+dmg+" damage");
         if (eventLog.size()>25) eventLog.remove(0);
         out.println(arr[i].getName()+" has "+arr[i].getHP()+" health remaining");
-        arr[subturn-1].addLXP(2*dmg);
-        out.println(arr[subturn-1].getName()+" gained "+2*dmg+" xp");
+        arr[subturn-1].addLXP(dmg);
+        out.println(arr[subturn-1].getName()+" gained "+dmg+" xp");
         out.println("Level "+arr[subturn-1].getLvl()+": "+arr[subturn-1].getLXP()+"/"+arr[subturn-1].getNL()+" xp");
         levelUp(subturn-1);
         completeLockout(subturn-1);
@@ -533,8 +533,8 @@ public class BalancedGame {
         eventLog.add("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" shot "+arr[i].getName()+" for "+dmg+" damage");
         if (eventLog.size()>25) eventLog.remove(0);
         out.println(arr[i].getName()+" has "+arr[i].getHP()+" health remaining");
-        arr[subturn-1].addLXP(2*dmg);
-        out.println(arr[subturn-1].getName()+" gained "+2*dmg+" xp");
+        arr[subturn-1].addLXP(dmg);
+        out.println(arr[subturn-1].getName()+" gained "+dmg+" xp");
         out.println("Level "+arr[subturn-1].getLvl()+": "+arr[subturn-1].getLXP()+"/"+arr[subturn-1].getNL()+" xp");
         levelUp(subturn-1);
         completeLockout(subturn-1);
@@ -737,7 +737,7 @@ public class BalancedGame {
         int crit = (int) (Math.random()*100)+1;
         if (crit<=da) {
             out.println("Critical Hit!");
-            cdmg=(2+sa/100.0);
+            cdmg=(2+ia/100.0);
         }
         defences[0]*=(1+eventChecker("Earth_Defence")/100.0);
         defences[1]*=(1+eventChecker("Thunder_Defence")/100.0);
@@ -819,8 +819,8 @@ public class BalancedGame {
         out.println(arr[subturn-1].getName()+" used "+mc+" mana on the spell");
         arr[subturn-1].setMana(arr[subturn-1].getMana()-(int) mc);
         out.println(arr[subturn-1].getName()+" has "+arr[subturn-1].getMana()+" mana remaining");
-        arr[subturn-1].addLXP(2*dmg*playersHit);
-        out.println(arr[subturn-1].getName()+" gained "+2*dmg*playersHit+" xp");
+        arr[subturn-1].addLXP(dmg*playersHit);
+        out.println(arr[subturn-1].getName()+" gained "+dmg*playersHit+" xp");
         out.println("Level "+arr[subturn-1].getLvl()+": "+arr[subturn-1].getLXP()+"/"+arr[subturn-1].getNL()+" xp");
         levelUp(subturn-1);
         completeLockout(subturn-1);
