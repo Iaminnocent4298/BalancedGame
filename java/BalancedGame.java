@@ -643,19 +643,19 @@ public class BalancedGame {
                             eventLog.add(arr[k].getName()+" HAS WON THE GAME");
                             if (eventLog.size()>25) eventLog.remove(0);
                             playersAlive = playerCount;
-                            arr[k] = new playerData(arr[k].getName(), lockoutTypes.length);
-                            for (int j=0; j<5; j++) {
-                                spells[k][j] = null;
-                            }
-                            weapons[k][0] = null;
-                            weapons[k][1] = null;
-                            arr[k].setLP(lp);
                             break;
                         }
                     }
                     for (int k=0; k<playerCount; k++) {
+                        arr[k] = new playerData(arr[k].getName(), lockoutTypes.length);
                         arr[k].setAlive(true);
                         arr[k].setAP(0);
+                        for (int z=0; z<5; z++) {
+                            spells[k][z] = null;
+                        }
+                        weapons[k][0] = null;
+                        weapons[k][1] = null;
+                        arr[k].setLP(lp);
                         location[k] = 1;
                     }
                     for (peffect p:potionEffects) {
@@ -935,6 +935,10 @@ public class BalancedGame {
                             generator(num, false);
                         }
                     }
+                    else {
+                        arr[i].setAP(arr[i].getAP()-cost);
+                        generator(num, false);
+                    }
                     if (weapons[i][1].getRC()==0) weapons[i][1].setRC(1);
                     else weapons[i][1].setRC(Math.min(16,weapons[i][1].getRC()*2));
                 }
@@ -971,6 +975,10 @@ public class BalancedGame {
                             generator(num, false);
                         }
                     }
+                    else {
+                        arr[i].setAP(arr[i].getAP()-cost);
+                        generator(num, false);
+                    }
                     if (weapons[i][0].getRC()==0) weapons[i][0].setRC(1);
                     else weapons[i][0].setRC(Math.min(16,weapons[i][0].getRC()*2));
                 }
@@ -1003,6 +1011,10 @@ public class BalancedGame {
                         arr[i].setAP(arr[i].getAP()-cost);
                         generator(num, false);
                     }
+                }
+                else {
+                    arr[i].setAP(arr[i].getAP()-cost);
+                    generator(num, false);
                 }
                 if (spells[i][num-1].getRC()==0) spells[i][num-1].setRC((num!=5) ? num : 1);
                 else spells[i][num-1].setRC(Math.min(16*num,cost*2));
