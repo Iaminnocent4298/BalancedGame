@@ -1597,28 +1597,29 @@ public class BalancedGame {
     }
     public static void devMode() throws IOException {
         out.println("Options");
-        out.println("A: Ordering players");
-        out.println("B: HP setting");
-        out.println("C: Setting lives");
-        out.println("D: Reset Game");
-        out.println("E: Add Stamina");
-        out.println("F: Set Mana");
-        char x = br.readLine().charAt(0);
-        if (x=='A') {
+        out.println("1: Ordering players");
+        out.println("2: HP setting");
+        out.println("3: Setting lives");
+        out.println("4: Reset Game");
+        out.println("5: Add Stamina");
+        out.println("6: Set Mana");
+        out.println("7: Set AP");
+        int x = Integer.parseInt(br.readLine());
+        if (x==1) {
             out.print("Type order of players: ");
             StringTokenizer st = new StringTokenizer(br.readLine());
             for (int i=0; i<playerCount; i++) {
                 arr[i].setName(st.nextToken());
             }
         }
-        else if (x=='B') {
+        else if (x==2) {
             out.print("Player name: ");
             int i = findPlayer(br.readLine());
             out.print("Set new HP: ");
             double h = Double.parseDouble(br.readLine());
             arr[i].setHP(h);
         }
-        else if (x=='C') {
+        else if (x==3) {
             out.print("Player name: ");
             int i = findPlayer(br.readLine());
             out.print("Set new lives (0 = Gulag): ");
@@ -1628,25 +1629,61 @@ public class BalancedGame {
                 arr[i].kill();
             }
         }
-        else if (x=='D') {
-            for (int i=0; i<playerCount; i++) {
-                arr[i] = new playerData(arr[i].getName(), lockoutTypes.length);
+        else if (x==4) {
+            lockoutProgress[] lp = new lockoutProgress[lockoutTypes.length];
+            for (int j=0; j<lockoutTypes.length; j++) {
+                lp[j] = new lockoutProgress(lockoutTypes[j], 0.0);
             }
-            lockoutGen();
+            for (int k=0; k<playerCount; k++) {
+                arr[k] = new playerData(arr[k].getName(), lockoutTypes.length);
+                arr[k].setAlive(true);
+                arr[k].setAP(0);
+                arr[k].setLP(lp);
+                for (int z=0; z<5; z++) {
+                    spells[k][z] = null;
+                }
+                weapons[k][0] = null;
+                weapons[k][1] = null;
+                arr[k].setLP(lp);
+                location[k] = 1;
+            }
+            for (peffect p:potionEffects) {
+                int k = findPlayer(p.getName());
+                switch(p.getType()) {
+                    case "Health Regen": arr[k].setHPRegen(arr[k].getHPRegen()-p.getValue());
+                    case "Mana Regen": arr[k].setMR(arr[k].getMR()-p.getValue());
+                    case "Strength": arr[k].setElement(0, 0, arr[k].getElement(0,0)-p.getValue());
+                    case "Dexterity": arr[k].setElement(0, 1, arr[k].getElement(0,1)-p.getValue());
+                    case "Intelligence": arr[k].setElement(0, 2, arr[k].getElement(0,2)-p.getValue());
+                    case "Defence": arr[k].setElement(0, 3, arr[k].getElement(0,3)-p.getValue());
+                    case "Agility": arr[k].setElement(0, 4, arr[k].getElement(0,4)-p.getValue());
+                }
+            }
+            while (!potionEffects.isEmpty()) {
+                potionEffects.remove(0);
+            }
+            lockoutReset = turn+10;
         }
-        else if (x=='E') {
+        else if (x==5) {
             out.print("Player name: ");
             int i = findPlayer(br.readLine());
             out.print("Add stamina: ");
             int s = Integer.parseInt(br.readLine());
             arr[i].addStamina(s);
         }
-        else if (x=='F') {
+        else if (x==6) {
             out.print("Player name: ");
             int i = findPlayer(br.readLine());
             out.print("Set new Mana: ");
             int h = Integer.parseInt(br.readLine());
             arr[i].setMana(h);
+        }
+        else if (x==7) {
+            out.print("Player name: ");
+            int i = findPlayer(br.readLine());
+            out.print("Set new AP: ");
+            int h = Integer.parseInt(br.readLine());
+            arr[i].setAP(h);
         }
     }
     public static int findPlayer(String s) {
