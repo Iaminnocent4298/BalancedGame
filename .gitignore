@@ -1,4 +1,7 @@
-dist/
+dist/*
+!dist/potions.json
+!dist/mobs.json
+
 .env
 __pycache__/
 *.py[cod]
