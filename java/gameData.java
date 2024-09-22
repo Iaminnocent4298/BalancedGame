@@ -6,7 +6,7 @@ public class gameData {
     int nextEvent;
     int islandLim;
     int islandCost;
-    int crossed;
+    int lockoutReset;
     event weather;
     event season;
     event disaster;
@@ -18,14 +18,12 @@ public class gameData {
     ArrayList<event> lst;
     ArrayList<event> curevent;
     lockoutGoal[] goals;
-    ArrayList<pair>[] bridges;
+    ArrayList<tuple>[] bridges;
     int[] location;
     ArrayList<String> eventLog;
     int playersAlive;
     potion[] potionShop;
     ArrayList<peffect> potionEffects;
-    ArrayList<mob>[] mobLocations;
-    ArrayList<mob> mobList;
     public gameData() {}
     /**
      * Creates the gameData object.
@@ -44,7 +42,7 @@ public class gameData {
         nextEvent = 2;
         islandLim = 26;
         islandCost = 1;
-        crossed = 0;
+        lockoutReset = 10;
         weather = new event();
         season = new event();
         disaster = new event();
@@ -63,15 +61,10 @@ public class gameData {
         playersAlive = p;
         potionShop = ps;
         potionEffects = new ArrayList<>();
-        mobLocations = new ArrayList[26];
-        for (int i=0; i<26; i++) {
-            mobLocations[i] = new ArrayList<>();
-        }
         for (int i=0; i<p; i++) {
             arr[i] = new playerData(names[i], lt);
-            arr[i].setGL(0);
+            arr[i].setAlive(true);
             location[i] = 1;
         }
-        mobList = new ArrayList<>();
     }
 }

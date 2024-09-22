@@ -1,6 +1,6 @@
 import java.util.*;
 public class playerData {
-    private int gameLevel;
+    private boolean isAlive;
     private int lives;
     private String name;
     private int lvl;
@@ -15,6 +15,7 @@ public class playerData {
     private int neutraldmg;
     private int[][] elements;
     private ArrayList<potion> potionBag;
+    private int amplifiercount;
     private lockoutProgress[] status;
     /**
      * The constructor for player data
@@ -22,7 +23,7 @@ public class playerData {
      * @param lt The number of lockout types
      */
     public playerData(String n, int lt) {
-        gameLevel = 0;
+        isAlive = true;
         lives = 2;
         name = n;
         abilityPoints = 0;
@@ -41,11 +42,12 @@ public class playerData {
         neutraldmg = 0;
         elements = new int[2][5];
         potionBag = new ArrayList<>();
+        amplifiercount = 0;
         status = new lockoutProgress[lt];
     }
 
     //GETTERS
-    public int getGL() {return gameLevel;}
+    public boolean getAlive() {return isAlive;}
     public int getLives() {return lives;}
     public String getName() {return name;}
     public int getLvl() {return lvl;}
@@ -65,9 +67,10 @@ public class playerData {
     public int[][] getElements() {return elements;}
     public int getElement(int i, int j) {return elements[i][j];}
     public ArrayList<potion> getPB() {return potionBag;}
+    public int getAmplifierCount() {return amplifiercount;}
     public lockoutProgress[] getLP() {return status;}
     //SETTERS
-    public void setGL(int i) {gameLevel = i;}
+    public void setAlive(boolean b) {isAlive = b;}
     public void setLives(int i) {lives = i;}
     public void setName(String n) {name = n;}
     public void setLXP(double d) {lvlxp = d;}
@@ -81,6 +84,7 @@ public class playerData {
     public void setStaminaRegen(int i) {staminaregen = i;}
     public void setPB(ArrayList<potion> pb) {potionBag = pb;}
     public void setElement(int i, int j, int v) {elements[i][j] = v;}
+    public void getAmplifierCount(int i) {amplifiercount = i;}
     public void setLP(lockoutProgress[] lp) {status = lp;}
     //MUTATORS
     public void addLives(int v) {lives+=v;}
@@ -99,8 +103,9 @@ public class playerData {
     public void addStaminaRegen(int i) {staminaregen+=i;}
     public void addND(int v) {neutraldmg+=v;}
     public void addElement(int i, int j, int v) {elements[i][j]+=v;}
+    public void addAmplifierCount(int i) {amplifiercount+=i;}
     //OTHERS
-    public void kill() {gameLevel = -1;}
+    public void kill() {isAlive = false;}
 }
 
 
