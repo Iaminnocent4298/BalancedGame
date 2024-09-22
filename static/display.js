@@ -581,7 +581,7 @@ export function updateGameDisplay(received, overwriteAll) {
   infobox("lockout", "Lockout Challenges", [
     classSpan([
       "Next Reset: Turn ",
-      classSpan(data.turn + 10 - ((data.turn - 1) % 10), "primary"),
+      classSpan(data.lockoutReset, "primary")
     ]),
     newline(),
     newline(),
