@@ -128,7 +128,7 @@ function temperatureIndicator(temp) {
   if (temp >= 31) return "fire";
   else if (temp >= 21) return "neutral";
   else if (temp >= 11) return "thunder";
-  else if (temp >= 1) return "strength";
+  else if (temp >= 1) return "earth";
   else if (temp >= -9) return "mana";
   else if (temp >= -19) return "water";
   else return "lvl";
@@ -962,7 +962,7 @@ export function updateGameDisplay(received, overwriteAll) {
     const arr = [];
     arr.push(
       classDiv(
-        prettify(weapon.name) + " " + toRomanNumerals(weapon.tier),
+        weapon.name + " " + toRomanNumerals(weapon.tier),
         "underline " + weapon.rarity.toLowerCase(),
       ),
     );
