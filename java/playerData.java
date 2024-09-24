@@ -15,6 +15,7 @@ public class playerData {
     private int neutraldmg;
     private int[][] elements;
     private ArrayList<potion> potionBag;
+    private Map<String,Integer> inventory;
     private int amplifiercount;
     private lockoutProgress[] status;
     /**
@@ -67,6 +68,13 @@ public class playerData {
     public int[][] getElements() {return elements;}
     public int getElement(int i, int j) {return elements[i][j];}
     public ArrayList<potion> getPB() {return potionBag;}
+    public int getMapValue(String s) {
+        if (inventory.containsKey(s)) {
+            return inventory.get(s);
+        }
+        inventory.put(s,0);
+        return 0;
+    }
     public int getAmplifierCount() {return amplifiercount;}
     public lockoutProgress[] getLP() {return status;}
     //SETTERS
@@ -83,6 +91,14 @@ public class playerData {
     public void setMaxStamina(int i) {maxstamina = i;}
     public void setStaminaRegen(int i) {staminaregen = i;}
     public void setPB(ArrayList<potion> pb) {potionBag = pb;}
+    public void setMapValue(String s, int i) {
+        if (inventory.containsKey(s)) {
+            inventory.replace(s, inventory.get(s), i);
+        }
+        else {
+            inventory.put(s,i);
+        }
+    }
     public void setElement(int i, int j, int v) {elements[i][j] = v;}
     public void getAmplifierCount(int i) {amplifiercount = i;}
     public void setLP(lockoutProgress[] lp) {status = lp;}
@@ -102,10 +118,30 @@ public class playerData {
     public void addMaxStamina(int i) {maxstamina+=i;}
     public void addStaminaRegen(int i) {staminaregen+=i;}
     public void addND(int v) {neutraldmg+=v;}
+    public void addMapValue(String s, int i) {
+        if (inventory.containsKey(s)) {
+            inventory.replace(s, inventory.get(s), inventory.get(s)+i);
+        }
+        else {
+            inventory.put(s,i);
+        }
+    }
     public void addElement(int i, int j, int v) {elements[i][j]+=v;}
     public void addAmplifierCount(int i) {amplifiercount+=i;}
     //OTHERS
     public void kill() {isAlive = false;}
+    /**
+     * 
+     * @param s The name of the object
+     * @param i The amount of the object you want to remove
+     * @return If it possible to remove i of object s from the inventory
+     */
+    public boolean inventoryRemovable(String s, int i) {
+        if (!inventory.containsKey(s) || inventory.get(s)<i) {
+            return false;
+        }
+        return true;
+    }
 }
 
 
