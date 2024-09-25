@@ -672,11 +672,11 @@ export function updateGameDisplay(received, overwriteAll) {
 
   function playerHeader(player) {
     const td = document.createElement("td");
-    if (player.name === "Victor") {
+    if (player.name === "Brian") {
       td.style.backgroundColor = "black";
       td.setAttribute(
         "tooltip",
-        "This player has been censored under the groundhog act of 2024",
+        "This player has been censored under the chaewon act of 2024",
       );
     } else {
       const arr = [

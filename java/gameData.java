@@ -5,21 +5,18 @@ public class gameData {
     int subturn;
     int nextEvent;
     int islandLim;
-    int islandCost;
+    int islandsBuilt;
     int lockoutReset;
     event weather;
     event season;
     event disaster;
     int temperature;
     event temp;
-    spell[][] spells;
-    weapon[][] weapons;
     playerData[] arr;
     ArrayList<event> lst;
     ArrayList<event> curevent;
     lockoutGoal[] goals;
     ArrayList<tuple>[] bridges;
-    int[] location;
     ArrayList<String> eventLog;
     int playersAlive;
     potion[] potionShop;
@@ -41,13 +38,11 @@ public class gameData {
         subturn = p;
         nextEvent = 2;
         islandLim = 26;
-        islandCost = 1;
+        islandsBuilt = 1;
         lockoutReset = 10;
         weather = new event();
         season = new event();
         disaster = new event();
-        spells = new spell[p][5];
-        weapons = new weapon[p][2];
         arr = new playerData[p];
         lst = new ArrayList<>();
         curevent = new ArrayList<>();
@@ -56,7 +51,6 @@ public class gameData {
         for (int i=0; i<26; i++) {
             bridges[i] = new ArrayList<>();
         }
-        location = new int[p];
         eventLog = new ArrayList<>();
         playersAlive = p;
         potionShop = ps;
@@ -64,7 +58,6 @@ public class gameData {
         for (int i=0; i<p; i++) {
             arr[i] = new playerData(names[i], lt);
             arr[i].setAlive(true);
-            location[i] = 1;
         }
     }
 }
