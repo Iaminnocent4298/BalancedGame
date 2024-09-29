@@ -32,7 +32,7 @@ public class BalancedGame {
     static int nextEvent;
     static int lockoutReset;
     static playerData[] arr;
-    static lockoutGoal[] goals;
+    static lockoutGoal[] goals = new lockoutGoal[12];
     static ArrayList<event> lst = new ArrayList<>();
     static ArrayList<event> curevent = new ArrayList<>();
     static event weather = new event();
@@ -55,17 +55,18 @@ public class BalancedGame {
     static String path;
     public static void main(String[] args) throws Exception {
         int ans = 1;
-        while (ans>=1 && ans<=8) {
+        while (ans>=1 && ans<=3) {
             out.println("Which game?");
             out.println("1: Main Game A");
             out.println("2: Main Game B");
             out.println("3: RTP Cup");
             out.println("Other to quit");
             ans = Integer.parseInt(br.readLine());
+            playerCount = 6;
             switch(ans) {
-                case 1: path = "maina.json"; playerCount = 6; break;
-                case 2: path = "mainb.json"; playerCount = 6; break;
-                case 3: path = "rtpcup.json"; playerCount = 6; break;
+                case 1: path = "maina.json"; break;
+                case 2: path = "mainb.json"; break;
+                case 3: path = "rtpcup.json"; break;
                 default: return;
             }
             input();
@@ -208,7 +209,7 @@ public class BalancedGame {
                         out.println("You can't attack yourself!");
                     }
                     else {
-                        if (!arr[i].getAlive()) {
+                        if (!arr[i].isAlive()) {
                             out.println("The opponent is dead!");
                             break;
                         }
@@ -238,35 +239,10 @@ public class BalancedGame {
         if (subturn>playerCount) {
             subturn = 1;
             turn++;
-            Set<event> s = new HashSet<>();
-            for (event e:lst) {
-                if (e.getEnd()<turn) {
-                    s.add(e);
-                }
-            }
-            for (event e:s) {
-                lst.remove(e);
-            }
-            s.clear();
-            for (event e:curevent) {
-                if (e.getEnd()<turn) {
-                    s.add(e);
-                }
-            }
-            for (event e:s) {
-                curevent.remove(e);
-            }
-            if (turn==nextEvent) {
-                eventMaker();
-            }
-            if (turn==lockoutReset) {
-                lockoutGen();
-                lockoutReset+=10;
-            }
             double hpmult=1+eventChecker("Health Regen")/100.0;
             double manamult=1+eventChecker("Mana Regen")/100.0;
             for (int i=0; i<playerCount; i++) {
-                if (!arr[i].getAlive()) continue;
+                if (!arr[i].isAlive()) continue;
                 arr[i].addAP((turn%10>0 && turn%10<6) ? 4 : 5);
                 arr[i].setHP(r2(Math.min(arr[i].getHPRegen()*hpmult+arr[i].getHP(),arr[i].getMaxHP())));
                 arr[i].addLockoutProgressValue("Heal",r2(arr[i].getHPRegen()*hpmult));
@@ -293,6 +269,25 @@ public class BalancedGame {
             }
             for (peffect p:curEffects) {
                 potionEffects.remove(p);
+            }
+            int index = 0;
+            while (index<lst.size()) {
+                if (lst.get(index).getEnd()<turn) {
+                    lst.remove(index);
+                }
+                else index++;
+            }
+            index = 0;
+            while (index<curevent.size()) {
+                if (curevent.get(index).getEnd()<turn) {
+                    curevent.remove(index);
+                }
+                else index++;
+            }
+            if (turn==nextEvent) eventMaker();
+            if (turn==lockoutReset) {
+                lockoutGen();
+                lockoutReset+=10;
             }
             weatherGen();
             if (turn%3==1) seasonGen();
@@ -598,11 +593,11 @@ public class BalancedGame {
                 for (Map.Entry<String,Double> map:arr[i].getLockoutProgress().entrySet()) {
                     map.setValue(0.0);
                 }
-                if (!arr[i].getAlive()) playersAlive--;
+                if (!arr[i].isAlive()) playersAlive--;
                 if (playersAlive==1) {
                     out.println("THE GAME HAS ENDED!");
                     for (int k=0; k<playerCount; k++) {
-                        if (arr[k].getAlive()) {
+                        if (arr[k].isAlive()) {
                             out.println("THE WINNER IS: "+arr[k].getName());
                             addToEventLog(arr[k].getName()+" HAS WON THE GAME");
                             break;
@@ -622,7 +617,7 @@ public class BalancedGame {
         else {
             int count = 0;
             for (int k=0; k<playerCount; k++) {
-                if (arr[k].getLocation()==i && arr[k].getAlive()) {
+                if (arr[k].getLocation()==i && arr[k].isAlive()) {
                     count++;
                     nd+=arr[k].getElement(0, 3);
                 }
@@ -642,7 +637,7 @@ public class BalancedGame {
         else {
             int count = 0;
             for (int k=0; k<playerCount; k++) {
-                if (arr[k].getLocation()==i && arr[k].getAlive()) {
+                if (arr[k].getLocation()==i && arr[k].isAlive()) {
                     count++;
                     for (int l=0; l<5; l++) {
                         defences[l] = arr[k].getElement(1, l);
@@ -698,7 +693,7 @@ public class BalancedGame {
         if (j==4) {
             int count = 0;
             for (int k=0; k<playerCount; k++) {
-                if (arr[k].getLocation()==i && arr[k].getAlive()) {
+                if (arr[k].getLocation()==i && arr[k].isAlive()) {
                     if (k==subturn-1) count--;
                     s.add(k);
                     count++;
@@ -1514,6 +1509,11 @@ public class BalancedGame {
     }
     public static void lockoutGen() {
         for (int i=0; i<playerCount; i++) {
+            if (arr[i].getLockoutProgress()==null) {
+                for (int j=0; j<lockoutTypes.length; j++) {
+                    arr[i].setLockoutProgressValue(lockoutTypes[j], 0.0);
+                }
+            }
             for (Map.Entry<String,Double> map:arr[i].getLockoutProgress().entrySet()) {
                 map.setValue(0.0);
             }
@@ -1522,17 +1522,19 @@ public class BalancedGame {
         int origmana = 20;
         int originalreward = 1;
         int totaldmg = 100;
-        for (int i=0; i<6; i++) {
+        for (int i=0; i<12; i++) {
             int choice = (int) (Math.random()*lockoutTypes.length);
             switch (lockoutTypes[choice]) {
                 case "Mana": goals[i] = new lockoutGoal(lockoutTypes[choice],origmana,originalreward); break;
                 case "Spell Damage": case "Melee Damage": case "Weapon Damage": goals[i] = new lockoutGoal(lockoutTypes[choice],totaldmg,originalreward); break;
                 default: goals[i] = new lockoutGoal(lockoutTypes[choice],specificdmg,originalreward); break;
             }
-            specificdmg*=2;
-            origmana*=2;
-            originalreward*=2;
-            totaldmg*=2;
+            if (i%2==1) {
+                specificdmg*=2;
+                origmana*=2;
+                originalreward*=2;
+                totaldmg*=2;
+            }
         }
     }
     public static void completeLockout(int i) {

@@ -51,11 +51,17 @@ public class playerData {
         lockoutProgress = new HashMap<>();
         location = 1;
         spells = new spell[5];
+        for (int i=0; i<5; i++) {
+            spells[i] = null;
+        }
         weapons = new weapon[2];
+        for (int i=0; i<2; i++) {
+            weapons[i] = null;
+        }
     }
 
     //GETTERS
-    public boolean getAlive() {return isAlive;}
+    public boolean isAlive() {return isAlive;}
     public int getLives() {return lives;}
     public String getName() {return name;}
     public int getLvl() {return lvl;}
