@@ -1016,45 +1016,46 @@ public class BalancedGame {
         out.println("Options:");
         out.println("1: Drink potion");
         out.println("2: Potion shop");
-        char opt = br.readLine().charAt(0);
-        if (opt=='D') {
+        int opt = Integer.parseInt(br.readLine());
+        if (opt==1) {
             usePotion(i);
-            return;
         }
-        if (arr[i].getPB()==null) {
-            arr[i].setPB(new ArrayList<>());
-        }
-        out.println("Which potion type would you like to buy?");
-        out.println("1: HP Regen");
-        out.println("2: Mana Regen");
-        out.println("3: Strength");
-        out.println("4: Dexterity");
-        out.println("5: Intelligence");
-        out.println("6: Defence");
-        out.println("7: Agility");
-        int choice = Integer.parseInt(br.readLine());
-        int index = choice-1;
-        out.println("Current "+potionShop[index].getType()+" potions for sale: ");
-        String[] sizes = {"Tiny","Small","Medium","Large","Extra Large"};
-        for (int j=0; j<potionnum; j+=7) {
-            out.println(sizes[j/7]+" "+potionShop[index+j].getValue()+" potion - Cost: "+potionShop[index+j].getCost()
-            +", Req Lvl: "+potionShop[index+j].getLvlReq());
-        }
-        out.println("Which would you like to buy? (1-"+potionnum/7+")");
-        int num = Integer.parseInt(br.readLine());
-        if (num<1 || num>potionnum/7) {
-            return;
-        }
-        if (potionShop[index+(num-1)*7].getCost()>arr[i].getAP()) {
-            out.println("You do not have enough AP to purchase this item!");
-        }
-        else if (potionShop[index+(num-1)*7].getLvlReq()>arr[i].getLvl()) {
-            out.println("You do not meet the level requirements to purchase this item!");
-        }
-        else {
-            out.println("Purchased potion!");
-            arr[i].getPB().add(potionShop[index+(num-1)*7]);
-            arr[i].setAP(arr[i].getAP()-potionShop[index+(num-1)*7].getCost());
+        else if (opt==2) {
+            if (arr[i].getPB()==null) {
+                arr[i].setPB(new ArrayList<>());
+            }
+            out.println("Which potion type would you like to buy?");
+            out.println("1: HP Regen");
+            out.println("2: Mana Regen");
+            out.println("3: Strength");
+            out.println("4: Dexterity");
+            out.println("5: Intelligence");
+            out.println("6: Defence");
+            out.println("7: Agility");
+            int choice = Integer.parseInt(br.readLine());
+            int index = choice-1;
+            out.println("Current "+potionShop[index].getType()+" potions for sale: ");
+            String[] sizes = {"Tiny","Small","Medium","Large","Extra Large"};
+            for (int j=0; j<potionnum; j+=7) {
+                out.println(sizes[j/7]+" "+potionShop[index+j].getValue()+" potion - Cost: "+potionShop[index+j].getCost()
+                +", Req Lvl: "+potionShop[index+j].getLvlReq());
+            }
+            out.println("Which would you like to buy? (1-"+potionnum/7+")");
+            int num = Integer.parseInt(br.readLine());
+            if (num<1 || num>potionnum/7) {
+                return;
+            }
+            if (potionShop[index+(num-1)*7].getCost()>arr[i].getAP()) {
+                out.println("You do not have enough AP to purchase this item!");
+            }
+            else if (potionShop[index+(num-1)*7].getLvlReq()>arr[i].getLvl()) {
+                out.println("You do not meet the level requirements to purchase this item!");
+            }
+            else {
+                out.println("Purchased potion!");
+                arr[i].getPB().add(potionShop[index+(num-1)*7]);
+                arr[i].setAP(arr[i].getAP()-potionShop[index+(num-1)*7].getCost());
+            }
         }
     }
     public static void mapMenu(int i) throws IOException {
@@ -1637,21 +1638,7 @@ public class BalancedGame {
         for (int k=0; k<playerCount; k++) {
             arr[k] = new playerData(arr[k].getName(), lockoutTypes.length);
         }
-        for (peffect p:potionEffects) {
-            int k = findPlayer(p.getName());
-            switch(p.getType()) {
-                case "Health Regen": arr[k].setHPRegen(arr[k].getHPRegen()-p.getValue());
-                case "Mana Regen": arr[k].setMR(arr[k].getMR()-p.getValue());
-                case "Strength": arr[k].setElement(0, 0, arr[k].getElement(0,0)-p.getValue());
-                case "Dexterity": arr[k].setElement(0, 1, arr[k].getElement(0,1)-p.getValue());
-                case "Intelligence": arr[k].setElement(0, 2, arr[k].getElement(0,2)-p.getValue());
-                case "Defence": arr[k].setElement(0, 3, arr[k].getElement(0,3)-p.getValue());
-                case "Agility": arr[k].setElement(0, 4, arr[k].getElement(0,4)-p.getValue());
-            }
-        }
-        while (!potionEffects.isEmpty()) {
-            potionEffects.remove(0);
-        }
+        potionEffects.clear();
         lockoutReset = turn+10;
     }
 }
