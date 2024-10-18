@@ -1152,7 +1152,11 @@ export function updateGameDisplay(received, overwriteAll) {
       "Large",
       "Extra Large",
     ])) {
-      let shopData = potions.POTION_SHOP_DATA.potionShop[j * 7 + i];
+      let shopData = potions.potionShopData?.potionShop[j * 7 + i] ?? {
+        lvlreq: "Loading...",
+        cost: "Loading...",
+        turns: "Loading...",
+      };
 
       const potionImage = potions.potionSprites[buff][j];
       if (potionImage) {
