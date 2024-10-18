@@ -120,6 +120,10 @@ public class playerData {
     public void setStaminaRegen(int i) {staminaregen = i;}
     public void setPB(ArrayList<potion> pb) {potionBag = pb;}
     public void setInventoryValue(String s, int i) {
+        if (i==0) {
+            inventory.remove(s);
+            return;
+        }
         if (inventory.containsKey(s)) {
             inventory.replace(s, i);
         }
@@ -163,6 +167,9 @@ public class playerData {
         }
         else {
             inventory.put(s,i);
+        }
+        if (inventory.get(s)==0) {
+            inventory.remove(s);
         }
     }
     public void addElement(int i, int j, int v) {elements[i][j]+=v;}

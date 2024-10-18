@@ -102,7 +102,7 @@
       "lvlreq": 7,
       "type": "Health Regen",
       "value": 60,
-      "turns": 32,
+      "turns": 3,
       "cost": 7
     },
     {
