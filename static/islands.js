@@ -56,6 +56,10 @@ let lastTime,
 let timeUntilNextSave = 10;
 export function animationFrame(time) {
   const newCanvas = getCanvas();
+  if (!newCanvas) {
+    window.requestAnimationFrame(animationFrame);
+    return;
+  }
   if (newCanvas !== canvas) {
     // Assume previous canvas is deleted
     canvas = newCanvas;
