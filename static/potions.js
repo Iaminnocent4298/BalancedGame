@@ -84,6 +84,15 @@ const POTION_SPRITE_DATA = {
   base_palette: ["#000000", "#cdd9f2", "#deeeff", "#934c20"],
 };
 
+export let potionShopData = undefined;
+
+const potionShopDataPromise = fetch("/static/potions.json")
+  .then((res) => res.json())
+  .then((json) => {
+    console.log("loaded potion data");
+    potionShopData = json;
+  });
+
 export const potionSprites = {};
 let numSpritesLoaded = 0;
 
@@ -144,18 +153,9 @@ export function init(callback) {
         numSpritesLoaded++;
         if (numSpritesLoaded == 7 * 5) {
           console.log("loaded potion sprites");
-          callback();
+          potionShopDataPromise.then(callback);
         }
       });
     }
   }
 }
-
-export let potionShopData = undefined;
-
-fetch("/static/potions.json")
-  .then((res) => res.json())
-  .then((json) => {
-    console.log("loaded potion data");
-    potionShopData = json;
-  });

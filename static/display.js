@@ -1164,7 +1164,7 @@ export function updateGameDisplay(received, overwriteAll) {
                     <h3>${size} ${prettyBuff} Potion</h3>
                     <p>Level requirement: <span class="lvl">${shopData.lvlreq}</span></p>
                     <p>Cost: <span class="ap">${shopData.cost} AP</span></p>
-                    <p><span class="${className}">${symbol} +${shopData[buff + "add"]}</span> for <span class="primary">${shopData.turns} turns</span></p>
+                    <p><span class="${className}">${symbol} +${shopData.value}</span> for <span class="primary">${shopData.turns} turns</span></p>
                 `;
         potionData[i + 1][j + 1] = item("", {
           defaultTag: "img",
