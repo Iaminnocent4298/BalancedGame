@@ -212,10 +212,10 @@ function draw(force) {
 
   ctx.clearRect(-radX, -radY, radX * 2, radY * 2);
 
-  while (islands.length < data.islandCost) {
+  while (islands.length < data.islandsBuilt) {
     islands.push(new Island(islands.length + 1));
   }
-  while (islands.length > data.islandCost) {
+  while (islands.length > data.islandsBuilt) {
     islands.pop();
   }
 
@@ -306,7 +306,7 @@ function draw(force) {
   ctx.font = `0.09px '${FONT}'`;
   let islandPlayerCount = Array(islands.length).fill(0);
   for (let i = 0; i < data.arr.length; i++) {
-    const islandId = data.location[i] - 1;
+    const islandId = data.arr[i].location - 1;
     const island = islands[islandId];
     const playerName = data.arr[i].name;
     let playerCount = islandPlayerCount[islandId]++;

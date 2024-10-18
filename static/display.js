@@ -582,10 +582,7 @@ export function updateGameDisplay(received, overwriteAll) {
   }
 
   infobox("lockout", "Lockout Challenges", [
-    classSpan([
-      "Next Reset: Turn ",
-      classSpan(data.lockoutReset, "primary")
-    ]),
+    classSpan(["Next Reset: Turn ", classSpan(data.lockoutReset, "primary")]),
     newline(),
     newline(),
     list(data.goals.map((x, i) => lockout(x, i))),
@@ -726,7 +723,7 @@ export function updateGameDisplay(received, overwriteAll) {
     (player, i) =>
       tdTooltip(
         `${player.hp}/${player.maxhp}`,
-        `${nickMapGet(player.status, "Heal")} health healed this lockout cycle`,
+        `${player.lockoutProgress["Heal"] ?? 0} health healed this lockout cycle`,
       ),
     "hp",
     null,
@@ -752,7 +749,7 @@ export function updateGameDisplay(received, overwriteAll) {
     (player, i) =>
       tdTooltip(
         `${player.mana}/${player.maxmana}`,
-        `${nickMapGet(player.status, "Mana")} mana used this lockout cycle`,
+        `${player.lockoutProgress["Mana"] ?? 0} mana used this lockout cycle`,
       ),
     "mana",
     null,
@@ -815,7 +812,7 @@ export function updateGameDisplay(received, overwriteAll) {
     (player, i) =>
       tdTooltip(
         player.neutraldmg,
-        `${nickMapGet(player.status, "Neutral Damage")} neutral damage dealt this lockout cycle`,
+        `${player.lockoutProgress["Neutral Damage"] ?? 0} neutral damage dealt this lockout cycle`,
       ),
     "neutral",
     null,
@@ -888,7 +885,7 @@ export function updateGameDisplay(received, overwriteAll) {
       (player, i) =>
         tdTooltip(
           `${symbol} ${player.elements[0][index]}\n❈ ${player.elements[1][index]}`,
-          `${nickMapGet(player.status, prettify(el) + " Damage")} ${el} damage dealt this lockout cycle`,
+          `${player.lockoutProgress[prettify(el) + " Damage"] ?? 0} ${el} damage dealt this lockout cycle`,
         ),
       el,
       null,
@@ -1011,7 +1008,7 @@ export function updateGameDisplay(received, overwriteAll) {
         classDiv(name, "primary"),
         cost != null && classDiv(`Cost: ${cost} AP`, "secondary"),
       ],
-      (_, i) => weapon(data.spells[i][spellId]),
+      (_, i) => weapon(data.arr[i].spells[spellId]),
     );
   }
 
@@ -1019,13 +1016,13 @@ export function updateGameDisplay(received, overwriteAll) {
 
   row(element("h3", "Weapons"), playerHeader);
 
-  for (let weaponId = 0; weaponId < data.weapons[0].length; weaponId++) {
+  for (let weaponId = 0; weaponId < data.arr[0].weapons.length; weaponId++) {
     row(
       [
         [classDiv("Melee Weapon", "primary"), classDiv("25 AP", "secondary")],
         [classDiv("Ranged Weapon", "primary"), classDiv("35 AP", "secondary")],
       ][weaponId],
-      (_, i) => weapon(data.weapons[i][weaponId]),
+      (_, i) => weapon(data.arr[i].weapons[weaponId]),
     );
   }
 
