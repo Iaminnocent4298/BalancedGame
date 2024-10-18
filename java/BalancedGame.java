@@ -1510,10 +1510,8 @@ public class BalancedGame {
     }
     public static void lockoutGen() {
         for (int i=0; i<playerCount; i++) {
-            if (arr[i].getLockoutProgress()==null) {
-                for (int j=0; j<lockoutTypes.length; j++) {
-                    arr[i].setLockoutProgressValue(lockoutTypes[j], 0.0);
-                }
+            for (int j=0; j<lockoutTypes.length; j++) {
+                arr[i].setLockoutProgressValue(lockoutTypes[j], 0.0);
             }
             for (Map.Entry<String,Double> map:arr[i].getLockoutProgress().entrySet()) {
                 map.setValue(0.0);
@@ -1634,10 +1632,13 @@ public class BalancedGame {
     public static void endGame() {
         eventLog.clear();
         playersAlive = playerCount;
-        lockoutGen();
         for (int k=0; k<playerCount; k++) {
             arr[k] = new playerData(arr[k].getName(), lockoutTypes.length);
+            for (int i=0; i<lockoutTypes.length; i++) {
+                arr[k].setLockoutProgressValue(lockoutTypes[i], 0);
+            }
         }
+        lockoutGen();
         potionEffects.clear();
         lockoutReset = turn+10;
     }
