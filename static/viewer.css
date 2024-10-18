@@ -154,6 +154,7 @@ td.darkened {
 
 #table-container ul,
 #table-container ol {
+    margin: 0;
     color: inherit;
 }
 

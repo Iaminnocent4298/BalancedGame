@@ -922,6 +922,43 @@ export function updateGameDisplay(received, overwriteAll) {
     "misc",
   );
 
+  row(
+    "Inventory",
+    (player, i) => {
+      const arr = [];
+      for (const [itemName, num] of Object.entries(player.inventory)) {
+        if (num <= 0) continue;
+        const className = /\bheal\b/i.test(itemName)
+          ? "heal"
+          : /\bmana\b/i.test(itemName)
+            ? "mana"
+            : /\b(earth|strength)\b/i.test(itemName)
+              ? "earth"
+              : /\b(thunder|dexterity)\b/i.test(itemName)
+                ? "thunder"
+                : /\b(water|intelligence)\b/i.test(itemName)
+                  ? "water"
+                  : /\b(fire|defence)\b/i.test(itemName)
+                    ? "fire"
+                    : /\b(air|agility)\b/i.test(itemName)
+                      ? "air"
+                      : "inactive";
+        arr.push([
+          item(`${num}x ${itemName}`, { defaultTag: "li", className }),
+        ]);
+      }
+      if (arr.length) {
+        const el = list(arr);
+        el.style.textAlign = "start";
+        return el;
+      }
+      return element("td", "Empty", {
+        className: "inactive",
+      });
+    },
+    "secondary",
+  );
+
   tableContainerDiv("islands", [
     element("h3", "Islands"),
     item(
@@ -1049,6 +1086,7 @@ export function updateGameDisplay(received, overwriteAll) {
                     <li class="unique">2 Components: 30%</li>
                     <li class="rare">3 Components: 10%</li>
                 </ul>
+                <br>
                 <p>Mythic spells/weapons are exempt from this.</p>
                 <p>Nick just does what he wants in that case</p>
             </div>
