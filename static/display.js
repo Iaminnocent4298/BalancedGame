@@ -329,10 +329,12 @@ export function updateGameDisplay(received, overwriteAll) {
         deeperDefaultTag: _4,
         tooltip,
         className,
+        style,
         ...rest
       } = options;
       Object.assign(el, rest);
       if (className) el.className = className;
+      if (style) Object.assign(el.style, style);
       if (tooltip) el.setAttribute("tooltip", tooltip);
     }
     return el;
@@ -570,7 +572,14 @@ export function updateGameDisplay(received, overwriteAll) {
     el.appendChild(
       classSpan(
         `${msg} - ${lockoutData.apreward} AP`,
-        ["common", "unique", "rare", "legendary", "fabled", "mythic"][i],
+        {
+          1: "common",
+          2: "unique",
+          4: "rare",
+          8: "legendary",
+          16: "fabled",
+          32: "mythic",
+        }[lockoutData.apreward],
       ),
     );
 
@@ -581,12 +590,22 @@ export function updateGameDisplay(received, overwriteAll) {
     return el;
   }
 
-  infobox("lockout", "Lockout Challenges", [
-    classSpan(["Next Reset: Turn ", classSpan(data.lockoutReset, "primary")]),
-    newline(),
-    newline(),
-    list(data.goals.map((x, i) => lockout(x, i))),
-  ]);
+  infobox(
+    "lockout",
+    "Lockout Challenges",
+    item(
+      [
+        classSpan([
+          "Next Reset: Turn ",
+          classSpan(data.lockoutReset, "primary"),
+        ]),
+        newline(),
+        newline(),
+        list(data.goals.map((x, i) => lockout(x, i))),
+      ],
+      { className: "scrollable" },
+    ),
+  );
 
   function tableGroup(groupId) {
     let groupEl = document.getElementById("tablegroup-" + groupId);
