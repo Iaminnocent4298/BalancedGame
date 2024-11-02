@@ -1060,13 +1060,12 @@ export function updateGameDisplay(received, overwriteAll) {
             <div>
                 <h4>Spell/Weapon Component Chances</h4>
                 <ul>
-                    <li class="common">1 Component: 60%</li>
+                    <li class="common">1 Component: 40%</li>
                     <li class="unique">2 Components: 30%</li>
-                    <li class="rare">3 Components: 10%</li>
+                    <li class="rare">3 Components: 20%</li>
+                    <li class="legendary">4 Components: 7%</li>
+                    <li class="fabled">5 Components: 3%</li>
                 </ul>
-                <br>
-                <p>Mythic spells/weapons are exempt from this.</p>
-                <p>Nick just does what he wants in that case</p>
             </div>
             <div>
                 <h4>Weather Chances</h4>
