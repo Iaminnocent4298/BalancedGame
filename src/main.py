@@ -71,7 +71,7 @@ def render_game(game_id):
 
 @app.route("/game/<game_id>")
 def game(game_id):
-    if game_id not in interface.data.game_datas:
+    if game_id not in interface.data.game_data:
         return not_found()
     return render_game(game_id)
 
@@ -141,7 +141,7 @@ def game_data_with_id(game_id):
 @app.route("/api/set_game_data/<game_id>", methods=["POST"])
 @auth_required
 def set_game_data(game_id):
-    if game_id not in interface.data.game_datas:
+    if game_id not in interface.data.game_data:
         return not_found()
     
     file = request.files["file"]
