@@ -205,7 +205,7 @@ public class BalancedGame {
                 }
                 catch (NumberFormatException e) {
                     int i = findPlayer(name);
-                    if (name.equals(arr[subturn-1].getName())) {
+                    if (name.equals(arr[subturn-1].getName().toLowerCase())) {
                         out.println("You can't attack yourself!");
                     }
                     else {
@@ -837,13 +837,13 @@ public class BalancedGame {
                     out.println("You do not have AP to do this!");
                 }
                 else {
-                    if (arr[i].getAmplifierCount()>0) {
+                    if (arr[i].getInventoryValue("Reroll Amplifier I")>0) {
                         out.print("Do you wish to use an amplifier? (y/n)");
                         ans = br.readLine().charAt(0);
                         if (ans=='y') {
                             arr[i].setAP(arr[i].getAP()-cost);
                             generator(num,true);
-                            arr[i].addAmplifierCount(-1);
+                            arr[i].addInventoryValue("Reroll Amplifier I",-1);
                         }
                         else {
                             arr[i].setAP(arr[i].getAP()-cost);
@@ -877,13 +877,13 @@ public class BalancedGame {
                     out.println("You do not have AP to do this!");
                 }
                 else {
-                    if (arr[i].getAmplifierCount()>0) {
-                        out.print("Do you wish to use an amplifier? (y/n)");
+                    if (arr[i].getInventoryValue("Reroll Amplifier I")>0) {
+                        out.print("Do you wish to use an amplifier? (y/n) ");
                         ans = br.readLine().charAt(0);
                         if (ans=='y') {
                             arr[i].setAP(arr[i].getAP()-cost);
                             generator(num,true);
-                            arr[i].addAmplifierCount(-1);
+                            arr[i].addInventoryValue("Reroll Amplifier I",-1);
                         }
                         else {
                             arr[i].setAP(arr[i].getAP()-cost);
@@ -914,13 +914,13 @@ public class BalancedGame {
             out.print("Would you like to proceed? (y/n) ");
             char ans = br.readLine().charAt(0);
             if (ans=='y' && arr[i].getAP()>=cost) {
-                if (arr[i].getAmplifierCount()>0) {
+                if (arr[i].getInventoryValue("Reroll Amplifier I")>0) {
                     out.print("Do you wish to use an amplifier? (y/n)");
                     ans = br.readLine().charAt(0);
                     if (ans=='y') {
                         arr[i].setAP(arr[i].getAP()-cost);
                         generator(num,true);
-                        arr[i].addAmplifierCount(-1);
+                        arr[i].addInventoryValue("Reroll Amplifier I", -1);
                     }
                     else {
                         arr[i].setAP(arr[i].getAP()-cost);
@@ -942,8 +942,7 @@ public class BalancedGame {
     public static int rarityGen(boolean useAmplifier) {
         double rarity = (int) (Math.random()*100)+1;
         if (useAmplifier) {
-            double multiplier = Math.random()*0.1+1;
-            rarity*=multiplier;
+            rarity*=1.05;
         }
         if (rarity<=35)  rarity = 0;
         else if (rarity<=65) rarity = 1;
@@ -1297,7 +1296,7 @@ public class BalancedGame {
             out.print("Tier? ");
             String[] dustTiers = {" I"," II"," III"," IV"};
             int tier = Integer.parseInt(br.readLine());
-            String item = elementType+dustTiers[tier-1];
+            String item = elementType+" Dust"+dustTiers[tier-1];
             out.print("Amount? ");
             int amount = Integer.parseInt(br.readLine());
             if (!arr[i].inventoryRemovable(item,amount)) {
@@ -1308,11 +1307,11 @@ public class BalancedGame {
             int[] tierDamage = {1,3,7,15};
             int elementNum = -1;
             switch (elementType) {
-                case "earth": elementNum = 1; break;
-                case "thunder": elementNum = 2; break;
-                case "water": elementNum = 3; break;
-                case "fire": elementNum = 4; break;
-                case "air": elementNum = 5; break;
+                case "Earth": elementNum = 1; break;
+                case "Thunder": elementNum = 2; break;
+                case "Water": elementNum = 3; break;
+                case "Fire": elementNum = 4; break;
+                case "Air": elementNum = 5; break;
             }
             if (weaponType>=1 && weaponType<=5) {
                 arr[i].getSpell(weaponType-1).addDmgs(elementNum, amount*tierDamage[tier-1]);
@@ -1325,13 +1324,46 @@ public class BalancedGame {
             arr[i].addInventoryValue(item, -amount);
         }
         else if (choice==2) {
+            out.println("Do you wish to combine as much as possible?");
+            out.println("1: Yes");
+            out.println("2: No");
+            int choice1 = Integer.parseInt(br.readLine());
+            String[] dustTiers = {" I"," II"," III"," IV"};
+            String[] elementTypes = {"Earth","Thunder","Water","Fire","Air"};
+            if (choice1==1) {
+                for (String elementType:elementTypes) {
+                    for (int dustTier = 0; dustTier<dustTiers.length; dustTier++) {
+                        String item = elementType+" Dust"+dustTiers[dustTier];
+                        if (arr[i].getInventoryValue(item)<2) {
+                            break;
+                        }
+                        else if (dustTiers[dustTier].equals(" IV")) {
+                            break;
+                        }
+                        while (true) {
+                            if (arr[i].getInventoryValue(item)<2) {
+                                break;
+                            }
+                            arr[i].addInventoryValue(item, -2);
+                            item = elementType+" Dust"+dustTiers[dustTier+1];
+                            arr[i].addInventoryValue(item, 1);
+                            item = elementType+" Dust"+dustTiers[dustTier];
+                        }
+                    }
+                }
+                return;
+            }
+            else if (choice1!=2) {
+                return;
+            }
             out.print("Type? ");
             String elementType = br.readLine().toLowerCase();
             elementType = elementType.substring(0,1).toUpperCase()+elementType.substring(1);
             out.print("Tier? ");
-            String[] dustTiers = {" I"," II"," III"," IV"};
             int tier = Integer.parseInt(br.readLine());
-            String item = elementType+dustTiers[tier-1];
+            String item = elementType+" Dust"+dustTiers[tier-1];
+            out.print("How many times? ");
+            int repeat = Integer.parseInt(br.readLine());
             if (arr[i].getInventoryValue(item)<2) {
                 out.println("You do not have enough of this dust to combine!");
                 return;
@@ -1340,9 +1372,18 @@ public class BalancedGame {
                 out.println("This is the highest tier of dust! You cannot upgrade anymore");
                 return;
             }
-            arr[i].addInventoryValue(item, -2);
-            item = elementType+dustTiers[tier];
-            arr[i].addInventoryValue(item, 1);
+            else {
+                for (int j=0; j<repeat; j++) {
+                    if (arr[i].getInventoryValue(item)<2) {
+                        out.println("You do not have enough of this dust to combine!");
+                        break;
+                    }
+                    arr[i].addInventoryValue(item, -2);
+                    item = elementType+" Dust"+dustTiers[tier];
+                    arr[i].addInventoryValue(item, 1);
+                    item = elementType+" Dust"+dustTiers[tier-1];
+                }
+            }
         }
     }
     public static void weatherGen() {
@@ -1499,7 +1540,7 @@ public class BalancedGame {
                     out.println("+1 Stamina Regen");
                 }
                 else if (ans==4) {
-                    arr[i].addAmplifierCount(1);
+                    arr[i].addInventoryValue("Reroll Amplifier I", 1);
                 }
                 else {
                     out.println("That's not a valid choice!");
@@ -1537,7 +1578,7 @@ public class BalancedGame {
         }
     }
     public static void completeLockout(int i) {
-        for (int j=0; j<6; j++) {
+        for (int j=0; j<goals.length; j++) {
             if (arr[i].getLockoutProgressValue(goals[j].getType())>=goals[j].getValue() && !goals[j].getDone()) {
                 System.out.println(arr[i].getName()+" completed goal "+(j+1));
                 arr[i].addAP(goals[j].getAPR());

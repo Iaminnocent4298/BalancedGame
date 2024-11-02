@@ -101,10 +101,10 @@ function getSeason(data) {
   }[intensity];
 
   const [symbol, season] = {
-    Air_Damage: ["❄", "Winter"],
-    Earth_Damage: ["⚘", "Spring"],
-    Fire_Damage: ["☀", "Summer"],
-    Water_Damage: ["🙒", "Fall"],
+    "Air Damage": ["❄", "Winter"],
+    "Earth Damage": ["⚘", "Spring"],
+    "Fire Damage": ["☀", "Summer"],
+    "Water Damage": ["🙒", "Fall"],
   }[type];
 
   return `${symbol} ${time} ${season}`;
@@ -116,14 +116,14 @@ function getWeather(data) {
   const { intensity, type } = data.weather;
 
   return {
-    "75 Water_Damage": "🌧 Rain",
-    "50 Air_Damage": "🌨 Snow",
-    "300 Thunder_Damage": "🌩 Thunderstorm",
-    "150 Water_Damage": "🌧 Sleet",
-    "75 Air_Damage": "🙛 Windy",
-    "50 Earth_Damage": "☁ Cloudy",
-    "25 Earth_Damage": "🌤 Partly Cloudy",
-    "100 Fire_Damage": "☀ Sunny",
+    "75 Water Damage": "🌧 Rain",
+    "50 Air Damage": "🌨 Snow",
+    "300 Thunder Damage": "🌩 Thunderstorm",
+    "150 Water Damage": "🌧 Sleet",
+    "75 Air Damage": "🙛 Windy",
+    "50 Earth Damage": "☁ Cloudy",
+    "25 Earth Damage": "🌤 Partly Cloudy",
+    "100 Fire Damage": "☀ Sunny",
   }[intensity + " " + type];
 }
 
@@ -135,47 +135,6 @@ function temperatureIndicator(temp) {
   else if (temp >= -9) return "mana";
   else if (temp >= -19) return "water";
   else return "lvl";
-}
-
-function toRomanNumerals(num) {
-  if (isNaN(+num)) return NaN;
-  var digits = [...String(num)],
-    key = [
-      "",
-      "C",
-      "CC",
-      "CCC",
-      "CD",
-      "D",
-      "DC",
-      "DCC",
-      "DCCC",
-      "CM",
-      "",
-      "X",
-      "XX",
-      "XXX",
-      "XL",
-      "L",
-      "LX",
-      "LXX",
-      "LXXX",
-      "XC",
-      "",
-      "I",
-      "II",
-      "III",
-      "IV",
-      "V",
-      "VI",
-      "VII",
-      "VIII",
-      "IX",
-    ],
-    roman = "",
-    i = 3;
-  while (i--) roman = (key[+digits.pop() + i * 10] || "") + roman;
-  return Array(+digits.join("") + 1).join("M") + roman;
 }
 
 const topContainer = document.getElementById("top-container");
@@ -540,7 +499,7 @@ export function updateGameDisplay(received, overwriteAll) {
         data.curevent.map((buff) =>
           classSpan(
             formatBuff(buff),
-            (buff.intensity < 0) ^ (buff.type == "Spell_Cost") ? "bad" : "ap",
+            (buff.intensity < 0) ^ (buff.type == "Spell Cost") ? "bad" : "ap",
           ),
         ),
       ),
@@ -1018,7 +977,7 @@ export function updateGameDisplay(received, overwriteAll) {
     const arr = [];
     arr.push(
       classDiv(
-        weapon.name + " " + toRomanNumerals(weapon.tier),
+        weapon.name,
         "underline " + weapon.rarity.toLowerCase(),
       ),
     );
