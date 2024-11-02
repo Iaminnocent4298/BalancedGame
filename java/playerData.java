@@ -16,7 +16,6 @@ public class playerData {
     private int[][] elements;
     private ArrayList<potion> potionBag;
     private Map<String,Integer> inventory;
-    private int amplifiercount;
     private Map<String,Double> lockoutProgress;
     private int location;
     private spell[] spells;
@@ -47,7 +46,6 @@ public class playerData {
         elements = new int[2][5];
         potionBag = new ArrayList<>();
         inventory = new HashMap<>();
-        amplifiercount = 0;
         lockoutProgress = new HashMap<>();
         location = 1;
         spells = new spell[5];
@@ -85,15 +83,12 @@ public class playerData {
         if (inventory.containsKey(s)) {
             return inventory.get(s);
         }
-        inventory.put(s,0);
         return 0;
     }
-    public int getAmplifierCount() {return amplifiercount;}
     public double getLockoutProgressValue(String s) {
         if (lockoutProgress.containsKey(s)) {
             return lockoutProgress.get(s);
         }
-        lockoutProgress.put(s,0.0);
         return 0;
     }
     public Map<String,Double> getLockoutProgress() {return lockoutProgress;}
@@ -130,7 +125,6 @@ public class playerData {
         else inventory.put(s,i);
     }
     public void setElement(int i, int j, int v) {elements[i][j] = v;}
-    public void getAmplifierCount(int i) {amplifiercount = i;}
     public void setLockoutProgressValue(String s, double d) {
         if (lockoutProgress.containsKey(s)) {
             lockoutProgress.replace(s, lockoutProgress.get(s), r2(d));
@@ -173,7 +167,6 @@ public class playerData {
         }
     }
     public void addElement(int i, int j, int v) {elements[i][j]+=v;}
-    public void addAmplifierCount(int i) {amplifiercount+=i;}
     public void addLockoutProgressValue(String s, double d) {
         if (lockoutProgress.containsKey(s)) {
             lockoutProgress.replace(s, r2(lockoutProgress.get(s)+d));
