@@ -33,6 +33,7 @@ def update_game_data_undebounced(game_id, game_data_json, event):
                 new_game_data = json.loads(content)
     except FileNotFoundError:
         warn("The file for %s (%s) doesn't exist!" % (game_id, game_data_json))
+        return
     except json.decoder.JSONDecodeError:
         warn("%s is invalid json, ignoring" % game_data_json)
         return
