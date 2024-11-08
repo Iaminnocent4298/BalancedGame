@@ -879,13 +879,13 @@ export function updateGameDisplay(received, overwriteAll) {
         if (effect.name !== player.name) continue;
 
         const [symbol, className] = {
-          Heal: ["❣", "heal"],
-          Mana: ["⸎", "manarg"],
-          Strength: ["✤", "earth"],
-          Dexterity: ["✦", "thunder"],
-          Intelligence: ["❉", "water"],
-          Defence: ["✹", "fire"],
-          Agility: ["❋", "air"],
+          "Health Regen": ["❣", "heal"],
+          "Mana Regen": ["⸎", "manarg"],
+          "Strength": ["✤", "earth"],
+          "Dexterity": ["✦", "thunder"],
+          "Intelligence": ["❉", "water"],
+          "Defence": ["✹", "fire"],
+          "Agility": ["❋", "air"],
         }[effect.type];
 
         arr.push([
