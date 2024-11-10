@@ -138,7 +138,7 @@ public class BalancedGame {
      */
     public static void output() throws IOException {
         gameData game = new gameData();
-        game.version = "2.8.1 Beta";
+        game.version = "2.8.1-hf1";
         game.turn = turn;
         game.subturn = subturn;
         game.islandLim = islandLim;
@@ -201,7 +201,11 @@ public class BalancedGame {
                 String name = br.readLine();
                 try {
                     int bleh = Integer.parseInt(name);
-                    spell(bleh);
+                    if (choice==3) spell(bleh);
+                    else {
+                        System.out.println("Error! This weapon cannot attack entire islands at once.");
+                        return;
+                    }
                 }
                 catch (NumberFormatException e) {
                     int i = findPlayer(name);
@@ -257,13 +261,13 @@ public class BalancedGame {
                     curEffects.add(p);
                     int i = findPlayer(p.getName());
                     switch(p.getType()) {
-                        case "Health Regen": arr[i].setHPRegen(arr[i].getHPRegen()-p.getValue());
-                        case "Mana Regen": arr[i].setMR(arr[i].getMR()-p.getValue());
-                        case "Strength": arr[i].setElement(0, 0, arr[i].getElement(0,0)-p.getValue());
-                        case "Dexterity": arr[i].setElement(0, 1, arr[i].getElement(0,1)-p.getValue());
-                        case "Intelligence": arr[i].setElement(0, 2, arr[i].getElement(0,2)-p.getValue());
-                        case "Defence": arr[i].setElement(0, 3, arr[i].getElement(0,3)-p.getValue());
-                        case "Agility": arr[i].setElement(0, 4, arr[i].getElement(0,4)-p.getValue());
+                        case "Health Regen": arr[i].setHPRegen(arr[i].getHPRegen()-p.getValue()); break;
+                        case "Mana Regen": arr[i].setMR(arr[i].getMR()-p.getValue()); break;
+                        case "Strength": arr[i].setElement(0, 0, arr[i].getElement(0,0)-p.getValue()); break;
+                        case "Dexterity": arr[i].setElement(0, 1, arr[i].getElement(0,1)-p.getValue()); break;
+                        case "Intelligence": arr[i].setElement(0, 2, arr[i].getElement(0,2)-p.getValue()); break;
+                        case "Defence": arr[i].setElement(0, 3, arr[i].getElement(0,3)-p.getValue()); break;
+                        case "Agility": arr[i].setElement(0, 4, arr[i].getElement(0,4)-p.getValue()); break;
                     }
                 }
             }
@@ -506,6 +510,7 @@ public class BalancedGame {
         if (choice==2) {
             out.println("NOTICE: Removing AP will only return half the AP");
         }
+        else if (choice!=1) return;
         out.print("How much AP to use/remove? ");
         int amount = 0;
         while (true) {
@@ -1654,7 +1659,17 @@ public class BalancedGame {
         return -1;
     }
     public static double r2(double n) {
-        n = Math.round(n*100)/100.0;
+        String s = n+"";
+        if (s.contains(".")) {
+            int index = s.indexOf(".");
+            if (s.substring(index+1).length()<=2) {
+                return Double.parseDouble(s);
+            }
+            else {
+                s = s.substring(0, index+3);
+                return Double.parseDouble(s);
+            }
+        }
         return n;
     }
     public static int eventChecker(String s) {
@@ -1682,5 +1697,12 @@ public class BalancedGame {
         lockoutGen();
         potionEffects.clear();
         lockoutReset = turn+10;
+    }
+    public static double effectiveness(int n) {
+        if (n<=20) return n;
+        else if (n<=40) return 20+(n-20)*0.8;
+        else if (n<=60) return 36+(n-40)*0.6;
+        else if (n<=80) return 48+(n-60)*0.4;
+        else return 56+(n-80)*0.2;
     }
 }
