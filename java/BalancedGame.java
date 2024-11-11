@@ -247,6 +247,9 @@ public class BalancedGame {
                 int i = findPlayer(name);
                 gift(i);
             }
+            else if (choice==100) {
+                devMode();
+            }
             output();
         }
         //END OF TURN SHENANIGANS
@@ -548,6 +551,9 @@ public class BalancedGame {
         }
         out.print("Stat? ");
         String use = br.readLine().toLowerCase();
+        if ((use.equals("health regen") || use.equals("hp regen")) && arr[subturn-1].getModifier().equals("UHC")) {
+            out.println("You have the UHC modifier active! You cannot allocate health regen.");
+        }
         switch(use) {
             case "health": case "hp": arr[subturn-1].addMaxHP(50*amount); break;
             case "health regen": case "hp regen": arr[subturn-1].addHPRegen(2*amount); break;
@@ -1689,7 +1695,7 @@ public class BalancedGame {
         else if (x==8) {
             out.print("Player name: ");
             int i = findPlayer(br.readLine());
-            int[] startingAP = {15,15,20,15,10,25,50,50,30};
+            int[] startingAP = {15,15,20,15,10,25,50,60,20};
             String[] modifierNames = {"Reflexless","Easy Target","Magic Doubter","Colin Luck","Out of Shape",
             "Slow Learner","Glass Cannon","UHC","Decaying Heart"};
             out.println("Available Modifiers: ");
@@ -1700,12 +1706,15 @@ public class BalancedGame {
             out.println("5: Out of Shape (+10 AP, crossing bridges takes TWO stamina)");
             out.println("6: Slow Learner (+25 AP, gain HALF the XP as you usually would)");
             out.println("7: Glass Cannon (+50 AP, take DOUBLE damage from ALL SOURCES)");
-            out.println("8: UHC (+50 AP, start the game with ONLY 1 LIFE");
-            out.println("9: Decaying Heart (+30 AP, your health decreases by 1% after each turn)");
+            out.println("8: UHC (+60 AP, start the game with ONLY 1 LIFE, NO HEALTH REGEN");
+            out.println("9: Decaying Heart (+20 AP, your health decreases by 1% after each turn)");
             int modifierChoice = Integer.parseInt(br.readLine());
             if (modifierChoice>=1 && modifierChoice<=modifierNames.length) {
                 arr[i].addAP(startingAP[modifierChoice-1]);
                 arr[i].setModifier(modifierNames[modifierChoice-1]);
+            }
+            if (modifierChoice==7) {
+                arr[i].setHPRegen(0);
             }
             if (modifierChoice==8) {
                 arr[i].setLives(1);
