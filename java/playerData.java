@@ -20,6 +20,7 @@ public class playerData {
     private int location;
     private spell[] spells;
     private weapon[] weapons;
+    private String modifier;
     /**
      * The constructor for player data
      * @param n The name of the player
@@ -56,6 +57,7 @@ public class playerData {
         for (int i=0; i<2; i++) {
             weapons[i] = null;
         }
+        modifier = "None";
     }
 
     //GETTERS
@@ -100,6 +102,7 @@ public class playerData {
      */
     public spell getSpell(int spellNum) {return spells[spellNum];}
     public weapon getWeapon(int weaponNum) {return weapons[weaponNum];}
+    public String getModifier() {return modifier;}
     //SETTERS
     public void setAlive(boolean b) {isAlive = b;}
     public void setLives(int i) {lives = i;}
@@ -139,6 +142,7 @@ public class playerData {
      */
     public void setSpell(int spellNum, spell s) {spells[spellNum] = s;}
     public void setWeapon(int weaponNum, weapon w) {weapons[weaponNum] = w;}
+    public void setModifier(String s) {modifier = s;}
     //MUTATORS
     public void addLives(int v) {lives+=v;}
     public void addLvl(int i) {lvl+=i;}
@@ -188,7 +192,17 @@ public class playerData {
         return true;
     }
     private double r2(double d) {
-        d = Math.round(d*100)/100.0;
+        String s = d+"";
+        if (s.contains(".")) {
+            int index = s.indexOf(".");
+            if (s.substring(index+1).length()<=2) {
+                return Double.parseDouble(s);
+            }
+            else {
+                s = s.substring(0, index+3);
+                return Double.parseDouble(s);
+            }
+        }
         return d;
     }
 }
