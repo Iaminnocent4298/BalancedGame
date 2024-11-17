@@ -19,3 +19,5 @@ Air Dust II
 Air Dust III
 Air Dust IV
 Reroll Amplifier I
+Reroll Amplifier II
+Reroll Amplifier III

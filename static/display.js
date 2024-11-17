@@ -674,6 +674,20 @@ export function updateGameDisplay(received, overwriteAll) {
   row(element("h3", "Player Stats"), playerHeader);
 
   row(
+    "Modifier",
+    (player) => {
+      let className;
+      if (player.modifier == "None") {
+        className = "inactive";
+      } else {
+        className = "modifier";
+      }
+      return classSpan(`${player.modifier}`,className);
+    },
+    "modifier",
+  );
+
+  row(
     "✷ Level",
     (player) =>
       `${player.lvl} ➩ ${player.lvl + 1}\n[${player.lvlxp}/${player.nextlvl}]`,
@@ -809,7 +823,7 @@ export function updateGameDisplay(received, overwriteAll) {
       "✤",
       `
             <h3>Strength/Earth Defence</h3>
-            <p>Strength increases your Earth Damage, and melee damage</p>
+            <p>Strength increases your Earth Damage, melee, and ranged damage</p>
             <p>Earth Defence decreases the amount of Earth damage dealt to you</p>
         `,
     ],
@@ -941,23 +955,6 @@ export function updateGameDisplay(received, overwriteAll) {
     element("h3", "Islands"),
     item(
       [
-        item([
-          element("h4", "Island Info"),
-          list([
-            [
-              classSpan("Number of islands: ", "secondary"),
-              classSpan(data.islandCost, "primary"),
-            ],
-            [
-              classSpan("Island limit: ", "secondary"),
-              classSpan(data.islandLim - 1, "primary"),
-            ],
-            [
-              classSpan("Island build cost: ", "secondary"),
-              classSpan(data.islandCost, "primary"),
-            ],
-          ]),
-        ]),
         item(element("canvas", null, { id: "island-canvas" }), {
           id: "island-canvas-container",
         }),

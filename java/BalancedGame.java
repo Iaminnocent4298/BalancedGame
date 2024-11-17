@@ -213,7 +213,7 @@ public class BalancedGame {
                             if (!arr[i].isAlive()) {
                                 out.println("The opponent is dead!");
                             }
-                            else if (WSChoice==2) {
+                            else if (WSChoice==1) {
                                 out.println("Choose attack method:");
                                 out.println("1: Melee");
                                 out.println("2: Ranged");
@@ -226,7 +226,7 @@ public class BalancedGame {
                                     ranged(i);
                                 }
                             }
-                            else if (WSChoice==3) spell(i);
+                            else if (WSChoice==2) spell(i);
                         }
                     }
                 }
@@ -236,10 +236,12 @@ public class BalancedGame {
                 out.println("1: Potion");
                 out.println("2: Map");
                 out.println("3: Elemental Dust");
+                out.println("4: Amplifier");
                 int menuChoice = Integer.parseInt(br.readLine());
                 if (menuChoice==1) potionMenu(subturn-1);
                 else if (menuChoice==2) mapMenu(subturn-1);
                 else if (menuChoice==3) dustMenu(subturn-1);
+                else if (menuChoice==4) amplifierMenu(subturn-1);
             }
             else if (choice==4) {
                 out.print("Player? ");
@@ -404,7 +406,7 @@ public class BalancedGame {
             cdmg=(2+sa/100.0);
         }
         //CALCULATIONS
-        damages[0] = (damages[0]+arr[subturn-1].getND())*(1+sa/100.0)*cdmg;
+        damages[0] = (damages[0])*(1+arr[subturn-1].getND()*1.5/100)*(1+sa/100.0)*cdmg;
         for (int j=1; j<6; j++) {
             damages[j] = (damages[j])*(1+arr[subturn-1].getElement(0, j-1)/100)*(1+sa/100.0)*cdmg;
         }
@@ -484,9 +486,9 @@ public class BalancedGame {
             cdmg=(2+sa/100.0);
         }
         //CALCULATIONS
-        damages[0] = (damages[0]+arr[subturn-1].getND())*(1+sa/100.0)*cdmg;
+        damages[0] = (damages[0])*(1+arr[subturn-1].getND()*1.5/100.0)*(1+sa/100.0)*cdmg;
         for (int j=1; j<6; j++) {
-            damages[j] = (damages[j]+arr[subturn-1].getElement(0, j-1))*(1+sa/100.0)*cdmg;
+            damages[j] = (damages[j])*(1+arr[subturn-1].getElement(0, j-1)/100.0)*(1+sa/100.0)*cdmg;
         }
         damages[0]*=((1+eventChecker("Neutral Damage")/100.0)+mult);
         damages[1]*=((1+eventChecker("Earth Damage")/100.0)+mult);
@@ -707,10 +709,9 @@ public class BalancedGame {
         double sr = Math.min(80,arr[subturn-1].getElement(0,2));
         ia = Math.max(-100,ia-nd);
         mc*=((1+eventChecker("Spell Cost")/100.0)*(1-sr/100.0));
-        damages[0] = (damages[0]+arr[subturn-1].getND())*(1+ia/100.0)*cdmg;
+        damages[0] = damages[0]*(1+arr[subturn-1].getND()*1.5/100.0)*(1+ia/100.0)*cdmg;
         for (int k=0; k<5; k++) {
-            damages[k+1]+=arr[subturn-1].getElement(0, k);
-            damages[k+1]*=(1+ia/100.0)*cdmg;
+            damages[k+1]*=(1+arr[subturn-1].getElement(0, k)/100.0)*(1+ia/100.0)*cdmg;
         }
         damages[0]*=((1+eventChecker("Neutral Damage")/100.0)+mult);
         damages[1]*=((1+eventChecker("Earth Damage")/100.0)+mult);
@@ -781,11 +782,11 @@ public class BalancedGame {
         else {
             for (int k:s) {
                 if (arr[k].getModifier().equals("Magic Doubter") || arr[i].getModifier().equals("Glass Cannon")) {
-                    out.println("Modifier! "+arr[i].getName()+" took double damage");
-                    arr[k].setHP(r2(arr[i].getHP()-dmg*2));
+                    out.println("Modifier! "+arr[k].getName()+" took double damage");
+                    arr[k].setHP(r2(arr[k].getHP()-dmg*2));
                 }
                 else {
-                    arr[k].setHP(r2(arr[i].getHP()-dmg));
+                    arr[k].setHP(r2(arr[k].getHP()-dmg));
                 }
             }
         }
@@ -889,22 +890,32 @@ public class BalancedGame {
                     out.println("You do not have AP to do this!");
                 }
                 else {
-                    if (arr[i].getInventoryValue("Reroll Amplifier I")>0) {
-                        out.print("Do you wish to use an amplifier? (y/n)");
+                    if (arr[i].getInventoryValue("Reroll Amplifier I")>0 || arr[i].getInventoryValue("Reroll Amplifier II")>0
+                    || arr[i].getInventoryValue("Reroll Amplifier III")>0) {
+                        out.print("Do you wish to use an amplifier? (y/n) ");
                         ans = br.readLine().charAt(0);
                         if (ans=='y') {
-                            arr[i].setAP(arr[i].getAP()-cost);
-                            generator(num,true);
-                            arr[i].addInventoryValue("Reroll Amplifier I",-1);
+                            String[] amplifierTiers = {" I"," II"," III"};
+                            out.print("Tier? ");
+                            int tier = Integer.parseInt(br.readLine());
+                            if (arr[i].getInventoryValue("Reroll Amplifier"+amplifierTiers[tier-1])==0) {
+                                out.println("You do not have this amplifier!");
+                                return;
+                            }
+                            else {
+                                arr[i].setAP(arr[i].getAP()-cost);
+                                generator(num,tier);
+                                arr[i].addInventoryValue("Reroll Amplifier"+amplifierTiers[tier-1],-1);
+                            }
                         }
                         else {
                             arr[i].setAP(arr[i].getAP()-cost);
-                            generator(num, false);
+                            generator(num, 0);
                         }
                     }
                     else {
                         arr[i].setAP(arr[i].getAP()-cost);
-                        generator(num, false);
+                        generator(num, 0);
                     }
                     if (arr[i].getWeapon(1).getRC()==0) arr[i].getWeapon(1).setRC(1);
                     else arr[i].getWeapon(1).setRC(Math.min(16,arr[i].getWeapon(1).getRC()*2));
@@ -929,22 +940,32 @@ public class BalancedGame {
                     out.println("You do not have AP to do this!");
                 }
                 else {
-                    if (arr[i].getInventoryValue("Reroll Amplifier I")>0) {
+                    if (arr[i].getInventoryValue("Reroll Amplifier I")>0 || arr[i].getInventoryValue("Reroll Amplifier II")>0
+                    || arr[i].getInventoryValue("Reroll Amplifier III")>0) {
                         out.print("Do you wish to use an amplifier? (y/n) ");
                         ans = br.readLine().charAt(0);
                         if (ans=='y') {
-                            arr[i].setAP(arr[i].getAP()-cost);
-                            generator(num,true);
-                            arr[i].addInventoryValue("Reroll Amplifier I",-1);
+                            String[] amplifierTiers = {" I"," II"," III"};
+                            out.print("Tier? ");
+                            int tier = Integer.parseInt(br.readLine());
+                            if (arr[i].getInventoryValue("Reroll Amplifier"+amplifierTiers[tier-1])==0) {
+                                out.println("You do not have this amplifier!");
+                                return;
+                            }
+                            else {
+                                arr[i].setAP(arr[i].getAP()-cost);
+                                generator(num,tier);
+                                arr[i].addInventoryValue("Reroll Amplifier"+amplifierTiers[tier-1],-1);
+                            }
                         }
                         else {
                             arr[i].setAP(arr[i].getAP()-cost);
-                            generator(num, false);
+                            generator(num, 0);
                         }
                     }
                     else {
                         arr[i].setAP(arr[i].getAP()-cost);
-                        generator(num, false);
+                        generator(num, 0);
                     }
                     if (arr[i].getWeapon(0).getRC()==0) arr[i].getWeapon(0).setRC(1);
                     else arr[i].getWeapon(0).setRC(Math.min(16,arr[i].getWeapon(0).getRC()*2));
@@ -966,22 +987,32 @@ public class BalancedGame {
             out.print("Would you like to proceed? (y/n) ");
             char ans = br.readLine().charAt(0);
             if (ans=='y' && arr[i].getAP()>=cost) {
-                if (arr[i].getInventoryValue("Reroll Amplifier I")>0) {
-                    out.print("Do you wish to use an amplifier? (y/n)");
+                if (arr[i].getInventoryValue("Reroll Amplifier I")>0 || arr[i].getInventoryValue("Reroll Amplifier II")>0
+                || arr[i].getInventoryValue("Reroll Amplifier III")>0) {
+                    out.print("Do you wish to use an amplifier? (y/n) ");
                     ans = br.readLine().charAt(0);
                     if (ans=='y') {
-                        arr[i].setAP(arr[i].getAP()-cost);
-                        generator(num,true);
-                        arr[i].addInventoryValue("Reroll Amplifier I", -1);
+                        String[] amplifierTiers = {" I"," II"," III"};
+                        out.print("Tier? ");
+                        int tier = Integer.parseInt(br.readLine());
+                        if (arr[i].getInventoryValue("Reroll Amplifier"+amplifierTiers[tier-1])==0) {
+                            out.println("You do not have this amplifier!");
+                            return;
+                        }
+                        else {
+                            arr[i].setAP(arr[i].getAP()-cost);
+                            generator(num,tier);
+                            arr[i].addInventoryValue("Reroll Amplifier"+amplifierTiers[tier-1],-1);
+                        }
                     }
                     else {
                         arr[i].setAP(arr[i].getAP()-cost);
-                        generator(num, false);
+                        generator(num, 0);
                     }
                 }
                 else {
                     arr[i].setAP(arr[i].getAP()-cost);
-                    generator(num, false);
+                    generator(num, 0);
                 }
                 if (arr[i].getSpell(num-1).getRC()==0) arr[i].getSpell(num-1).setRC(1);
                 else arr[i].getSpell(num-1).setRC(Math.min(16,cost*2));
@@ -991,11 +1022,9 @@ public class BalancedGame {
             }
         }
     }
-    public static int rarityGen(boolean useAmplifier) {
+    public static int rarityGen(int amplifierTier) {
         double rarity = (int) (Math.random()*100)+1;
-        if (useAmplifier) {
-            rarity*=1.05;
-        }
+        rarity*=(1+amplifierTier*5/100.0);
         if (arr[subturn-1].getModifier().equals("Colin Luck") && rarity>65) rarity = 65;
         if (rarity<=35)  rarity = 0;
         else if (rarity<=65) rarity = 1;
@@ -1005,11 +1034,10 @@ public class BalancedGame {
         else rarity = 5;
         return (int) rarity;
     }
-    public static void generator(int x, boolean useAmplifier) throws IOException { //1-5 = spell, 6-7 = weapon
+    public static void generator(int x, int amplifierTier) throws IOException { //1-5 = spell, 6-7 = weapon
         String[] rarityName = {"Common","Unique","Rare","Legendary","Fabled","Mythic"};
-        int[] dmgmult = {1,3,5,7};
-        int[] manamult = {1,2,3,4};
-        int rarity = rarityGen(useAmplifier);
+        int[] dmgmult = {1,2,3,4};
+        int rarity = rarityGen(amplifierTier);
         int dps; int manacost;
         out.print("Name: ");
         String name = br.readLine();
@@ -1020,10 +1048,7 @@ public class BalancedGame {
             dps = spelldps[rarity];
         }
         else dps = weapondps[rarity];
-        if (x<=4) {
-            manacost = 40*manamult[x-1];
-        }
-        else if (x==5) {
+        if (x<=5) {
             manacost = 60;
         }
         else manacost = 0;
@@ -1439,6 +1464,43 @@ public class BalancedGame {
             }
         }
     }
+
+    public static void amplifierMenu(int playerIndex) throws IOException {
+        String[] amplifierTiers = {" I"," II"," III"};
+        out.println("Welcome to the Amplifier Upgrader!");
+        out.println("What tier would you like to upgrade?");
+        int tier = Integer.parseInt(br.readLine());
+        if (tier<=0 || tier>=3) {
+            out.println("This is not legal!");
+        }
+        else {
+            String amplifierName = "Reroll Amplifier"+amplifierTiers[tier-1];
+            if (arr[playerIndex].getInventoryValue(amplifierName)<2) {
+                out.println("You do not have enough 2+ of this amplifier tier to upgrade!");
+                return;
+            }
+            int APCost = 0;
+            if (tier==1) APCost = 1;
+            else APCost = 3;
+            out.println("It will cost "+APCost+" AP to combine!");
+            if (arr[playerIndex].getAP()<APCost) {
+                out.println("However, you do not have enough AP to combine...");
+                return;
+            }
+            out.print("Would you like to continue? (y/n) ");
+            char decision = br.readLine().charAt(0);
+            if (decision=='y') {
+                arr[playerIndex].addAP(-APCost);
+                arr[playerIndex].addInventoryValue(amplifierName, -2);
+                amplifierName = "Reroll Amplifier"+amplifierTiers[tier];
+                arr[playerIndex].addInventoryValue(amplifierName, 1);
+                out.println("Action Completed");
+            }
+            else {
+                return;
+            }
+        }
+    }
     public static void weatherGen() {
         int[] intense = {75,300,75,50,25,100};
         int[] altint = {50,150};
@@ -1643,6 +1705,7 @@ public class BalancedGame {
         out.println("5: Add Stamina");
         out.println("6: Set Mana");
         out.println("7: Set AP");
+        out.println("8: Set Modifier");
         int x = Integer.parseInt(br.readLine());
         if (x==1) {
             out.print("Type order of players: ");
@@ -1706,7 +1769,7 @@ public class BalancedGame {
             out.println("5: Out of Shape (+10 AP, crossing bridges takes TWO stamina)");
             out.println("6: Slow Learner (+25 AP, gain HALF the XP as you usually would)");
             out.println("7: Glass Cannon (+50 AP, take DOUBLE damage from ALL SOURCES)");
-            out.println("8: UHC (+60 AP, start the game with ONLY 1 LIFE, NO HEALTH REGEN");
+            out.println("8: UHC (+60 AP, start the game with ONLY 1 LIFE, NO HEALTH REGEN)");
             out.println("9: Decaying Heart (+20 AP, your health decreases by 1% after each turn)");
             int modifierChoice = Integer.parseInt(br.readLine());
             if (modifierChoice>=1 && modifierChoice<=modifierNames.length) {
@@ -1764,6 +1827,7 @@ public class BalancedGame {
             for (int i=0; i<lockoutTypes.length; i++) {
                 arr[k].setLockoutProgressValue(lockoutTypes[i], 0);
             }
+            arr[k].setModifier("None");
         }
         lockoutGen();
         potionEffects.clear();

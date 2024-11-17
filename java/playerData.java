@@ -146,7 +146,7 @@ public class playerData {
     //MUTATORS
     public void addLives(int v) {lives+=v;}
     public void addLvl(int i) {lvl+=i;}
-    public void addLXP(double v) {lvlxp+=v;}
+    public void addLXP(double v) {lvlxp = r2(lvlxp+v);}
     public void addNL(int i) {nextlvl+=i;}
     public void addAP(int v) {abilityPoints+=v;}
     public void addHP(double v) {hp+=v;}
