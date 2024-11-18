@@ -595,10 +595,13 @@ export function updateGameDisplay(received, overwriteAll) {
       if (style) Object.assign(tr.style, style);
 
       function rowItem(i, dat, options) {
+        
         const el = item(dat, { defaultTag: "td", options });
         if (i === data.subturn - 1) el.classList.add("highlighted");
-        else if (players[i]?.gameLevel) el.classList.add("darkened");
+        else if (i !== null && !players[i]["isAlive"]) el.classList.add("darkened");
+      
         tr.appendChild(el);
+        
         return el;
       }
       function headerItem(dat, options) {
@@ -659,7 +662,7 @@ export function updateGameDisplay(received, overwriteAll) {
         element("span", "❤".repeat(player.lives), { className: "hp" }),
         ")",
       ];
-      if (player.gameLevel) arr.push(classDiv("In Gulag", "bad"));
+      if (!player.isAlive) arr.push(classDiv("In Gulag", "bad"));
       td.append(...arr);
     }
     return td;

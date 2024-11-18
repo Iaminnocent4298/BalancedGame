@@ -138,7 +138,7 @@ public class BalancedGame {
      */
     public static void output() throws IOException {
         gameData game = new gameData();
-        game.version = "2.8.2";
+        game.version = "2.8.2-hf1";
         game.turn = turn;
         game.subturn = subturn;
         game.islandLim = islandLim;
@@ -752,14 +752,23 @@ public class BalancedGame {
         arr[subturn-1].addLockoutProgressValue("Mana",mc);
         if (j!=4) {
             addToEventLog("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" spell "+(j+1)+"'d "+arr[i].getName()+" for "+dmg+" damage");
+            if (arr[i].getModifier().equals("Magic Doubter") || arr[i].getModifier().equals("Glass Cannon")) {
+                out.println("Modifier! "+arr[i].getName()+" took double damage");
+                dmg*=2;
+            }
+            arr[i].setHP(r2(arr[i].getHP()-dmg));
             out.println(arr[i].getName()+" has "+arr[i].getHP()+" health remaining");
         }
         else {
-            for (int k:s) {
-                arr[k].setHP(r2(arr[k].getHP()-dmg));
-            }
             addToEventLog("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" AOE'd island "+i+" for "+dmg+" damage each");
             for (int k:s) {
+                if (arr[k].getModifier().equals("Magic Doubter") || arr[i].getModifier().equals("Glass Cannon")) {
+                    out.println("Modifier! "+arr[k].getName()+" took double damage");
+                    arr[k].setHP(r2(arr[k].getHP()-dmg*2));
+                }
+                else {
+                    arr[k].setHP(r2(arr[k].getHP()-dmg));
+                }
                 out.println(arr[k].getName()+" has "+arr[k].getHP()+" health remaining");
             }
         }
@@ -772,24 +781,6 @@ public class BalancedGame {
         arr[subturn-1].addLXP((arr[i].getModifier().equals("Slow Learner")) ? r2(dmg*playersHit*0.5) : r2(dmg*playersHit));
         out.println(arr[subturn-1].getName()+" gained "+dmg*playersHit+" xp");
         out.println("Level "+arr[subturn-1].getLvl()+": "+arr[subturn-1].getLXP()+"/"+arr[subturn-1].getNL()+" xp");
-        if (j!=4) {
-            if (arr[i].getModifier().equals("Magic Doubter") || arr[i].getModifier().equals("Glass Cannon")) {
-                out.println("Modifier! "+arr[i].getName()+" took double damage");
-                dmg*=2;
-            }
-            arr[i].setHP(r2(arr[i].getHP()-dmg));
-        }
-        else {
-            for (int k:s) {
-                if (arr[k].getModifier().equals("Magic Doubter") || arr[i].getModifier().equals("Glass Cannon")) {
-                    out.println("Modifier! "+arr[k].getName()+" took double damage");
-                    arr[k].setHP(r2(arr[k].getHP()-dmg*2));
-                }
-                else {
-                    arr[k].setHP(r2(arr[k].getHP()-dmg));
-                }
-            }
-        }
         levelUp(subturn-1);
         completeLockout(subturn-1);
         if (j!=4) {
@@ -1776,11 +1767,15 @@ public class BalancedGame {
                 arr[i].addAP(startingAP[modifierChoice-1]);
                 arr[i].setModifier(modifierNames[modifierChoice-1]);
             }
-            if (modifierChoice==7) {
-                arr[i].setHPRegen(0);
-            }
             if (modifierChoice==8) {
+                double totalHealth = 0;
+                if (arr[i].getLives()==2) {
+                    totalHealth = arr[i].getMaxHP()+arr[i].getHP();
+                }
+                else totalHealth = arr[i].getHP();
                 arr[i].setLives(1);
+                arr[i].setHPRegen(0);
+                arr[i].setHP(r2(totalHealth/2));
             }
         }
     }
