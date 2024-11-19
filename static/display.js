@@ -446,11 +446,11 @@ export function updateGameDisplay(received, overwriteAll) {
               "Current disaster: ",
               classSpan(
                 {
-                  Air_Damage: "🏔 Blizzard",
-                  Earth_Damage: "🌎 Earthquake",
-                  Water_Damage: "🌊Tsunami",
-                  Fire_Damage: "🌋 Volcano Eruption",
-                  Thunder_Damage: "🗱 Lightning Storm",
+                  "Air Damage": "🏔 Blizzard",
+                  "Earth Damage": "🌎 Earthquake",
+                  "Water Damage": "🌊Tsunami",
+                  "Fire Damage": "🌋 Volcano Eruption",
+                  "Thunder Damage": "🗱 Lightning Storm",
                 }[data.disaster.type],
                 type(data.disaster.type),
               ),
