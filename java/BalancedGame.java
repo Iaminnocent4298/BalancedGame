@@ -1,6 +1,6 @@
 /*
 "Balanced Game" - made by Iaminnocent4298, web server made by Creative0708
-Version 2.8 - The Mild(ish) Update
+Version 2.9 - En Garde!
 */
 import java.util.*;
 import java.io.*;
@@ -51,6 +51,10 @@ public class BalancedGame {
     static String[] lockoutTypes = {"Neutral Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage","Heal","Mana","Spell Damage","Melee Damage","Ranged Damage"};
     static int[] weapondps = {20,25,35,50,70,100}; //base
     static int[] spelldps = {40,45,55,70,90,120}; //base spell 1
+    /**
+     * The total "score" of each rarity of armour
+     */
+    static int[] armourWeight = {100,200,350,550,800,1100};
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static String path;
     public static void main(String[] args) throws Exception {
@@ -138,7 +142,7 @@ public class BalancedGame {
      */
     public static void output() throws IOException {
         gameData game = new gameData();
-        game.version = "2.8.2-hf2";
+        game.version = "2.9";
         game.turn = turn;
         game.subturn = subturn;
         game.islandLim = islandLim;
@@ -193,7 +197,7 @@ public class BalancedGame {
                 int WSChoice = Integer.parseInt(br.readLine());
                 if (WSChoice==1) out.print("Player? ");
                 else if (WSChoice==2) out.print("Player/Island? ");
-                else if (WSChoice==3) attackGen(subturn-1);
+                else if (WSChoice==3) rerollMenu(subturn-1);
                 if (WSChoice==1 || WSChoice==2) {
                     String name = br.readLine();
                     try {
@@ -201,7 +205,6 @@ public class BalancedGame {
                         if (WSChoice==2) spell(islandNum);
                         else {
                             System.out.println("Error! This weapon cannot attack entire islands at once.");
-                            return;
                         }
                     }
                     catch (NumberFormatException e) {
@@ -331,47 +334,49 @@ public class BalancedGame {
         }
         output();
     }
-    /**
-     * User selects which potion to consume.
-     * @param i The ID of the player in the array
-     * @throws IOException
-     */
-    public static void usePotion(int i) throws IOException {
-        if (arr[i].getPB()==null) {
-            out.println("Your potion bag is empty!");
-            return;
+
+    public static void useAP() throws IOException {
+        out.println(arr[subturn-1].getAP()+" AP owned");
+        out.println("Would u like to spend or remove AP?");
+        out.println("1 to spend");
+        out.println("2 to remove");
+        int choice = Integer.parseInt(br.readLine());
+        if (choice==2) {
+            out.println("NOTICE: Removing AP will only return half the AP");
         }
-        out.println("Your potion bag contains:");
-        for (potion p:arr[i].getPB()) {
-            out.println("+"+p.getValue()+" "+p.getType()+": "+p.getTurns()+"⇆");
+        else if (choice!=1) return;
+        out.print("How much AP to use/remove? ");
+        int amount = 0;
+        while (true) {
+            amount = Integer.parseInt(br.readLine());
+            if (choice==1 && arr[subturn-1].getAP()-amount>=0) break;
+            else if (choice==2) break;
+            out.println("Error: Insufficient AP");
         }
-        out.print("Select potion to drink (1-"+arr[i].getPB().size()+"): ");
-        int num = Integer.parseInt(br.readLine());
-        if (num<1 || num>arr[i].getPB().size()) {
-            return;
+        if (choice==1) arr[subturn-1].addAP(-amount);
+        else if (choice==2) {
+            amount*=(-1);
+            arr[subturn-1].addAP(-amount/2);
         }
-        num--;
-        Set<String> activeEffects = new HashSet<>();
-        for (peffect p: potionEffects) {
-            if (p.getName().equals(arr[i].getName())) activeEffects.add(p.getType());
+        out.print("Stat? ");
+        String use = br.readLine().toLowerCase();
+        if ((use.equals("health regen") || use.equals("hp regen")) && arr[subturn-1].getModifier().equals("UHC")) {
+            out.println("You have the UHC modifier active! You cannot allocate health regen.");
         }
-        if (activeEffects.contains(arr[i].getPB().get(num).getType())) {
-            out.println("You already have this effect active!");
-            return;
+        switch(use) {
+            case "health": case "hp": arr[subturn-1].addMaxHP(50*amount); break;
+            case "health regen": case "hp regen": arr[subturn-1].addHPRegen(2*amount); break;
+            case "mana regen": arr[subturn-1].addMR(amount); break;
+            case "stamina": arr[subturn-1].addMaxStamina(5*amount); break;
+            case "neutral damage": case "neutral": arr[subturn-1].addND(amount); break;
+            case "strength": case "str": arr[subturn-1].addElement(0, 0, amount); break;
+            case "dexterity": case "dex": arr[subturn-1].addElement(0, 1, amount); break;
+            case "intelligence": case "intel": case "int": arr[subturn-1].addElement(0, 2, amount); break;
+            case "defence": case "def": arr[subturn-1].addElement(0, 3, amount); break;
+            case "agility": case "agi": arr[subturn-1].addElement(0, 4, amount); break;
+            default: out.println("That's not valid!"); arr[subturn-1].addAP(amount); break;
         }
-        out.println("Consumed potion!");
-        peffect p = new peffect(arr[i].getName(),arr[i].getPB().get(num).getType(),arr[i].getPB().get(num).getValue(),arr[i].getPB().get(num).getTurns());
-        switch(p.getType()) {
-            case "Health Regen": arr[i].setHPRegen(arr[i].getHPRegen()+p.getValue()); break;
-            case "Mana Regen": arr[i].setMR(arr[i].getMR()+p.getValue()); break;
-            case "Strength": arr[i].setElement(0, 0, arr[i].getElement(0,0)+p.getValue()); break;
-            case "Dexterity": arr[i].setElement(0, 1, arr[i].getElement(0,1)+p.getValue()); break;
-            case "Intelligence": arr[i].setElement(0, 2, arr[i].getElement(0,2)+p.getValue()); break;
-            case "Defence": arr[i].setElement(0, 3, arr[i].getElement(0,3)+p.getValue()); break;
-            case "Agility": arr[i].setElement(0, 4, arr[i].getElement(0,4)+p.getValue()); break;
-        }
-        potionEffects.add(p);
-        arr[i].getPB().remove(num);
+        out.println(arr[subturn-1].getAP()+" AP remaining");
     }
 
     public static void melee(int i) throws IOException {
@@ -403,6 +408,7 @@ public class BalancedGame {
         int crit = (int) (Math.random()*100)+1;
         if (crit<=da) {
             out.println("Critical Hit!");
+            addToEventLog(arr[subturn-1].getName()+" dealt a critical hit!");
             cdmg=(2+sa/100.0);
         }
         //CALCULATIONS
@@ -418,7 +424,7 @@ public class BalancedGame {
         damages[5]*=((1+eventChecker("Air Damage")/100.0)+mult);
         damages[0] = r2(Math.max(0,damages[0]));
         for (int j=1; j<6; j++) {
-            damages[j] = Math.max(0,r2(damages[j]-defences[j-1]*2));
+            damages[j] = Math.max(0,r2(damages[j]-defences[j-1]));
         }
         out.println("Damage dealt:");
         String[] dmgTypes = {"Neutral","Earth","Thunder","Water","Fire","Air"};
@@ -485,6 +491,7 @@ public class BalancedGame {
         int crit = (int) (Math.random()*100)+1;
         if (crit<=da) {
             out.println("Critical Hit!");
+            addToEventLog(arr[subturn-1].getName()+" dealt a critical hit!");
             cdmg=(2+sa/100.0);
         }
         //CALCULATIONS
@@ -503,7 +510,7 @@ public class BalancedGame {
         }
         damages[0] = r2(Math.max(0,damages[0]));
         for (int j=1; j<6; j++) {
-            damages[j] = Math.max(0,r2(damages[j]-defences[j-1]*2));
+            damages[j] = Math.max(0,r2(damages[j]-defences[j-1]));
         }
         out.println("Damage dealt:");
         String[] dmgTypes = {"Neutral","Earth","Thunder","Water","Fire","Air"};
@@ -533,54 +540,7 @@ public class BalancedGame {
         completeLockout(subturn-1);
         isDead(i);
     }
-    public static void useAP() throws IOException {
-        out.println(arr[subturn-1].getAP()+" AP owned");
-        out.println("Would u like to spend or remove AP?");
-        out.println("1 to spend");
-        out.println("2 to remove");
-        int choice = Integer.parseInt(br.readLine());
-        if (choice==2) {
-            out.println("NOTICE: Removing AP will only return half the AP");
-        }
-        else if (choice!=1) return;
-        out.print("How much AP to use/remove? ");
-        int amount = 0;
-        while (true) {
-            amount = Integer.parseInt(br.readLine());
-            if (choice==1 && arr[subturn-1].getAP()-amount>=0) break;
-            else if (choice==2) break;
-            out.println("Error: Insufficient AP");
-        }
-        if (choice==1) arr[subturn-1].addAP(-amount);
-        else if (choice==2) {
-            amount*=(-1);
-            arr[subturn-1].addAP(-amount/2);
-        }
-        out.print("Stat? ");
-        String use = br.readLine().toLowerCase();
-        if ((use.equals("health regen") || use.equals("hp regen")) && arr[subturn-1].getModifier().equals("UHC")) {
-            out.println("You have the UHC modifier active! You cannot allocate health regen.");
-        }
-        switch(use) {
-            case "health": case "hp": arr[subturn-1].addMaxHP(50*amount); break;
-            case "health regen": case "hp regen": arr[subturn-1].addHPRegen(2*amount); break;
-            case "mana regen": arr[subturn-1].addMR(amount); break;
-            case "stamina": arr[subturn-1].addMaxStamina(5*amount); break;
-            case "neutral damage": case "neutral": arr[subturn-1].addND(amount); break;
-            case "strength": case "str": arr[subturn-1].addElement(0, 0, amount); break;
-            case "dexterity": case "dex": arr[subturn-1].addElement(0, 1, amount); break;
-            case "intelligence": case "intel": case "int": arr[subturn-1].addElement(0, 2, amount); break;
-            case "defence": case "def": arr[subturn-1].addElement(0, 3, amount); break;
-            case "agility": case "agi": arr[subturn-1].addElement(0, 4, amount); break;
-            case "earth defence": case "earth def": arr[subturn-1].addElement(1, 0, amount); break;
-            case "thunder defence": case "thunder def": arr[subturn-1].addElement(1, 1, amount); break;
-            case "water defence": case "water def": arr[subturn-1].addElement(1, 2, amount); break;
-            case "fire defence": case "fire def": arr[subturn-1].addElement(1, 3, amount); break;
-            case "air defence": case "air def": arr[subturn-1].addElement(1, 4, amount); break;
-            default: out.println("That's not valid!"); arr[subturn-1].addAP(amount); break;
-        }
-        out.println(arr[subturn-1].getAP()+" AP remaining");
-    }
+    
     public static void spell(int i) throws Exception {
         out.println("Which spell to use? (1-5, -1 to quit) ");
         int num = Integer.parseInt(br.readLine());
@@ -607,18 +567,6 @@ public class BalancedGame {
                 }
             }
         }
-    }
-    public static void eventMaker() {
-        int type = (int) (Math.random()*2)+1;
-        int multiplier = ((int) (Math.random()*4)+1)*25;
-        int dmg = (int) (Math.random()*eventTypes.length);
-        if (eventTypes[dmg].equals("Spell Cost")) {multiplier = ((int) (Math.random()*3)+1)*25;}
-        if (type!=1) multiplier*=-1;
-        int length = (int) (Math.random()*4)+2;
-        nextEvent+=1;
-        event e = new event(multiplier,eventTypes[dmg],turn,turn+length-1);
-        lst.add(e);
-        curevent.add(e);
     }
     public static void isDead(int i) {
         if (arr[i].getHP()<=0) {
@@ -708,6 +656,7 @@ public class BalancedGame {
         int crit = (int) (Math.random()*100)+1;
         if (crit<=da) {
             out.println("Critical Hit!");
+            addToEventLog(arr[subturn-1].getName()+" dealt a critical hit!");
             cdmg=(2+ia/100.0);
         }
         double mult = eventChecker("Spell Damage")/100.0+eventChecker("All Damage")/100.0;
@@ -726,7 +675,7 @@ public class BalancedGame {
         damages[5]*=((1+eventChecker("Air Damage")/100.0)+mult);
         damages[0] = Math.max(0,r2(damages[0]));
         for (int k=1; k<=5; k++) {
-            damages[k] = Math.max(0,r2(damages[k]-defences[k-1]*2));
+            damages[k] = Math.max(0,r2(damages[k]-defences[k-1]));
         }
         mc = Math.round(mc);
         int playersHit = 1;
@@ -860,29 +809,31 @@ public class BalancedGame {
             }
         }
     }
-    public static void attackGen(int i) throws Exception {
-        out.println("Which spell would you like to purchase/reroll?");
+    public static void rerollMenu(int i) throws Exception {
+        out.println("What would you like to purchase/reroll?");
         out.println("1-4 for regular spell");
         out.println("5 for AOE spell");
         out.println("6 for melee weapon");
         out.println("7 for ranged weapon");
+        out.println("8-11 for armour");
         int num = Integer.parseInt(br.readLine());
-        if (num>7 || num<1) return;
-        if (num==7) {
-            int cost = 0;
-            if (arr[i].getWeapon(1)==null) {
-                out.println("You are rolling your ranged weapon!");
-                cost = 35;
+        if (num>11 || num<1) return;
+        if (num>=8 && num<=11) {
+            int[] armourCosts = {6,12,9,6};
+            int APCost = 0;
+            if (arr[i].getArmour(num-8)==null) {
+                out.println("You are rolling your armour piece!");
+                APCost = armourCosts[num-8];
             }
             else {
-                out.println("You are rerolling your ranged weapon!");
-                cost = arr[i].getWeapon(1).getRC();
+                out.println("You are rerolling your armour piece!");
+                APCost = arr[i].getArmour(num-8).getRerollCost();
             }
-            out.println("This will cost "+cost+" ap");
+            out.println("This will cost "+APCost+" ap");
             out.print("Would you like to proceed? (y/n) ");
             char ans = br.readLine().charAt(0);
             if (ans=='y') {
-                if (arr[i].getAP()<cost) {
+                if (arr[i].getAP()<APCost) {
                     out.println("You do not have AP to do this!");
                 }
                 else {
@@ -899,34 +850,45 @@ public class BalancedGame {
                                 return;
                             }
                             else {
-                                arr[i].setAP(arr[i].getAP()-cost);
-                                generator(num,tier);
+                                arr[i].setAP(arr[i].getAP()-APCost);
+                                weaponGen(num,tier);
                                 arr[i].addInventoryValue("Reroll Amplifier"+amplifierTiers[tier-1],-1);
                             }
                         }
                         else {
-                            arr[i].setAP(arr[i].getAP()-cost);
-                            generator(num, 0);
+                            arr[i].setAP(arr[i].getAP()-APCost);
+                            armourGen(i, num, 0);
                         }
                     }
                     else {
-                        arr[i].setAP(arr[i].getAP()-cost);
-                        generator(num, 0);
+                        arr[i].setAP(arr[i].getAP()-APCost);
+                        armourGen(i, num, 0);
                     }
-                    if (arr[i].getWeapon(1).getRC()==0) arr[i].getWeapon(1).setRC(1);
-                    else arr[i].getWeapon(1).setRC(Math.min(16,arr[i].getWeapon(1).getRC()*2));
+                    if (arr[i].getArmour(num-8).getRerollCost()==0) arr[i].getArmour(num-8).setRerollCost(1);
+                    else arr[i].getArmour(num-8).setRerollCost(Math.min(8,arr[i].getArmour(num-8).getRerollCost()*2));
                 }
             }
         }
-        else if (num==6) {
+        if (num==6 || num==7) {
             int cost = 0;
-            if (arr[i].getWeapon(0)==null) {
-                out.println("You are rolling your melee weapon!");
-                cost = 25;
+            if (arr[i].getWeapon((num==6) ? 0 : 1)==null) {
+                if (num==6) {
+                    out.println("You are rolling your melee weapon!");
+                    cost = 12;
+                }
+                else {
+                    out.println("You are rolling your ranged weapon!");
+                    cost = 17;
+                }
             }
             else {
-                out.println("You are rerolling your melee weapon!");
-                cost = arr[i].getWeapon(0).getRC();
+                if (num==6) {
+                    out.println("You are rerolling your melee weapon!");
+                }
+                else {
+                    out.println("You are rerolling your ranged weapon!");
+                }
+                cost = arr[i].getWeapon((num==6) ? 0 : 1).getRC();
             }
             out.println("This will cost "+cost+" ap");
             out.print("Would you like to proceed? (y/n) ");
@@ -950,21 +912,21 @@ public class BalancedGame {
                             }
                             else {
                                 arr[i].setAP(arr[i].getAP()-cost);
-                                generator(num,tier);
+                                weaponGen(num,tier);
                                 arr[i].addInventoryValue("Reroll Amplifier"+amplifierTiers[tier-1],-1);
                             }
                         }
                         else {
                             arr[i].setAP(arr[i].getAP()-cost);
-                            generator(num, 0);
+                            weaponGen(num, 0);
                         }
                     }
                     else {
                         arr[i].setAP(arr[i].getAP()-cost);
-                        generator(num, 0);
+                        weaponGen(num, 0);
                     }
-                    if (arr[i].getWeapon(0).getRC()==0) arr[i].getWeapon(0).setRC(1);
-                    else arr[i].getWeapon(0).setRC(Math.min(16,arr[i].getWeapon(0).getRC()*2));
+                    if (arr[i].getWeapon(1).getRC()==0) arr[i].getWeapon((num==6) ? 0 : 1).setRC(1);
+                    else arr[i].getWeapon(1).setRC(Math.min(8,arr[i].getWeapon((num==6) ? 0 : 1).getRC()*2));
                 }
             }
         }
@@ -972,8 +934,8 @@ public class BalancedGame {
             int cost = 0;
             if (arr[i].getSpell(num-1)==null) {
                 out.println("You are rolling your spell!");
-                if (num!=5) cost = 10*(int) (Math.pow(2,num-1));
-                else cost = 15;
+                if (num!=5) cost = 5*(int) (Math.pow(2,num-1));
+                else cost = 7;
             }
             else {
                 out.println("You are rerolling your spell!");
@@ -997,21 +959,21 @@ public class BalancedGame {
                         }
                         else {
                             arr[i].setAP(arr[i].getAP()-cost);
-                            generator(num,tier);
+                            weaponGen(num,tier);
                             arr[i].addInventoryValue("Reroll Amplifier"+amplifierTiers[tier-1],-1);
                         }
                     }
                     else {
                         arr[i].setAP(arr[i].getAP()-cost);
-                        generator(num, 0);
+                        weaponGen(num, 0);
                     }
                 }
                 else {
                     arr[i].setAP(arr[i].getAP()-cost);
-                    generator(num, 0);
+                    weaponGen(num, 0);
                 }
                 if (arr[i].getSpell(num-1).getRC()==0) arr[i].getSpell(num-1).setRC(1);
-                else arr[i].getSpell(num-1).setRC(Math.min(16,cost*2));
+                else arr[i].getSpell(num-1).setRC(Math.min(8,cost*2));
             }
             else if (ans=='y' && arr[i].getAP()<cost) {
                 out.println("You do not have AP to do this!");
@@ -1030,7 +992,7 @@ public class BalancedGame {
         else rarity = 5;
         return (int) rarity;
     }
-    public static void generator(int x, int amplifierTier) throws IOException { //1-5 = spell, 6-7 = weapon
+    public static void weaponGen(int x, int amplifierTier) throws IOException { //1-5 = spell, 6-7 = weapon
         String[] rarityName = {"Common","Unique","Rare","Legendary","Fabled","Mythic"};
         int[] dmgmult = {1,2,3,4};
         int rarity = rarityGen(amplifierTier);
@@ -1058,6 +1020,26 @@ public class BalancedGame {
         else if (elements<=97) elements = 4;
         else elements = 5;
         int[][] minmax = new int[2][7];
+        ArrayList<Integer> damageTypes = new ArrayList<>();
+        int elementsAdded = 0;
+        while (elementsAdded<elements) {
+            int elementType = (int) (Math.random()*((x<=5) ? 7 : 6));
+            if (!damageTypes.contains(elementType)) {
+                elementsAdded++;
+                damageTypes.add(elementType);
+            }
+        }
+        for (int i=0; i<dps; i++) {
+            int index = (int) (Math.random()*elements);
+            minmax[0][damageTypes.get(index)]++;
+            minmax[1][damageTypes.get(index)]++;
+        }
+        for (int i=0; i<((x<=5) ? 7 : 6); i++) {
+            int damageRange = (int) (Math.random()*minmax[0][damageTypes.get(i)]/2);
+            minmax[0][damageTypes.get(i)]-=damageRange;
+            minmax[1][damageTypes.get(i)]+=damageRange;
+        }
+        
         int base = -1;
         for (int a=elements-1; a>=0; a--) {
             int avgdps = (a==0) ? dps : (int) (Math.random()*(dps-a))+1;
@@ -1079,13 +1061,81 @@ public class BalancedGame {
         if (x<=5) {
             if (arr[subturn-1].getSpell(x-1)!=null) reroll = arr[subturn-1].getSpell(x-1).getRC();
             arr[subturn-1].setSpell(x-1,new spell(minmax,manacost,reroll,name,rarityName[rarity]));
-            addToEventLog(arr[subturn-1]+" rolled a spell and got a "+rarityName[rarity]+"!");
+            addToEventLog(arr[subturn-1].getName()+" rolled a spell and got a "+rarityName[rarity]+"!");
         }
         else {
             if (arr[subturn-1].getWeapon(x-6)!=null) reroll = arr[subturn-1].getWeapon(x-6).getRC();
             arr[subturn-1].setWeapon(x-6, new weapon(minmax,reroll,name,rarityName[rarity]));
-            addToEventLog(arr[subturn-1]+" rolled a weapon and got a "+rarityName[rarity]+"!");
+            addToEventLog(arr[subturn-1].getName()+" rolled a weapon and got a "+rarityName[rarity]+"!");
         }
+    }
+
+    /**
+     * Generates the armour stats
+     * @param playerNum The ID of the player in the array
+     * @param armourType The type of armour (helmet, chestplate, leggings, boots)
+     * @param amplifierTier The amplifier tier used
+     */
+    public static void armourGen(int playerNum, int armourType, int amplifierTier) throws IOException {
+        out.print("Name: ");
+        String name = br.readLine();
+        String[] rarityName = {"Common","Unique","Rare","Legendary","Fabled","Mythic"};
+        double[] armourTypeBuff = {1,2,1.5,1};
+        int rarityTier = rarityGen(amplifierTier);
+        int armourScore = armourWeight[rarityTier];
+        int healthScore = (int) (Math.random()*(armourScore*0.7-armourScore*0.3+1))+(int) (armourScore*0.3);
+        int elementalDefenceScore = armourScore-healthScore;
+        int maxHealthBuff = (int) (healthScore*armourTypeBuff[armourType]*10);
+        int elementalDefenceBuff = (int) (elementalDefenceScore*armourTypeBuff[armourType]*5);
+        int elementCount = (int) (Math.random()*100)+1;
+        if (elementCount<=40) elementCount = 1;
+        else if (elementCount<=70) elementCount = 2;
+        else if (elementCount<=90) elementCount = 3;
+        else if (elementCount<=97) elementCount = 4;
+        else elementCount = 5;
+
+        // The number of elements with negative defence values
+        int negativeElements = (int) (Math.random()*(elementCount-1))+1;
+        int roundToNearest5 = (int) (Math.random()*armourWeight[rarityTier]);
+        int negativeDefence = roundToNearest5-roundToNearest5%5;
+        elementalDefenceBuff+=negativeDefence;
+        ArrayList<Integer> elementalDefences = new ArrayList<>();
+        ArrayList<Integer> negativeElementalDefences = new ArrayList<>();
+        int elementsAdded = 0;
+        while (elementsAdded<elementCount) {
+            int elementType = (int) (Math.random()*5);
+            if (!elementalDefences.contains(elementType)) {
+                elementsAdded++;
+                elementalDefences.add(elementType);
+            }
+        }
+        elementsAdded = 0;
+        while (elementsAdded<negativeElements) {
+            int index = (int) (Math.random()*elementCount);
+            if (!elementalDefences.contains(elementalDefences.get(index))) {
+                elementsAdded++;
+                negativeElementalDefences.add(elementalDefences.get(index));
+            }
+        }
+
+        int[] elementalDefence = new int[5];
+        for (int i=0; i<elementalDefenceBuff/5; i++) {
+            int index = (int) (Math.random()*elementCount);
+            elementalDefence[elementalDefences.get(index)]+=5;
+        }
+        if (negativeElements>0) {
+            for (int i=0; i<negativeDefence/5; i++) {
+                int index = (int) (Math.random()*negativeElements);
+                elementalDefence[negativeElementalDefences.get(index)]-=5;
+            }
+        }
+        out.println("Rarity: "+rarityName[rarityTier]);
+        int rerollCost = 0;
+        if (arr[playerNum].getArmour(armourType)!=null) {
+            rerollCost = arr[playerNum].getArmour(armourType).getRerollCost();
+        }
+        arr[playerNum].setArmour(armourType, new armour(maxHealthBuff, elementalDefence, name, rarityName[rarityTier], rerollCost));
+        addToEventLog(arr[playerNum].getName()+" rolled an armour piece and got a "+rarityName[rarityTier]+"!");
     }
     public static void potionMenu(int i) throws IOException {
         out.println("Options:");
@@ -1133,6 +1183,50 @@ public class BalancedGame {
             }
         }
     }
+
+    /**
+     * User selects which potion to consume.
+     * @param i The ID of the player in the array
+     * @throws IOException
+     */
+    public static void usePotion(int i) throws IOException {
+        if (arr[i].getPB()==null) {
+            out.println("Your potion bag is empty!");
+            return;
+        }
+        out.println("Your potion bag contains:");
+        for (potion p:arr[i].getPB()) {
+            out.println("+"+p.getValue()+" "+p.getType()+": "+p.getTurns()+"⇆");
+        }
+        out.print("Select potion to drink (1-"+arr[i].getPB().size()+"): ");
+        int num = Integer.parseInt(br.readLine());
+        if (num<1 || num>arr[i].getPB().size()) {
+            return;
+        }
+        num--;
+        Set<String> activeEffects = new HashSet<>();
+        for (peffect p: potionEffects) {
+            if (p.getName().equals(arr[i].getName())) activeEffects.add(p.getType());
+        }
+        if (activeEffects.contains(arr[i].getPB().get(num).getType())) {
+            out.println("You already have this effect active!");
+            return;
+        }
+        out.println("Consumed potion!");
+        peffect p = new peffect(arr[i].getName(),arr[i].getPB().get(num).getType(),arr[i].getPB().get(num).getValue(),arr[i].getPB().get(num).getTurns());
+        switch(p.getType()) {
+            case "Health Regen": arr[i].setHPRegen(arr[i].getHPRegen()+p.getValue()); break;
+            case "Mana Regen": arr[i].setMR(arr[i].getMR()+p.getValue()); break;
+            case "Strength": arr[i].setElement(0, 0, arr[i].getElement(0,0)+p.getValue()); break;
+            case "Dexterity": arr[i].setElement(0, 1, arr[i].getElement(0,1)+p.getValue()); break;
+            case "Intelligence": arr[i].setElement(0, 2, arr[i].getElement(0,2)+p.getValue()); break;
+            case "Defence": arr[i].setElement(0, 3, arr[i].getElement(0,3)+p.getValue()); break;
+            case "Agility": arr[i].setElement(0, 4, arr[i].getElement(0,4)+p.getValue()); break;
+        }
+        potionEffects.add(p);
+        arr[i].getPB().remove(num);
+    }
+
     public static void mapMenu(int i) throws IOException {
         out.println("Options:");
         out.println("1: Travel");
@@ -1215,7 +1309,7 @@ public class BalancedGame {
             else {
                 arr[i].setAP(arr[i].getAP()-3);
                 out.println("A new island has been built!");
-                addToEventLog(arr[i]+" built a new island");
+                addToEventLog(arr[i].getName()+" built a new island");
             }
         }
         else if (choice==2) {
@@ -1260,17 +1354,17 @@ public class BalancedGame {
                 out.println("Bridge connecting islands "+smol+" and "+big+" has been connected!");
                 if (option==3) {
                     out.println("This bridge will last for "+cost+" turns before collapsing");
-                    addToEventLog(arr[i]+" built a temporary bridge from "+smol+" to "+big);
+                    addToEventLog(arr[i].getName()+" built a temporary bridge from "+smol+" to "+big);
                 }
                 else if (option==2) {
-                    addToEventLog(arr[i]+" built a toll bridge from "+smol+" to "+big);
+                    addToEventLog(arr[i].getName()+" built a toll bridge from "+smol+" to "+big);
                 }
                 else if (option==1) {
-                    addToEventLog(arr[i]+" built a bridge from "+smol+" to "+big);
+                    addToEventLog(arr[i].getName()+" built a bridge from "+smol+" to "+big);
                 }
                 tuple a = new tuple();
                 a.first = big;
-                a.second = (cost==12) ? (int) Math.ceil(bfs(smol, big)/2.0) : 0;
+                a.second = (cost==8) ? (int) Math.ceil(bfs(smol, big)/2.0) : 0;
                 a.third = (option==3) ? cost : -1;
                 tuple b = new tuple();
                 b.first = smol;
@@ -1343,7 +1437,7 @@ public class BalancedGame {
                 }
             }
             out.println("Burned bridge connecting islands "+one+" and "+two);
-            addToEventLog(arr[i]+" burned a bridge from "+one+" to "+two);
+            addToEventLog(arr[i].getName()+" burned a bridge from "+one+" to "+two);
         }
     }
     public static int bfs(int start, int end) {
@@ -1367,14 +1461,16 @@ public class BalancedGame {
     }
 
     public static void dustMenu(int i) throws IOException {
-        out.println("Welcome to the Dust Center!");
         out.println("Would you like to add dust to weapons or upgrade dust?");
         out.println("1: Add dust to weapon");
         out.println("2: Upgrade dust tier");
         int choice = Integer.parseInt(br.readLine());
         if (choice==1) {
-            out.println("Select weapon (1-5 for spells, 6-7 for weapons)");
-            int weaponType = Integer.parseInt(br.readLine());
+            out.println("Selection Menu: ");
+            out.println("Spell: 1-5");
+            out.println("Weapon: 6-7");
+            out.println("Armour: 8-11");
+            int optionType = Integer.parseInt(br.readLine());
             out.print("Type? ");
             String elementType = br.readLine().toLowerCase();
             elementType = elementType.substring(0,1).toUpperCase()+elementType.substring(1);
@@ -1398,13 +1494,17 @@ public class BalancedGame {
                 case "Fire": elementNum = 4; break;
                 case "Air": elementNum = 5; break;
             }
-            if (weaponType>=1 && weaponType<=5) {
-                arr[i].getSpell(weaponType-1).addDmgs(elementNum, amount*tierDamage[tier-1]);
+            if (optionType>=1 && optionType<=5) {
+                arr[i].getSpell(optionType-1).addDmgs(elementNum, amount*tierDamage[tier-1]);
                 out.println("You increased the damage on your spell!");
             }
-            else if (weaponType>=6 && weaponType<=7) {
-                arr[i].getWeapon(weaponType-6).addDmgs(elementNum, amount*tierDamage[tier-1]);
+            else if (optionType>=6 && optionType<=7) {
+                arr[i].getWeapon(optionType-6).addDmgs(elementNum, amount*tierDamage[tier-1]);
                 out.println("You increased the damage on your weapon!");
+            }
+            else if (optionType>=8 && optionType<=11) {
+                arr[i].getArmour(optionType-8).addDefences(elementNum, 2*amount*tierDamage[tier-1]);
+                out.println("You increased the damage on your armour piece!");
             }
             arr[i].addInventoryValue(item, -amount);
         }
@@ -1419,14 +1519,14 @@ public class BalancedGame {
                 for (String elementType:elementTypes) {
                     for (int dustTier = 0; dustTier<dustTiers.length; dustTier++) {
                         String item = elementType+" Dust"+dustTiers[dustTier];
-                        if (arr[i].getInventoryValue(item)<2) {
+                        if (arr[i].getInventoryValue(item)<4) {
                             break;
                         }
                         else if (dustTiers[dustTier].equals(" IV")) {
                             break;
                         }
                         while (true) {
-                            if (arr[i].getInventoryValue(item)<2) {
+                            if (arr[i].getInventoryValue(item)<4) {
                                 break;
                             }
                             arr[i].addInventoryValue(item, -4);
@@ -1508,6 +1608,23 @@ public class BalancedGame {
             }
         }
     }
+
+    /**
+     * Creates and adds game events to the "lst" arraylist
+     */
+    public static void eventMaker() {
+        int type = (int) (Math.random()*2)+1;
+        int multiplier = ((int) (Math.random()*4)+1)*25;
+        int dmg = (int) (Math.random()*eventTypes.length);
+        if (eventTypes[dmg].equals("Spell Cost")) {multiplier = ((int) (Math.random()*3)+1)*25;}
+        if (type!=1) multiplier*=-1;
+        int length = (int) (Math.random()*4)+2;
+        nextEvent+=1;
+        event e = new event(multiplier,eventTypes[dmg],turn,turn+length-1);
+        lst.add(e);
+        curevent.add(e);
+    }
+
     public static void weatherGen() {
         int[] intense = {75,300,75,50,25,100};
         int[] altint = {50,150};

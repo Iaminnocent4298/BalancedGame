@@ -313,9 +313,8 @@ function draw(force) {
     const islandId = data.arr[i].location - 1;
     const island = islands[islandId];
     const playerName = data.arr[i].name;
-    let playerCount = islandPlayerCount[islandId]++;
-
     if (data.arr[i].isAlive == false) continue
+    let playerCount = islandPlayerCount[islandId]++;
 
     ctx.fillStyle = hoveredIsland === island ? "#ffe5fb" : "#f6c3ff";
     ctx.fillText(playerName, island.x, island.y - playerCount * 0.1 - 0.35);

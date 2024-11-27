@@ -1012,11 +1012,11 @@ export function updateGameDisplay(received, overwriteAll) {
   }
 
   for (const [spellId, name, cost] of [
-    [0, "Spell 1", 10],
-    [1, "Spell 2", 20],
-    [2, "Spell 3", 40],
-    [3, "Spell 4", 80],
-    [4, "AOE Spell", 15],
+    [0, "Spell 1", 5],
+    [1, "Spell 2", 10],
+    [2, "Spell 3", 20],
+    [3, "Spell 4", 40],
+    [4, "AOE Spell", 7],
   ]) {
     row(
       [
@@ -1034,12 +1034,29 @@ export function updateGameDisplay(received, overwriteAll) {
   for (let weaponId = 0; weaponId < data.arr[0].weapons.length; weaponId++) {
     row(
       [
-        [classDiv("Melee Weapon", "primary"), classDiv("25 AP", "secondary")],
-        [classDiv("Ranged Weapon", "primary"), classDiv("35 AP", "secondary")],
+        [classDiv("Melee Weapon", "primary"), classDiv("12 AP", "secondary")],
+        [classDiv("Ranged Weapon", "primary"), classDiv("17 AP", "secondary")],
       ][weaponId],
       (_, i) => weapon(data.arr[i].weapons[weaponId]),
     );
   }
+
+  row = table("armour");
+
+  row(element("h3", "Armour"), playerHeader);
+
+  for (let armourId = 0; armourId < data.arr[0].armour.length; armourId++) {
+    row(
+      [
+        [classDiv("Helmet", "primary"), classDiv("6 AP", "secondary")],
+        [classDiv("Chestplate", "primary"), classDiv("12 AP", "secondary")],
+        [classDiv("Pants", "primary"), classDiv("9 AP", "secondary")],
+        [classDiv("Boots", "primary"), classDiv("6 AP", "secondary")],
+      ][armourId],
+      (_, i) => weapon(data.arr[i].armour[armourId]), //TODO: ADD armour() FUNCTION
+    );
+  }
+
 
   tableContainerDiv("useful-info", [
     element("h3", "Useful Info"),

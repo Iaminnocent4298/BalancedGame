@@ -20,6 +20,7 @@ public class playerData {
     private int location;
     private spell[] spells;
     private weapon[] weapons;
+    private armour[] armour;
     private String modifier;
     /**
      * The constructor for player data
@@ -56,6 +57,10 @@ public class playerData {
         weapons = new weapon[2];
         for (int i=0; i<2; i++) {
             weapons[i] = null;
+        }
+        armour = new armour[4];
+        for (int i=0; i<4; i++) {
+            armour[i] = null;
         }
         modifier = "None";
     }
@@ -102,6 +107,7 @@ public class playerData {
      */
     public spell getSpell(int spellNum) {return spells[spellNum];}
     public weapon getWeapon(int weaponNum) {return weapons[weaponNum];}
+    public armour getArmour(int armourNum) {return armour[armourNum];}
     public String getModifier() {return modifier;}
     //SETTERS
     public void setAlive(boolean b) {isAlive = b;}
@@ -142,6 +148,7 @@ public class playerData {
      */
     public void setSpell(int spellNum, spell s) {spells[spellNum] = s;}
     public void setWeapon(int weaponNum, weapon w) {weapons[weaponNum] = w;}
+    public void setArmour(int armourNum, armour a) {armour[armourNum] = a;}
     public void setModifier(String s) {modifier = s;}
     //MUTATORS
     public void addLives(int v) {lives+=v;}

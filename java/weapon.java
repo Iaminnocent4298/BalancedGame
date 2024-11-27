@@ -19,7 +19,7 @@ public class weapon {
     //MUTATORS
     /**
      * Increases the damage of a certain element
-     * @param i The element (0-7)
+     * @param i The element (0-6)
      * @param v The amount of damage to increase by
      */
     public void addDmgs(int i, int v) {
