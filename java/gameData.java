@@ -3,7 +3,6 @@ public class gameData {
     String version;
     int turn;
     int subturn;
-    int nextEvent;
     int islandLim;
     int islandsBuilt;
     int lockoutReset;
@@ -36,7 +35,6 @@ public class gameData {
         version = vers;
         turn = 0;
         subturn = p;
-        nextEvent = 2;
         islandLim = 26;
         islandsBuilt = 1;
         lockoutReset = 10;

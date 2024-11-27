@@ -29,7 +29,6 @@ public class BalancedGame {
     static int playerCount;
     static int islandLim = 26;
     static int islandsBuilt;
-    static int nextEvent;
     static int lockoutReset;
     static playerData[] arr;
     static lockoutGoal[] goals = new lockoutGoal[12];
@@ -64,6 +63,7 @@ public class BalancedGame {
             out.println("1: Main Game A");
             out.println("2: Main Game B");
             out.println("3: RTP Cup");
+            out.println("4: RTP Second Chance");
             out.println("Other to quit");
             ans = Integer.parseInt(br.readLine());
             playerCount = 6;
@@ -71,6 +71,7 @@ public class BalancedGame {
                 case 1: path = "maina.json"; break;
                 case 2: path = "mainb.json"; break;
                 case 3: path = "rtpcup.json"; break;
+                case 4: path = "rtp2chance.json"; break;
                 default: return;
             }
             input();
@@ -122,7 +123,6 @@ public class BalancedGame {
         disaster = game.disaster;
         temp = game.temp;
         islandsBuilt = game.islandsBuilt;
-        nextEvent = game.nextEvent;
         lockoutReset = game.lockoutReset;
         curevent = game.curevent;
         bridges = game.bridges;
@@ -152,7 +152,6 @@ public class BalancedGame {
         game.disaster = disaster;
         game.temp = temp;
         game.islandsBuilt = islandsBuilt;
-        game.nextEvent = nextEvent;
         game.lockoutReset = lockoutReset;
         game.curevent = curevent;
         game.bridges = bridges;
@@ -311,7 +310,7 @@ public class BalancedGame {
                 }
                 else index++;
             }
-            if (turn==nextEvent) eventMaker();
+            eventMaker();
             if (turn==lockoutReset) {
                 lockoutGen();
                 lockoutReset+=10;
@@ -1135,6 +1134,13 @@ public class BalancedGame {
             rerollCost = arr[playerNum].getArmour(armourType).getRerollCost();
         }
         arr[playerNum].setArmour(armourType, new armour(maxHealthBuff, elementalDefence, name, rarityName[rarityTier], rerollCost));
+        //DEBUGGING
+        out.println("Max Health Buff: "+maxHealthBuff);
+        out.println("Defences:");
+        String[] defType = {"Earth","Thunder","Water","Fire","Air"};
+        for (int i=0; i<5; i++) {
+            out.println(defType[i]+": "+elementalDefence[i]);
+        }
         addToEventLog(arr[playerNum].getName()+" rolled an armour piece and got a "+rarityName[rarityTier]+"!");
     }
     public static void potionMenu(int i) throws IOException {
@@ -1619,7 +1625,6 @@ public class BalancedGame {
         if (eventTypes[dmg].equals("Spell Cost")) {multiplier = ((int) (Math.random()*3)+1)*25;}
         if (type!=1) multiplier*=-1;
         int length = (int) (Math.random()*4)+2;
-        nextEvent+=1;
         event e = new event(multiplier,eventTypes[dmg],turn,turn+length-1);
         lst.add(e);
         curevent.add(e);
@@ -1748,7 +1753,7 @@ public class BalancedGame {
             out.println(arr[i].getName()+" has levelled up!");
             arr[i].addLvl(1);
             arr[i].setLXP(r2(arr[i].getLXP()-arr[i].getNL()));
-            arr[i].addNL(100*(arr[i].getLvl()/5+1));
+            arr[i].addNL(50*(arr[i].getLvl()/5+1));
             out.println("Select a level up choice:");
             out.println("1: gain elemental dust");
             out.println("2: to gain AP");

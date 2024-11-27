@@ -34,7 +34,7 @@ public class playerData {
         abilityPoints = 0;
         lvl = 0;
         lvlxp = 0;
-        nextlvl = 100;
+        nextlvl = 50;
         maxhp = 2500;
         hp = maxhp;
         hpregen = 10;

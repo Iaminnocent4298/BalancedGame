@@ -438,7 +438,7 @@ export function updateGameDisplay(received, overwriteAll) {
       ),
       yearEl,
       weatherEl,
-      classDiv("Next Event: Turn " + data.nextEvent, "lvl"),
+      classDiv("Next Event: Turn " + (data.turn + 1), "lvl"),
       element("h4", "Disaster Info"),
       ...(data.disaster
         ? [
