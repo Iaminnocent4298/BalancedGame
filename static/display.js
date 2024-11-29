@@ -595,13 +595,13 @@ export function updateGameDisplay(received, overwriteAll) {
       if (style) Object.assign(tr.style, style);
 
       function rowItem(i, dat, options) {
-        
         const el = item(dat, { defaultTag: "td", options });
         if (i === data.subturn - 1) el.classList.add("highlighted");
-        else if (i !== null && !players[i]["isAlive"]) el.classList.add("darkened");
-      
+        else if (i !== null && !players[i]["isAlive"])
+          el.classList.add("darkened");
+
         tr.appendChild(el);
-        
+
         return el;
       }
       function headerItem(dat, options) {
@@ -685,7 +685,7 @@ export function updateGameDisplay(received, overwriteAll) {
       } else {
         className = "modifier";
       }
-      return classSpan(`${player.modifier}`,className);
+      return classSpan(`${player.modifier}`, className);
     },
     "modifier",
   );
@@ -898,11 +898,11 @@ export function updateGameDisplay(received, overwriteAll) {
         const [symbol, className] = {
           "Health Regen": ["❣", "heal"],
           "Mana Regen": ["⸎", "manarg"],
-          "Strength": ["✤", "earth"],
-          "Dexterity": ["✦", "thunder"],
-          "Intelligence": ["❉", "water"],
-          "Defence": ["✹", "fire"],
-          "Agility": ["❋", "air"],
+          Strength: ["✤", "earth"],
+          Dexterity: ["✦", "thunder"],
+          Intelligence: ["❉", "water"],
+          Defence: ["✹", "fire"],
+          Agility: ["❋", "air"],
         }[effect.type];
 
         arr.push([
@@ -975,12 +975,7 @@ export function updateGameDisplay(received, overwriteAll) {
       return element("td", "Not Unlocked", { className: "inactive" });
 
     const arr = [];
-    arr.push(
-      classDiv(
-        weapon.name,
-        "underline " + weapon.rarity.toLowerCase(),
-      ),
-    );
+    arr.push(classDiv(weapon.name, "underline " + weapon.rarity.toLowerCase()));
     arr.push(newline());
 
     for (const [index, el, symbol] of [
@@ -1007,6 +1002,40 @@ export function updateGameDisplay(received, overwriteAll) {
     arr.push(classDiv("↻ " + weapon.rerollcost, "tertiary"));
     arr.push(newline());
     arr.push(classDiv(prettify(weapon.rarity), weapon.rarity.toLowerCase()));
+
+    return arr;
+  }
+
+  function armour(armour) {
+    if (!armour)
+      return element("td", "Not Unlocked", { className: "inactive" });
+
+    const arr = [];
+    arr.push(classDiv(armour.name, "underline " + armour.rarity.toLowerCase()));
+    arr.push(newline());
+
+    if (armour.maxHealthBuff) {
+      arr.push(classDiv(`+${armour.maxHealthBuff} ❤`, "hp"));
+      arr.push(newline());
+    }
+
+    for (const [index, el, symbol] of [
+      [0, "earth"],
+      [1, "thunder"],
+      [2, "water"],
+      [3, "fire"],
+      [4, "air"],
+    ]) {
+      const defence = armour.elementalDefences[index];
+      if (defence == 0) continue;
+
+      arr.push(classDiv(`❈ ${defence}`, el));
+    }
+
+    arr.push(newline());
+    arr.push(classDiv("↻ " + armour.rerollCost, "tertiary"));
+    arr.push(newline());
+    arr.push(classDiv(prettify(armour.rarity), armour.rarity.toLowerCase()));
 
     return arr;
   }
@@ -1053,10 +1082,9 @@ export function updateGameDisplay(received, overwriteAll) {
         [classDiv("Pants", "primary"), classDiv("9 AP", "secondary")],
         [classDiv("Boots", "primary"), classDiv("6 AP", "secondary")],
       ][armourId],
-      (_, i) => weapon(data.arr[i].armour[armourId]), //TODO: ADD armour() FUNCTION
+      (_, i) => armour(data.arr[i].armour[armourId]),
     );
   }
-
 
   tableContainerDiv("useful-info", [
     element("h3", "Useful Info"),
