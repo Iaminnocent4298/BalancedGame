@@ -53,7 +53,7 @@ public class BalancedGame {
     /**
      * The total "score" of each rarity of armour
      */
-    static int[] armourWeight = {100,200,350,550,800,1100};
+    static int[] armourWeight = {5,10,15,20,25,35};
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static String path;
     public static void main(String[] args) throws Exception {
@@ -856,19 +856,19 @@ public class BalancedGame {
                         }
                         else {
                             arr[i].setAP(arr[i].getAP()-APCost);
-                            armourGen(i, num, 0);
+                            armourGen(i, num-8, 0);
                         }
                     }
                     else {
                         arr[i].setAP(arr[i].getAP()-APCost);
-                        armourGen(i, num, 0);
+                        armourGen(i, num-8, 0);
                     }
                     if (arr[i].getArmour(num-8).getRerollCost()==0) arr[i].getArmour(num-8).setRerollCost(1);
                     else arr[i].getArmour(num-8).setRerollCost(Math.min(8,arr[i].getArmour(num-8).getRerollCost()*2));
                 }
             }
         }
-        if (num==6 || num==7) {
+        else if (num==6 || num==7) {
             int cost = 0;
             if (arr[i].getWeapon((num==6) ? 0 : 1)==null) {
                 if (num==6) {
@@ -1034,25 +1034,9 @@ public class BalancedGame {
             minmax[1][damageTypes.get(index)]++;
         }
         for (int i=0; i<((x<=5) ? 7 : 6); i++) {
-            int damageRange = (int) (Math.random()*minmax[0][damageTypes.get(i)]/2);
-            minmax[0][damageTypes.get(i)]-=damageRange;
-            minmax[1][damageTypes.get(i)]+=damageRange;
-        }
-        
-        int base = -1;
-        for (int a=elements-1; a>=0; a--) {
-            int avgdps = (a==0) ? dps : (int) (Math.random()*(dps-a))+1;
-            dps-=avgdps;
-            int dmgtype;
-            while (true) {
-                int limit = (x<=5) ? 7 : 6;
-                dmgtype = (int) (Math.random()*limit);
-                if (base==-1) base = dmgtype;
-                if (minmax[1][dmgtype]==0) break;
-            }
-            int range = (int) (Math.random()*avgdps);
-            minmax[0][dmgtype] = avgdps-range;
-            minmax[1][dmgtype] = avgdps+range;
+            int damageRange = (int) (Math.random()*minmax[0][i]/2);
+            minmax[0][i]-=damageRange;
+            minmax[1][i]+=damageRange;
         }
         out.println("Number of elements: "+elements);
         out.println("Rarity: "+rarityName[rarity]);
@@ -1078,13 +1062,20 @@ public class BalancedGame {
     public static void armourGen(int playerNum, int armourType, int amplifierTier) throws IOException {
         out.print("Name: ");
         String name = br.readLine();
+        if (arr[playerNum].getArmour(armourType)!=null) {
+            arr[playerNum].addMaxHP(-arr[playerNum].getArmour(armourType).getMaxHealthBuff());
+            int[] elementalDefences = arr[playerNum].getArmour(armourType).getElementalDefences();
+            for (int i=0; i<5; i++) {
+                arr[playerNum].addElement(1, i, -elementalDefences[i]);
+            }
+        }
         String[] rarityName = {"Common","Unique","Rare","Legendary","Fabled","Mythic"};
         double[] armourTypeBuff = {1,2,1.5,1};
         int rarityTier = rarityGen(amplifierTier);
         int armourScore = armourWeight[rarityTier];
-        int healthScore = (int) (Math.random()*(armourScore*0.7-armourScore*0.3+1))+(int) (armourScore*0.3);
+        int healthScore = (int) (Math.random()*(armourScore*0.8-armourScore*0.4+1))+(int) (armourScore*0.4);
         int elementalDefenceScore = armourScore-healthScore;
-        int maxHealthBuff = (int) (healthScore*armourTypeBuff[armourType]*10);
+        int maxHealthBuff = (int) (healthScore*armourTypeBuff[armourType]*25);
         int elementalDefenceBuff = (int) (elementalDefenceScore*armourTypeBuff[armourType]*5);
         int elementCount = (int) (Math.random()*100)+1;
         if (elementCount<=40) elementCount = 1;
@@ -1111,7 +1102,7 @@ public class BalancedGame {
         elementsAdded = 0;
         while (elementsAdded<negativeElements) {
             int index = (int) (Math.random()*elementCount);
-            if (!elementalDefences.contains(elementalDefences.get(index))) {
+            if (!negativeElementalDefences.contains(elementalDefences.get(index))) {
                 elementsAdded++;
                 negativeElementalDefences.add(elementalDefences.get(index));
             }
@@ -1140,6 +1131,10 @@ public class BalancedGame {
         String[] defType = {"Earth","Thunder","Water","Fire","Air"};
         for (int i=0; i<5; i++) {
             out.println(defType[i]+": "+elementalDefence[i]);
+        }
+        arr[playerNum].addMaxHP(maxHealthBuff);
+        for (int i=0; i<5; i++) {
+            arr[playerNum].addElement(1, i, elementalDefence[i]);
         }
         addToEventLog(arr[playerNum].getName()+" rolled an armour piece and got a "+rarityName[rarityTier]+"!");
     }

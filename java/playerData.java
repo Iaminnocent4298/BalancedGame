@@ -84,6 +84,12 @@ public class playerData {
     public int getStaminaRegen() {return staminaregen;}
     public int getND() {return neutraldmg;}
     public int[][] getElements() {return elements;}
+    /**
+     * Returns the data value of the elements and their defences
+     * @param i 0 for attack, 1 for defence
+     * @param j The element type (0 = earth, 1 = thunder, etc)
+     * @return The value of the specified element
+     */
     public int getElement(int i, int j) {return elements[i][j];}
     public ArrayList<potion> getPB() {return potionBag;}
     public int getInventoryValue(String s) {
@@ -177,6 +183,12 @@ public class playerData {
             inventory.remove(s);
         }
     }
+    /**
+     * 
+     * @param i 0 for attack, 1 for defence
+     * @param j The element type (0 = earth, 1 = thunder, etc)
+     * @param v The value to increase by
+     */
     public void addElement(int i, int j, int v) {elements[i][j]+=v;}
     public void addLockoutProgressValue(String s, double d) {
         if (lockoutProgress.containsKey(s)) {
