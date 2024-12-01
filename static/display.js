@@ -24,7 +24,6 @@ const QUOTES = [
   "“New Event! -100% ALL DAMAGE” L bozo",
   "“WHY IS IT THROWING AN ERROR- oh.”",
   "No, the logo is not the spikes from Boxel Rebound",
-  'Ah yes, I love the weapon name "0 1"',
   "When you reroll a common and it was worse than the previous common",
   '"Lemme poke Brian" -> java.lang.NullPointerException',
   '"It\'s winter!" "Great what\'s the temperature" "20 degrees-"',
@@ -33,11 +32,11 @@ const QUOTES = [
   "The goal of the game is to make your opponent's health 0 while keeping your own health above 0",
   "Bing Bong noises",
   "Unga Bunga",
-  '"object Object',
+  '"object Object"',
   '"No o no No No"',
   "ap bankN!KNKNK!NK!N",
-  "1900 DAMAGE WHAT",
-  '"This is fine actually" meanwhile Brian with a literal 400 dps weapon',
+  "Beta server shenanigans",
+  '"This is fine actually" meanwhile Eric dealing 3000 damage with only spell 1 spam',
   "When the disaster stops you from completing a lockout challenge",
   '"You should be able to complete the exam in 30-45 mins" - Ms. Krasteva',
   "Blåhaj",
@@ -60,6 +59,8 @@ const QUOTES = [
   "Imagine being the 13th player",
   "The damage calculation is ALWAYS incorrect!",
   "With great features come great bugs",
+  "You think your strats will go undetected without being nerfed? Then you're WRONG",
+  "I am..... inevitable",
 ];
 
 function prettify(str) {

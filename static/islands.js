@@ -1,6 +1,6 @@
 const PI = Math.PI;
 const TAU = PI * 2;
-const FONT = "Roboto";
+const FONT = "Patrick Hand";
 
 let data = null;
 export function updateData(newData) {
@@ -249,10 +249,10 @@ function draw(force) {
     island.connected = connected;
   }
   ctx.lineWidth = 0.15;
-  ctx.strokeStyle = "#a66ecc60";
+  ctx.strokeStyle = "#8ecee860";
   ctx.stroke();
   ctx.lineWidth = 0.02;
-  ctx.strokeStyle = "#a66eccd0";
+  ctx.strokeStyle = "#8ecee8d0";
   ctx.stroke();
 
   ctx.beginPath();
@@ -288,8 +288,8 @@ function draw(force) {
     }
   }
   ctx.lineWidth = 0.02;
-  ctx.fillStyle = "#672f97";
-  ctx.strokeStyle = "#a66ecc";
+  ctx.fillStyle = "#2061bd";
+  ctx.strokeStyle = "#6eb1cc";
   ctx.fill();
   ctx.stroke();
 
@@ -299,7 +299,7 @@ function draw(force) {
     ctx.fillText(cost + " AP", (i1.x + i2.x) / 2, (i1.y + i2.y) / 2 + 0.05);
   }
 
-  ctx.fillStyle = "#cd8fff";
+  ctx.fillStyle = "#8feaff";
   ctx.font = `0.18px '${FONT}'`;
   for (const island of islands) {
     if (hoveredIsland !== island) {
@@ -316,7 +316,7 @@ function draw(force) {
     if (data.arr[i].isAlive == false) continue
     let playerCount = islandPlayerCount[islandId]++;
 
-    ctx.fillStyle = hoveredIsland === island ? "#ffe5fb" : "#f6c3ff";
+    ctx.fillStyle = hoveredIsland === island ? "#e5fbff" : "#c3f1ff";
     ctx.fillText(playerName, island.x, island.y - playerCount * 0.1 - 0.35);
   }
 
@@ -327,7 +327,7 @@ function draw(force) {
     ctx.beginPath();
     ctx.moveTo(draggedIsland.x, draggedIsland.y);
     ctx.lineTo(mouseX, mouseY);
-    ctx.strokeStyle = "#cd96e6";
+    ctx.strokeStyle = "#96d2e6";
     ctx.lineWidth = 0.012;
     ctx.stroke();
   } else if (hoveredIsland) {
@@ -335,14 +335,14 @@ function draw(force) {
 
     ctx.lineWidth = 0.02;
     ctx.beginPath();
-    ctx.fillStyle = "#7944a5";
-    ctx.strokeStyle = "#cd96e6";
+    ctx.fillStyle = "#38afb5";
+    ctx.strokeStyle = "#96d2e6";
     ctx.arc(hoveredIsland.x, hoveredIsland.y, ISLAND_RADIUS, 0, TAU);
     ctx.fill();
     ctx.stroke();
 
     ctx.font = `0.18px '${FONT}'`;
-    ctx.fillStyle = "#f6c3ff";
+    ctx.fillStyle = "#c3f1ff";
     ctx.fillText(
       hoveredIsland.id,
       hoveredIsland.x - 0.008,

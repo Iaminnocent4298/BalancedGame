@@ -48,8 +48,8 @@ public class BalancedGame {
     static String[] eventTypes = {"Spell Damage","Neutral Damage","Melee Damage","Ranged Damage","Weapon Damage","Health Regen","Mana Regen","Spell Cost",
     "All Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage"};
     static String[] lockoutTypes = {"Neutral Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage","Heal","Mana","Spell Damage","Melee Damage","Ranged Damage"};
-    static int[] weapondps = {20,25,35,50,70,100}; //base
-    static int[] spelldps = {40,45,55,70,90,120}; //base spell 1
+    static int[] weapondps = {15,20,30,45,65,90}; //base
+    static int[] spelldps = {25,30,40,55,75,100}; //base spell 1
     /**
      * The total "score" of each rarity of armour
      */
@@ -58,7 +58,7 @@ public class BalancedGame {
     static String path;
     public static void main(String[] args) throws Exception {
         int ans = 1;
-        while (ans>=1 && ans<=3) {
+        while (ans>=1 && ans<=4) {
             out.println("Which game?");
             out.println("1: Main Game A");
             out.println("2: Main Game B");
@@ -924,8 +924,8 @@ public class BalancedGame {
                         arr[i].setAP(arr[i].getAP()-cost);
                         weaponGen(num, 0);
                     }
-                    if (arr[i].getWeapon(1).getRC()==0) arr[i].getWeapon((num==6) ? 0 : 1).setRC(1);
-                    else arr[i].getWeapon(1).setRC(Math.min(8,arr[i].getWeapon((num==6) ? 0 : 1).getRC()*2));
+                    if (arr[i].getWeapon((num==6) ? 0 : 1).getRC()==0) arr[i].getWeapon((num==6) ? 0 : 1).setRC(1);
+                    else arr[i].getWeapon((num==6) ? 0 : 1).setRC(Math.min(8,arr[i].getWeapon((num==6) ? 0 : 1).getRC()*2));
                 }
             }
         }
@@ -1078,10 +1078,10 @@ public class BalancedGame {
         int maxHealthBuff = (int) (healthScore*armourTypeBuff[armourType]*25);
         int elementalDefenceBuff = (int) (elementalDefenceScore*armourTypeBuff[armourType]*5);
         int elementCount = (int) (Math.random()*100)+1;
-        if (elementCount<=40) elementCount = 1;
-        else if (elementCount<=70) elementCount = 2;
-        else if (elementCount<=90) elementCount = 3;
-        else if (elementCount<=97) elementCount = 4;
+        if (elementCount<=20) elementCount = 1;
+        else if (elementCount<=40) elementCount = 2;
+        else if (elementCount<=60) elementCount = 3;
+        else if (elementCount<=80) elementCount = 4;
         else elementCount = 5;
 
         // The number of elements with negative defence values
@@ -1463,7 +1463,7 @@ public class BalancedGame {
 
     public static void dustMenu(int i) throws IOException {
         out.println("Would you like to add dust to weapons or upgrade dust?");
-        out.println("1: Add dust to weapon");
+        out.println("1: Add dust");
         out.println("2: Upgrade dust tier");
         int choice = Integer.parseInt(br.readLine());
         if (choice==1) {
@@ -1489,11 +1489,11 @@ public class BalancedGame {
             int[] tierDamage = {1,5,21,85};
             int elementNum = -1;
             switch (elementType) {
-                case "Earth": elementNum = 1; break;
-                case "Thunder": elementNum = 2; break;
-                case "Water": elementNum = 3; break;
-                case "Fire": elementNum = 4; break;
-                case "Air": elementNum = 5; break;
+                case "Earth": elementNum = 0; break;
+                case "Thunder": elementNum = 1; break;
+                case "Water": elementNum = 2; break;
+                case "Fire": elementNum = 3; break;
+                case "Air": elementNum = 4; break;
             }
             if (optionType>=1 && optionType<=5) {
                 arr[i].getSpell(optionType-1).addDmgs(elementNum, amount*tierDamage[tier-1]);
@@ -1748,7 +1748,7 @@ public class BalancedGame {
             out.println(arr[i].getName()+" has levelled up!");
             arr[i].addLvl(1);
             arr[i].setLXP(r2(arr[i].getLXP()-arr[i].getNL()));
-            arr[i].addNL(50*(arr[i].getLvl()/5+1));
+            arr[i].addNL(100*(arr[i].getLvl()/5+1));
             out.println("Select a level up choice:");
             out.println("1: gain elemental dust");
             out.println("2: to gain AP");
@@ -1962,6 +1962,7 @@ public class BalancedGame {
         lockoutReset = turn+10;
     }
     public static double effectiveness(int n) {
+        if (n>200) return 200;
         return -(n-200)*(n-200)/400.0+100.0;
     }
 }
