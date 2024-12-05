@@ -142,7 +142,7 @@ public class BalancedGame {
      */
     public static void output() throws IOException {
         gameData game = new gameData();
-        game.version = "2.9";
+        game.version = "2.9.1";
         game.turn = turn;
         game.subturn = subturn;
         game.islandLim = islandLim;
@@ -170,10 +170,11 @@ public class BalancedGame {
      * @throws Exception
      */
     public static void nextTurn() throws Exception {
+        int attackerIndex = subturn-1;
         int choice = 0;
         while (choice!=-1) {
-            out.println("Actions - "+(arr[subturn-1].getName()));
-            out.println("Island #: "+arr[subturn-1].getLocation());
+            out.println("Actions - "+(arr[attackerIndex].getName()));
+            out.println("Island #: "+arr[attackerIndex].getLocation());
             out.println("1: Use AP");
             out.println("2: Weapon/Spell Menu");
             out.println("3: Other Menus");
@@ -196,23 +197,34 @@ public class BalancedGame {
                 int WSChoice = Integer.parseInt(br.readLine());
                 if (WSChoice==1) out.print("Player? ");
                 else if (WSChoice==2) out.print("Player/Island? ");
-                else if (WSChoice==3) rerollMenu(subturn-1);
+                else if (WSChoice==3) rerollMenu(attackerIndex);
                 if (WSChoice==1 || WSChoice==2) {
                     String name = br.readLine();
                     try {
                         int islandNum = Integer.parseInt(name);
-                        if (WSChoice==2) spell(islandNum);
+                        if (WSChoice==2) {
+                            if (arr[attackerIndex].getModifier().equals("Confusion")) {
+                                int confusionRoll = (int) (Math.random()*100)+1;
+                                if (confusionRoll<=10) {
+                                    out.println("You hit yourself in confusion!");
+                                    addToEventLog("Turn "+turn+"-"+subturn+": "+arr[attackerIndex].getName()+" hit their own island in confusion!");
+                                    spell(arr[attackerIndex].getLocation());
+                                }
+                                else spell(islandNum);
+                            }
+                            else spell(islandNum);
+                        }
                         else {
-                            System.out.println("Error! This weapon cannot attack entire islands at once.");
+                            out.println("Error! This weapon cannot attack entire islands at once.");
                         }
                     }
                     catch (NumberFormatException e) {
-                        int i = findPlayer(name);
-                        if (name.equals(arr[subturn-1].getName().toLowerCase())) {
+                        int targetIndex = findPlayer(name);
+                        if (name.equals(arr[attackerIndex].getName().toLowerCase())) {
                             out.println("You can't attack yourself!");
                         }
                         else {
-                            if (!arr[i].isAlive()) {
+                            if (!arr[targetIndex].isAlive()) {
                                 out.println("The opponent is dead!");
                             }
                             else if (WSChoice==1) {
@@ -221,14 +233,40 @@ public class BalancedGame {
                                 out.println("2: Ranged");
                                 out.println("3: Both");
                                 int ans = Integer.parseInt(br.readLine());
-                                if (ans==1) melee(i);
-                                else if (ans==2) ranged(i);
+                                if (ans==1) weaponAttack(targetIndex, true);
+                                else if (ans==2) weaponAttack(targetIndex, false);
                                 else if (ans==3) {
-                                    melee(i);
-                                    ranged(i);
+                                    if (arr[attackerIndex].getModifier().equals("Confusion")) {
+                                        int confusionRoll = (int) (Math.random()*100)+1;
+                                        if (confusionRoll<=10) {
+                                            out.println("You hit yourself in confusion!");
+                                            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[attackerIndex].getName()+" hit themselves in confusion!");
+                                            weaponAttack(attackerIndex, true);
+                                            weaponAttack(attackerIndex, false);
+                                        }
+                                        else {
+                                            weaponAttack(targetIndex, true);
+                                            weaponAttack(targetIndex, false);
+                                        }
+                                    }
+                                    else {
+                                        weaponAttack(targetIndex, true);
+                                        weaponAttack(targetIndex, false);
+                                    }
                                 }
                             }
-                            else if (WSChoice==2) spell(i);
+                            else if (WSChoice==2) {
+                                if (arr[attackerIndex].getModifier().equals("Confusion")) {
+                                    int confusionRoll = (int) (Math.random()*100)+1;
+                                    if (confusionRoll<=10) {
+                                        out.println("You hit yourself in confusion!");
+                                        addToEventLog("Turn "+turn+"-"+subturn+": "+arr[attackerIndex].getName()+" hit themselves in confusion!");
+                                        spell(attackerIndex);
+                                    }
+                                    else spell(targetIndex);
+                                }
+                                else spell(targetIndex);
+                            }
                         }
                     }
                 }
@@ -378,312 +416,301 @@ public class BalancedGame {
         out.println(arr[subturn-1].getAP()+" AP remaining");
     }
 
-    public static void melee(int i) throws IOException {
-        if (arr[subturn-1].getLocation()!=arr[i].getLocation()) {
+    public static void weaponAttack(int targetIndex, boolean isMelee) throws IOException {
+        /**
+         * The index of the player attacking
+         */
+        int attackerIndex = subturn-1;
+        if (isMelee & arr[attackerIndex].getLocation()!=arr[targetIndex].getLocation()) {
             out.println("You cannot attack them since they are on a different island!");
             return;
         }
-        out.println("Attacking "+arr[i].getName());
-        double sa = Math.min(effectiveness(arr[subturn-1].getElement(0, 0)),99);
-        double da = Math.min(effectiveness(arr[subturn-1].getElement(0, 1)),99);
-        double dd = Math.min(effectiveness(arr[i].getElement(0, 3)),99);
-        double mult = (eventChecker("All Damage")+eventChecker("Weapon Damage")+eventChecker("Melee Damage"))/100.0;
-        sa*=(1+eventChecker("Strength")/100.0);
-        da*=(1+eventChecker("Dexterity")/100.0);
-        dd*=(1+eventChecker("Defence")/100.0)*0.75;
-        sa = Math.max(-100,sa-dd);
-        //ATTACKS
-        double[] damages = {1,0,0,0,0,0};
-        if (arr[subturn-1].getWeapon(0)!=null) {
-            damages = arr[subturn-1].getWeapon(0).rollDmg();
-        }
-        //DEFENCES
-        int[] temp = arr[i].getElements()[1];
-        double[] defences = new double[5];
-        for (int j=0; j<5; j++) {
-            defences[j] = temp[j];
-        }
-        double cdmg = 1;
-        int crit = (int) (Math.random()*100)+1;
-        if (crit<=da) {
-            out.println("Critical Hit!");
-            addToEventLog(arr[subturn-1].getName()+" dealt a critical hit!");
-            cdmg=(2+sa/100.0);
-        }
-        //CALCULATIONS
-        damages[0] = (damages[0])*(1+arr[subturn-1].getND()*1.5/100)*(1+sa/100.0)*cdmg;
-        for (int j=1; j<6; j++) {
-            damages[j] = (damages[j])*(1+arr[subturn-1].getElement(0, j-1)/100)*(1+sa/100.0)*cdmg;
-        }
-        damages[0]*=((1+eventChecker("Neutral Damage")/100.0)+mult);
-        damages[1]*=((1+eventChecker("Earth Damage")/100.0)+mult);
-        damages[2]*=((1+eventChecker("Thunder Damage")/100.0)+mult);
-        damages[3]*=((1+eventChecker("Water Damage")/100.0)+mult);
-        damages[4]*=((1+eventChecker("Fire Damage")/100.0)+mult);
-        damages[5]*=((1+eventChecker("Air Damage")/100.0)+mult);
-        damages[0] = r2(Math.max(0,damages[0]));
-        for (int j=1; j<6; j++) {
-            damages[j] = Math.max(0,r2(damages[j]-defences[j-1]));
-        }
-        out.println("Damage dealt:");
-        String[] dmgTypes = {"Neutral","Earth","Thunder","Water","Fire","Air"};
-        double dmg = 0;
-        for (int j=0; j<6; j++) {
-            out.println(damages[j]+" "+dmgTypes[j]);
-            dmg = r2(dmg+damages[j]);
-        }
-        String[] damageTypes = {"Neutral Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage"};
-        for (int j=0; j<6; j++) {
-            arr[subturn-1].addLockoutProgressValue(damageTypes[j], damages[j]);
-        }
-        arr[subturn-1].addLockoutProgressValue("Melee Damage", dmg);
-        if (arr[i].getModifier().equals("Reflexless") || arr[i].getModifier().equals("Glass Cannon")) {
-            out.println("Modifier! "+arr[i].getName()+" took double damage");
-            arr[i].setHP(r2(arr[i].getHP()-dmg*2));
-        }
-        else {
-            arr[i].setHP(r2(arr[i].getHP()-dmg));
-        }
-        addToEventLog("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" bonked "+arr[i].getName()+" for "+dmg+" damage");
-        out.println(arr[i].getName()+" has "+arr[i].getHP()+" health remaining");
-        arr[subturn-1].addLXP((arr[i].getModifier().equals("Slow Learner")) ? r2(dmg*0.5) : r2(dmg));
-        out.println(arr[subturn-1].getName()+" gained "+dmg+" xp");
-        out.println("Level "+arr[subturn-1].getLvl()+": "+arr[subturn-1].getLXP()+"/"+arr[subturn-1].getNL()+" xp");
-        levelUp(subturn-1);
-        completeLockout(subturn-1);
-        isDead(i);
-    }
-    public static void ranged(int i) throws Exception {
-        if (arr[subturn-1].getWeapon(1)==null) {
-            out.println("You don't own a ranged weapon!");
+        if (!isMelee & arr[attackerIndex].getWeapon(1)==null) {
+            out.println("You do not own a bow!");
             return;
         }
-        out.println("Attacking "+arr[i].getName());
-        double sa = Math.min(effectiveness(arr[subturn-1].getElement(0, 0)),99);
-        double da = Math.min(effectiveness(arr[subturn-1].getElement(0, 1)),99);
-        double dd = Math.min(effectiveness(arr[i].getElement(0, 3)),99);
-        double ag = Math.min(effectiveness(arr[i].getElement(0, 4)),99);
-        double mult = (eventChecker("All Damage")+eventChecker("Weapon Damage")+eventChecker("Ranged Damage"))/100.0;
-        sa*=(1+eventChecker("Strength")/100.0);
-        da*=(1+eventChecker("Dexterity")/100.0);
-        dd*=(1+eventChecker("Defence")/100.0)*0.75;
-        ag*=(1+eventChecker("Agility")/100.0);
-        sa = Math.max(-100,sa-dd);
-        //ATTACKS
-        double[] damages = {1,0,0,0,0,0};
-        if (arr[subturn-1].getWeapon(1)!=null) {
-            damages = arr[subturn-1].getWeapon(1).rollDmg();
+        out.println("Attacking "+arr[targetIndex].getName());
+        double attackerStrength = Math.min(effectiveness(arr[attackerIndex].getElement(0, 0)),99);
+        if (arr[attackerIndex].getModifier().equals("Dumb and Weak")) {
+            attackerStrength = 0;
         }
-        //DEFENCES
-        int[] temp = arr[i].getElements()[1];
-        double[] defences = new double[5];
-        for (int j=0; j<5; j++) {
-            defences[j] = temp[j];
+        double attackerDexterity = Math.min(effectiveness(arr[attackerIndex].getElement(0, 1)),99);
+        double defenderDefence = Math.min(effectiveness(arr[targetIndex].getElement(0, 3)),99);
+        double defenderAgility = Math.min(effectiveness(arr[targetIndex].getElement(0, 4)),99);
+        double eventMultiplier = (eventChecker("All Damage")+eventChecker("Weapon Damage"))/100.0;
+        if (isMelee) {
+            eventMultiplier+=eventChecker("Melee Damage")/100.0;
         }
-        double cdmg = 1;
-        int dodge = (int) (Math.random()*100)+1;
-        if (dodge<=ag) {
+        else {
+            eventMultiplier+=eventChecker("Ranged Damage")/100.0;
+        }
+        attackerStrength*=(1+eventChecker("Strength")/100.0);
+        attackerDexterity*=(1+eventChecker("Dexterity")/100.0);
+        defenderDefence*=(1+eventChecker("Defence")/100.0)*0.75;
+        defenderAgility*=(1+eventChecker("Agility")/100.0);
+        attackerStrength = Math.max(-100,attackerStrength-defenderDefence);
+
+        if (arr[attackerIndex].getModifier().equals("Bullseyen't") && !isMelee) {
+            int missRoll = (int) (Math.random()*100)+1;
+            if (missRoll<=25) {
+                out.println("You missed your shot!");
+                addToEventLog("Turn "+turn+"-"+subturn+": "+arr[attackerIndex].getName()+" MISSED their shot!");
+                return;
+            }
+        }
+
+        double dodgeRoll = Math.random()*100;
+        if (!isMelee && dodgeRoll<=defenderAgility) {
             out.println("The opponent dodged!");
-            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" dodged "+arr[subturn-1].getName()+"'s shot");
+            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[targetIndex].getName()+" dodged "+arr[attackerIndex].getName()+"'s shot");
             return;
         }
-        int crit = (int) (Math.random()*100)+1;
-        if (crit<=da) {
+
+        //ATTACKS
+        double[] weaponDamages = {1,0,0,0,0,0};
+        if (isMelee && arr[attackerIndex].getWeapon(0)!=null) {
+            weaponDamages = arr[attackerIndex].getWeapon(0).rollDmg();
+        }
+        else if (!isMelee && arr[attackerIndex].getWeapon(1)!=null) {
+            weaponDamages = arr[attackerIndex].getWeapon(1).rollDmg();
+        }
+        //DEFENCES
+        int[] temp = arr[targetIndex].getElements()[1];
+        double[] defenderDefences = new double[5];
+        for (int j=0; j<5; j++) {
+            defenderDefences[j] = temp[j];
+        }
+        double critDamage = 1;
+        double critRoll = Math.random()*100;
+        if (critRoll<=attackerDexterity) {
             out.println("Critical Hit!");
-            addToEventLog(arr[subturn-1].getName()+" dealt a critical hit!");
-            cdmg=(2+sa/100.0);
+            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[attackerIndex].getName()+" dealt a critical hit!");
+            critDamage=(2+attackerStrength/100.0);
+            if (arr[targetIndex].getModifier().equals("Brittle Bones")) {
+                critDamage=(5+attackerStrength/100.0);
+            }
         }
         //CALCULATIONS
-        damages[0] = (damages[0])*(1+arr[subturn-1].getND()*1.5/100.0)*(1+sa/100.0)*cdmg;
-        for (int j=1; j<6; j++) {
-            damages[j] = (damages[j])*(1+arr[subturn-1].getElement(0, j-1)/100.0)*(1+sa/100.0)*cdmg;
+        if (!arr[attackerIndex].getModifier().equals("\"The Normal One\"")) {
+            weaponDamages[0] = (weaponDamages[0])*(1+arr[attackerIndex].getND()*1.5/100)*(1+attackerStrength/100.0)*critDamage
+            *((1+eventChecker("Neutral Damage")/100.0)+eventMultiplier);
+            if (arr[attackerIndex].getModifier().equals("April Sun")) {
+                weaponDamages[0]*=0.5;
+            }
+            String[] elementDamageBuffs = {"Neutral Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage"};
+            for (int j=1; j<6; j++) {
+                weaponDamages[j] = (weaponDamages[j])*(1+arr[attackerIndex].getElement(0, j-1)/100)*(1+attackerStrength/100.0)*critDamage
+                *((1+eventChecker(elementDamageBuffs[j-1])/100.0)+eventMultiplier);
+                if (arr[attackerIndex].getModifier().equals("April Sun")) {
+                    weaponDamages[j]*=0.5;
+                }
+            }
         }
-        damages[0]*=((1+eventChecker("Neutral Damage")/100.0)+mult);
-        damages[1]*=((1+eventChecker("Earth Damage")/100.0)+mult);
-        damages[2]*=((1+eventChecker("Thunder Damage")/100.0)+mult);
-        damages[3]*=((1+eventChecker("Water Damage")/100.0)+mult);
-        damages[4]*=((1+eventChecker("Fire Damage")/100.0)+mult);
-        damages[5]*=((1+eventChecker("Air Damage")/100.0)+mult);
-        for (int j=0; j<6; j++) {
-            damages[j]*=(1-(Math.abs(arr[i].getLocation()-arr[subturn-1].getLocation())*20.0)/100.0);
+        if (!isMelee) {
+            for (int j=0; j<6; j++) {
+                weaponDamages[j]*=(1-(Math.abs(arr[targetIndex].getLocation()-arr[attackerIndex].getLocation())*20.0)/100.0);
+            }
         }
-        damages[0] = r2(Math.max(0,damages[0]));
+        weaponDamages[0] = r2(Math.max(0,weaponDamages[0]));
         for (int j=1; j<6; j++) {
-            damages[j] = Math.max(0,r2(damages[j]-defences[j-1]));
+            weaponDamages[j] = Math.max(0,r2(weaponDamages[j]-defenderDefences[j-1]));
         }
         out.println("Damage dealt:");
         String[] dmgTypes = {"Neutral","Earth","Thunder","Water","Fire","Air"};
-        double dmg = 0;
+        double totalDamage = 0;
         for (int j=0; j<6; j++) {
-            out.println(damages[j]+" "+dmgTypes[j]);
-            dmg = r2(dmg+damages[j]);
+            out.println(weaponDamages[j]+" "+dmgTypes[j]);
+            totalDamage = r2(totalDamage+weaponDamages[j]);
         }
         String[] damageTypes = {"Neutral Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage"};
         for (int j=0; j<6; j++) {
-            arr[subturn-1].addLockoutProgressValue(damageTypes[j], damages[j]);
+            arr[attackerIndex].addLockoutProgressValue(damageTypes[j], weaponDamages[j]);
         }
-        arr[subturn-1].addLockoutProgressValue("Ranged Damage", dmg);
-        if (arr[i].getModifier().equals("Reflexless") || arr[i].getModifier().equals("Glass Cannon")) {
-            out.println("Modifier! "+arr[i].getName()+" took double damage");
-            arr[i].setHP(r2(arr[i].getHP()-dmg*2));
+        if (isMelee) arr[attackerIndex].addLockoutProgressValue("Melee Damage", totalDamage);
+        else arr[attackerIndex].addLockoutProgressValue("Ranged Damage", totalDamage);
+        
+        if (isMelee && (arr[targetIndex].getModifier().equals("Reflexless") || arr[targetIndex].getModifier().equals("Glass Cannon"))) {
+            out.println("Modifier! "+arr[targetIndex].getName()+" took double damage");
+            arr[targetIndex].setHP(r2(arr[targetIndex].getHP()-totalDamage*2));
+        }
+        else if (!isMelee && (arr[targetIndex].getModifier().equals("Easy Target") || arr[targetIndex].getModifier().equals("Glass Cannon"))) {
+            out.println("Modifier! "+arr[targetIndex].getName()+" took double damage");
+            arr[targetIndex].setHP(r2(arr[targetIndex].getHP()-totalDamage*2));
         }
         else {
-            arr[i].setHP(r2(arr[i].getHP()-dmg));
+            arr[targetIndex].setHP(r2(arr[targetIndex].getHP()-totalDamage));
         }
-        addToEventLog("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" shot "+arr[i].getName()+" for "+dmg+" damage");
-        out.println(arr[i].getName()+" has "+arr[i].getHP()+" health remaining");
-        arr[subturn-1].addLXP((arr[i].getModifier().equals("Slow Learner")) ? r2(dmg*0.5) : r2(dmg));
-        out.println(arr[subturn-1].getName()+" gained "+dmg+" xp");
-        out.println("Level "+arr[subturn-1].getLvl()+": "+arr[subturn-1].getLXP()+"/"+arr[subturn-1].getNL()+" xp");
-        levelUp(subturn-1);
-        completeLockout(subturn-1);
-        isDead(i);
+        if (isMelee) addToEventLog("Turn "+turn+"-"+subturn+": "+arr[attackerIndex].getName()+" bonked "+arr[targetIndex].getName()+" for "+totalDamage+" damage");
+        else if (!isMelee) addToEventLog("Turn "+turn+"-"+subturn+": "+arr[attackerIndex].getName()+" shot "+arr[targetIndex].getName()+" for "+totalDamage+" damage");
+
+        out.println(arr[targetIndex].getName()+" has "+arr[targetIndex].getHP()+" health remaining");
+        arr[attackerIndex].addLXP((arr[attackerIndex].getModifier().equals("Slow Learner")) ? r2(totalDamage*0.5) : r2(totalDamage));
+        out.println(arr[attackerIndex].getName()+" gained "+totalDamage+" xp");
+        out.println("Level "+arr[attackerIndex].getLvl()+": "+arr[attackerIndex].getLXP()+"/"+arr[attackerIndex].getNL()+" xp");
+        levelUp(attackerIndex);
+        completeLockout(attackerIndex);
+        isDead(targetIndex);
     }
     
-    public static void spell(int i) throws Exception {
+    /**
+     * The "Spell Attack" menu
+     * @param targetIndex The index of the player, or island #, to be attacked
+     * @throws Exception
+     */
+    public static void spell(int targetIndex) throws Exception {
+        int attackerIndex = subturn-1;
         out.println("Which spell to use? (1-5, -1 to quit) ");
         int num = Integer.parseInt(br.readLine());
         if (num==-1) return;
         else if (num>0 && num<6) {
-            if (arr[subturn-1].getSpell(num-1) == null) {
+            if (arr[attackerIndex].getSpell(num-1) == null) {
                 out.println("This spell has not been unlocked yet!");
             }
             else {
-                double mc = arr[subturn-1].getSpell(num-1).getMC();
-                double sr = Math.min(95,effectiveness(arr[subturn-1].getElement(0,2)));
-                mc*=((1+eventChecker("Spell Cost")/100.0)*(1-sr/100.0));
-                mc = Math.round(mc);
-                if (mc>arr[subturn-1].getMana()) {
+                double manaCost = arr[attackerIndex].getSpell(num-1).getMC();
+                if (arr[attackerIndex].getModifier().equals("Amateur Wizard")) {
+                    manaCost*=2;
+                }
+                double spellCostReduction = Math.min(95,effectiveness(arr[attackerIndex].getElement(0,2)));
+                manaCost*=((1+eventChecker("Spell Cost")/100.0)*(1-spellCostReduction/100.0));
+                manaCost = Math.round(manaCost);
+                if (manaCost>arr[subturn-1].getMana()) {
                     out.println("You do not have enough mana to use this spell!");
                 }
                 else {
                     if (num!=5) {
-                        spellCalc(i,num-1);
+                        spellCalc(targetIndex,num-1);
                     }
                     else {
-                        spellCalc(i,4);
+                        spellCalc(targetIndex,4);
                     }
                 }
             }
         }
     }
-    public static void isDead(int i) {
-        if (arr[i].getHP()<=0) {
-            out.println(arr[i].getName()+" has lost a life!");
-            addToEventLog(arr[i].getName()+" has lost a life");
-            arr[i].setHP(arr[i].getMaxHP()+0.0);
-            arr[i].addLives(-1);
-            if (arr[i].getLives()==0) {
-                out.println(arr[i].getName()+" has been sent to the gulag");
-                addToEventLog(arr[i].getName()+" has been sent to the gulag");
-                arr[i] = new playerData(arr[i].getName(), lockoutTypes.length);
-                arr[i].setAlive(false);
-                for (Map.Entry<String,Double> map:arr[i].getLockoutProgress().entrySet()) {
-                    map.setValue(0.0);
-                }
-                if (!arr[i].isAlive()) playersAlive--;
-                if (playersAlive==1) {
-                    out.println("THE GAME HAS ENDED!");
-                    for (int k=0; k<playerCount; k++) {
-                        if (arr[k].isAlive()) {
-                            out.println("THE WINNER IS: "+arr[k].getName());
-                            addToEventLog(arr[k].getName()+" HAS WON THE GAME");
-                            break;
-                        }
-                    }
-                    endGame();
-                }
-            }
+
+    /**
+     * Calculates the spell damage
+     * @param targetIndex The index of the player to be attacked, or the island number to be AOE'd
+     * @param spellNum The index of the spell to be used
+     * @throws Exception
+     */
+    public static void spellCalc(int targetIndex, int spellNum) throws Exception {
+        int attackerIndex = subturn-1;
+        double attackerIntelligence = arr[attackerIndex].getElement(0, 2)*1.5;
+        if (arr[attackerIndex].getModifier().equals("Dumb and Weak")) {
+            attackerIntelligence = 0;
         }
-    }
-    public static void spellCalc(int i, int j) throws Exception { //i player/island (AOE), j spell num (0-4)
-        double ia = arr[subturn-1].getElement(0, 2)*1.5;
-        double da = Math.min(effectiveness(arr[subturn-1].getElement(0, 1)),99);
-        double nd = 0;
-        double opponentAgility = 0;
-        if (j!=4) nd = Math.min(effectiveness(arr[i].getElement(0, 3)),99);
+        double attackerDexterity = Math.min(effectiveness(arr[attackerIndex].getElement(0, 1)),99);
+        double defenderDefence = 0;
+        double defenderAgility = 0;
+        if (spellNum!=4) defenderDefence = Math.min(effectiveness(arr[targetIndex].getElement(0, 3)),99);
         else {
             int count = 0;
             for (int k=0; k<playerCount; k++) {
-                if (arr[k].getLocation()==i && arr[k].isAlive()) {
+                if (arr[k].getLocation()==targetIndex && arr[k].isAlive()) {
                     count++;
-                    nd+=arr[k].getElement(0, 3);
+                    defenderDefence+=arr[k].getElement(0, 3);
                 }
             }
-            if (count>0) nd/=count;
-            nd = Math.min(effectiveness((int) nd),99);
+            if (count>0) defenderDefence/=count;
+            defenderDefence = Math.min(effectiveness((int) defenderDefence),99);
         }
-        double mc = arr[subturn-1].getSpell(j).getMC();
+        double manaCost = arr[attackerIndex].getSpell(spellNum).getMC();
         //ATTACKS
-        double[] damages = arr[subturn-1].getSpell(j).rollDmg();
+        double[] spellDamages = arr[attackerIndex].getSpell(spellNum).rollDmg();
         //DEFENCES
-        double[] defences = {0,0,0,0,0};
-        if (j!=4) {
+        double[] defenderDefences = {0,0,0,0,0};
+        if (spellNum!=4) {
             for (int k=0; k<5; k++) {
-                defences[k] = arr[i].getElement(1, k);
+                defenderDefences[k] = arr[targetIndex].getElement(1, k);
             }
         }
         else {
             int count = 0;
             for (int k=0; k<playerCount; k++) {
-                if (arr[k].getLocation()==i && arr[k].isAlive()) {
+                if (arr[k].getLocation()==targetIndex && arr[k].isAlive()) {
                     count++;
                     for (int l=0; l<5; l++) {
-                        defences[l] = arr[k].getElement(1, l);
+                        defenderDefences[l] = arr[k].getElement(1, l);
                     }
                 }
             }
             if (count>0) {
                 for (int k=0; k<5; k++) {
-                    defences[k]/=count;
+                    defenderDefences[k]/=count;
                 }
             }
         }
         //CALCULATIONS
-        ia*=(1+eventChecker("Intelligence")/100.0);
-        da*=(1+eventChecker("Dexterity")/100.0);
-        nd*=(1+eventChecker("Defence")/100.0);
-        double cdmg = 1;
-        if (j!=4) {
-            int dodge = (int) (Math.random()*100)+1;
-            if (dodge<=opponentAgility) {
-                out.println("The opponent dodged!");
-                addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" dodged "+arr[subturn-1].getName()+"'s spell");
+        attackerIntelligence*=(1+eventChecker("Intelligence")/100.0);
+        attackerDexterity*=(1+eventChecker("Dexterity")/100.0);
+        defenderDefence*=(1+eventChecker("Defence")/100.0);
+
+        if (arr[attackerIndex].getModifier().equals("Bullseyen't")) {
+            int missRoll = (int) (Math.random()*100)+1;
+            if (missRoll<=25) {
+                out.println("You missed your spell!");
+                addToEventLog("Turn "+turn+"-"+subturn+": "+arr[attackerIndex].getName()+" MISSED their spell!");
                 return;
             }
         }
-        int crit = (int) (Math.random()*100)+1;
-        if (crit<=da) {
+
+        double critDamage = 1;
+        if (spellNum!=4) {
+            int dodgeRoll = (int) (Math.random()*100)+1;
+            if (dodgeRoll<=defenderAgility) {
+                out.println("The opponent dodged!");
+                addToEventLog("Turn "+turn+"-"+subturn+": "+arr[targetIndex].getName()+" dodged "+arr[attackerIndex].getName()+"'s spell");
+                return;
+            }
+        }
+
+        int critRoll = (int) (Math.random()*100)+1;
+        if (critRoll<=attackerDexterity) {
             out.println("Critical Hit!");
-            addToEventLog(arr[subturn-1].getName()+" dealt a critical hit!");
-            cdmg=(2+ia/100.0);
+            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[attackerIndex].getName()+" dealt a critical hit!");
+            critDamage=(2+attackerIntelligence/100.0);
+            if (arr[targetIndex].getModifier().equals("Brittle Bones")) {
+                critDamage=(5+attackerIntelligence/100.0);
+            }
         }
-        double mult = eventChecker("Spell Damage")/100.0+eventChecker("All Damage")/100.0;
-        double sr = Math.min(80,arr[subturn-1].getElement(0,2));
-        ia = Math.max(-100,ia-nd);
-        mc*=((1+eventChecker("Spell Cost")/100.0)*(1-sr/100.0));
-        damages[0] = damages[0]*(1+arr[subturn-1].getND()*1.5/100.0)*(1+ia/100.0)*cdmg;
-        for (int k=0; k<5; k++) {
-            damages[k+1]*=(1+arr[subturn-1].getElement(0, k)/100.0)*(1+ia/100.0)*cdmg;
+        double eventMultiplier = eventChecker("Spell Damage")/100.0+eventChecker("All Damage")/100.0;
+        double sr = Math.min(95,effectiveness(arr[attackerIndex].getElement(0,2)));
+        attackerIntelligence = Math.max(-100,attackerIntelligence-defenderDefence);
+        manaCost*=((1+eventChecker("Spell Cost")/100.0)*(1-sr/100.0));
+        if (arr[attackerIndex].getModifier().equals("Amateur Wizard")) {
+            manaCost*=2;
         }
-        damages[0]*=((1+eventChecker("Neutral Damage")/100.0)+mult);
-        damages[1]*=((1+eventChecker("Earth Damage")/100.0)+mult);
-        damages[2]*=((1+eventChecker("Thunder Damage")/100.0)+mult);
-        damages[3]*=((1+eventChecker("Water Damage")/100.0)+mult);
-        damages[4]*=((1+eventChecker("Fire Damage")/100.0)+mult);
-        damages[5]*=((1+eventChecker("Air Damage")/100.0)+mult);
-        damages[0] = Math.max(0,r2(damages[0]));
-        for (int k=1; k<=5; k++) {
-            damages[k] = Math.max(0,r2(damages[k]-defences[k-1]));
+
+        if (!arr[attackerIndex].getModifier().equals("\"The Normal One\"")) {
+            spellDamages[0] = (spellDamages[0])*(1+arr[attackerIndex].getND()*1.5/100)*(1+attackerIntelligence/100.0)*critDamage
+            *((1+eventChecker("Neutral Damage")/100.0)+eventMultiplier);
+            if (arr[attackerIndex].getModifier().equals("April Sun")) {
+                spellDamages[0]*=0.5;
+            }
+            String[] elementDamageBuffs = {"Neutral Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage"};
+            for (int j=1; j<6; j++) {
+                spellDamages[j] = (spellDamages[j])*(1+arr[attackerIndex].getElement(0, j-1)/100)*(1+attackerIntelligence/100.0)*critDamage
+                *((1+eventChecker(elementDamageBuffs[j-1])/100.0)+eventMultiplier);
+                if (arr[attackerIndex].getModifier().equals("April Sun")) {
+                    spellDamages[j]*=0.5;
+                }
+            }
         }
-        mc = Math.round(mc);
+        spellDamages[0] = r2(Math.max(0,spellDamages[0]));
+        for (int j=1; j<6; j++) {
+            spellDamages[j] = Math.max(0,r2(spellDamages[j]-defenderDefences[j-1]));
+        }
+
+        manaCost = Math.round(manaCost);
         int playersHit = 1;
         Set<Integer> s = new HashSet<>();
-        if (j==4) {
+        if (spellNum==4) {
             int count = 0;
             for (int k=0; k<playerCount; k++) {
-                if (arr[k].getLocation()==i && arr[k].isAlive()) {
-                    if (k==subturn-1) count--;
+                if (arr[k].getLocation()==targetIndex && arr[k].isAlive()) {
+                    if (k==attackerIndex) count--;
                     s.add(k);
                     count++;
                 }
@@ -691,29 +718,29 @@ public class BalancedGame {
             playersHit = count;
         }
         out.println("Damage dealt (to each player):");
-        String[] dmgTypes = {"Neutral","Earth","Thunder","Water","Fire","Air"};
+        String[] elementTypes = {"Neutral","Earth","Thunder","Water","Fire","Air"};
         double dmg = 0;
         for (int k=0; k<6; k++) {
-            out.println(damages[k]+" "+dmgTypes[k]);
-            dmg = r2(dmg+damages[k]);
+            out.println(spellDamages[k]+" "+elementTypes[k]);
+            dmg = r2(dmg+spellDamages[k]);
         }
         String[] damageTypes = {"Neutral Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage","Heal"};
         for (int k=0; k<6; k++) {
-            arr[subturn-1].addLockoutProgressValue(damageTypes[k], damages[k]*playersHit);
+            arr[attackerIndex].addLockoutProgressValue(damageTypes[k], spellDamages[k]*playersHit);
         }
-        arr[subturn-1].addLockoutProgressValue("Spell Damage", dmg*playersHit);
-        arr[subturn-1].addLockoutProgressValue("Mana",mc);
-        if (j!=4) {
-            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" spell "+(j+1)+"'d "+arr[i].getName()+" for "+dmg+" damage");
-            if (arr[i].getModifier().equals("Magic Doubter") || arr[i].getModifier().equals("Glass Cannon")) {
-                out.println("Modifier! "+arr[i].getName()+" took double damage");
+        arr[attackerIndex].addLockoutProgressValue("Spell Damage", dmg*playersHit);
+        arr[attackerIndex].addLockoutProgressValue("Mana",manaCost);
+        if (spellNum!=4) {
+            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[attackerIndex].getName()+" spell "+(spellNum+1)+"'d "+arr[targetIndex].getName()+" for "+dmg+" damage");
+            if (arr[targetIndex].getModifier().equals("Magic Doubter") || arr[targetIndex].getModifier().equals("Glass Cannon")) {
+                out.println("Modifier! "+arr[targetIndex].getName()+" took double damage");
                 dmg*=2;
             }
-            arr[i].setHP(r2(arr[i].getHP()-dmg));
-            out.println(arr[i].getName()+" has "+arr[i].getHP()+" health remaining");
+            arr[targetIndex].setHP(r2(arr[targetIndex].getHP()-dmg));
+            out.println(arr[targetIndex].getName()+" has "+arr[targetIndex].getHP()+" health remaining");
         }
         else {
-            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" AOE'd island "+i+" for "+dmg+" damage each");
+            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[attackerIndex].getName()+" AOE'd island "+targetIndex+" for "+dmg+" damage each");
             for (int k:s) {
                 if (arr[k].getModifier().equals("Magic Doubter") || arr[k].getModifier().equals("Glass Cannon")) {
                     out.println("Modifier! "+arr[k].getName()+" took double damage");
@@ -725,19 +752,19 @@ public class BalancedGame {
                 out.println(arr[k].getName()+" has "+arr[k].getHP()+" health remaining");
             }
         }
-        out.println(arr[subturn-1].getName()+" healed "+damages[6]*playersHit+" health");
-        arr[subturn-1].setHP(r2(Math.min(arr[subturn-1].getHP()+damages[6]*playersHit,arr[subturn-1].getMaxHP()+0.0)));
-        out.println(arr[subturn-1].getName()+" now has "+arr[subturn-1].getHP()+" health");
-        out.println(arr[subturn-1].getName()+" used "+mc+" mana on the spell");
-        arr[subturn-1].setMana(arr[subturn-1].getMana()-(int) mc);
-        out.println(arr[subturn-1].getName()+" has "+arr[subturn-1].getMana()+" mana remaining");
-        arr[subturn-1].addLXP((arr[i].getModifier().equals("Slow Learner")) ? r2(dmg*playersHit*0.5) : r2(dmg*playersHit));
-        out.println(arr[subturn-1].getName()+" gained "+dmg*playersHit+" xp");
-        out.println("Level "+arr[subturn-1].getLvl()+": "+arr[subturn-1].getLXP()+"/"+arr[subturn-1].getNL()+" xp");
-        levelUp(subturn-1);
-        completeLockout(subturn-1);
-        if (j!=4) {
-            isDead(i);
+        out.println(arr[attackerIndex].getName()+" healed "+spellDamages[6]*playersHit+" health");
+        arr[attackerIndex].setHP(r2(Math.min(arr[attackerIndex].getHP()+spellDamages[6]*playersHit,arr[attackerIndex].getMaxHP()+0.0)));
+        out.println(arr[attackerIndex].getName()+" now has "+arr[attackerIndex].getHP()+" health");
+        out.println(arr[attackerIndex].getName()+" used "+manaCost+" mana on the spell");
+        arr[attackerIndex].setMana(arr[attackerIndex].getMana()-(int) manaCost);
+        out.println(arr[attackerIndex].getName()+" has "+arr[attackerIndex].getMana()+" mana remaining");
+        arr[attackerIndex].addLXP((arr[attackerIndex].getModifier().equals("Slow Learner")) ? r2(dmg*playersHit*0.5) : r2(dmg*playersHit));
+        out.println(arr[attackerIndex].getName()+" gained "+dmg*playersHit+" xp");
+        out.println("Level "+arr[attackerIndex].getLvl()+": "+arr[attackerIndex].getLXP()+"/"+arr[attackerIndex].getNL()+" xp");
+        levelUp(attackerIndex);
+        completeLockout(attackerIndex);
+        if (spellNum!=4) {
+            isDead(targetIndex);
         }
         else {
             for (int k:s) {
@@ -756,7 +783,6 @@ public class BalancedGame {
             out.println(arr[subturn-1].getAP()+" AP");
             out.println(arr[subturn-1].getHP()+" hp");
             out.println(arr[subturn-1].getMana()+" mana");
-            out.println("----------");
             out.println("What would you like to gift? ");
             out.println("1 for AP");
             out.println("2 for hp");
@@ -775,7 +801,7 @@ public class BalancedGame {
                     arr[subturn-1].setAP(arr[subturn-1].getAP()-count);
                     arr[i].addAP(count);
                     out.println(arr[subturn-1].getName()+" has "+arr[subturn-1].getAP()+" AP remaining");
-                    out.println(arr[i].getName()+" has "+arr[i].getAP()+" AP remaining");
+                    out.println(arr[i].getName()+" has "+arr[i].getAP()+" AP now");
                 }
             }
             else if (choice==2) {
@@ -1044,12 +1070,12 @@ public class BalancedGame {
         if (x<=5) {
             if (arr[subturn-1].getSpell(x-1)!=null) reroll = arr[subturn-1].getSpell(x-1).getRC();
             arr[subturn-1].setSpell(x-1,new spell(minmax,manacost,reroll,name,rarityName[rarity]));
-            addToEventLog(arr[subturn-1].getName()+" rolled a spell and got a "+rarityName[rarity]+"!");
+            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" rolled a spell and got a "+rarityName[rarity]+"!");
         }
         else {
             if (arr[subturn-1].getWeapon(x-6)!=null) reroll = arr[subturn-1].getWeapon(x-6).getRC();
             arr[subturn-1].setWeapon(x-6, new weapon(minmax,reroll,name,rarityName[rarity]));
-            addToEventLog(arr[subturn-1].getName()+" rolled a weapon and got a "+rarityName[rarity]+"!");
+            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[subturn-1].getName()+" rolled a weapon and got a "+rarityName[rarity]+"!");
         }
     }
 
@@ -1136,7 +1162,7 @@ public class BalancedGame {
         for (int i=0; i<5; i++) {
             arr[playerNum].addElement(1, i, elementalDefence[i]);
         }
-        addToEventLog(arr[playerNum].getName()+" rolled an armour piece and got a "+rarityName[rarityTier]+"!");
+        addToEventLog("Turn "+turn+"-"+subturn+": "+arr[playerNum].getName()+" rolled an armour piece and got a "+rarityName[rarityTier]+"!");
     }
     public static void potionMenu(int i) throws IOException {
         out.println("Options:");
@@ -1310,7 +1336,7 @@ public class BalancedGame {
             else {
                 arr[i].setAP(arr[i].getAP()-3);
                 out.println("A new island has been built!");
-                addToEventLog(arr[i].getName()+" built a new island");
+                addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" built a new island");
             }
         }
         else if (choice==2) {
@@ -1355,13 +1381,13 @@ public class BalancedGame {
                 out.println("Bridge connecting islands "+smol+" and "+big+" has been connected!");
                 if (option==3) {
                     out.println("This bridge will last for "+cost+" turns before collapsing");
-                    addToEventLog(arr[i].getName()+" built a temporary bridge from "+smol+" to "+big);
+                    addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" built a temporary bridge from "+smol+" to "+big);
                 }
                 else if (option==2) {
-                    addToEventLog(arr[i].getName()+" built a toll bridge from "+smol+" to "+big);
+                    addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" built a toll bridge from "+smol+" to "+big);
                 }
                 else if (option==1) {
-                    addToEventLog(arr[i].getName()+" built a bridge from "+smol+" to "+big);
+                    addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" built a bridge from "+smol+" to "+big);
                 }
                 tuple a = new tuple();
                 a.first = big;
@@ -1438,7 +1464,7 @@ public class BalancedGame {
                 }
             }
             out.println("Burned bridge connecting islands "+one+" and "+two);
-            addToEventLog(arr[i].getName()+" burned a bridge from "+one+" to "+two);
+            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" burned a bridge from "+one+" to "+two);
         }
     }
     public static int bfs(int start, int end) {
@@ -1743,12 +1769,12 @@ public class BalancedGame {
             disaster = null;
         }
     }
-    public static void levelUp(int i) throws IOException {
-        while (arr[i].getLXP()>=arr[i].getNL()) {
-            out.println(arr[i].getName()+" has levelled up!");
-            arr[i].addLvl(1);
-            arr[i].setLXP(r2(arr[i].getLXP()-arr[i].getNL()));
-            arr[i].addNL(100*(arr[i].getLvl()/5+1));
+    public static void levelUp(int playerIndex) throws IOException {
+        while (arr[playerIndex].getLXP()>=arr[playerIndex].getNL()) {
+            out.println(arr[playerIndex].getName()+" has levelled up!");
+            arr[playerIndex].addLvl(1);
+            arr[playerIndex].setLXP(r2(arr[playerIndex].getLXP()-arr[playerIndex].getNL()));
+            arr[playerIndex].addNL(100*(arr[playerIndex].getLvl()/5+1));
             out.println("Select a level up choice:");
             out.println("1: gain elemental dust");
             out.println("2: to gain AP");
@@ -1758,31 +1784,67 @@ public class BalancedGame {
             while (ans<1 || ans>4) {
                 ans = Integer.parseInt(br.readLine());
                 if (ans==1) {
-                    out.println("Gained "+arr[i].getLvl()+" elemental dust!");
+                    out.println("Gained "+arr[playerIndex].getLvl()+" elemental dust!");
                     String[] dustTypes = {"Earth Dust I","Thunder Dust I","Water Dust I","Fire Dust I","Air Dust I"};
-                    for (int j=0; j<arr[i].getLvl(); j++) {
+                    for (int j=0; j<arr[playerIndex].getLvl(); j++) {
                         int elementType = (int) (Math.random()*5);
-                        arr[i].addInventoryValue(dustTypes[elementType], 1);
+                        arr[playerIndex].addInventoryValue(dustTypes[elementType], 1);
                     }
                 }
                 else if (ans==2) {
-                    arr[i].addAP(arr[i].getLvl());
-                    out.println("+"+arr[i].getLvl()+" AP");
+                    if (arr[playerIndex].getModifier().equals("Good Luck")) {
+                        out.println("Your modifier does not let you select this option!");
+                    }
+                    else {
+                        arr[playerIndex].addAP(arr[playerIndex].getLvl());
+                        out.println("+"+arr[playerIndex].getLvl()+" AP");
+                    }
                 }
                 else if (ans==3) {
-                    arr[i].addStaminaRegen(1);
+                    arr[playerIndex].addStaminaRegen(1);
                     out.println("+1 Stamina Regen");
                 }
                 else if (ans==4) {
-                    arr[i].addInventoryValue("Reroll Amplifier I", 1);
+                    arr[playerIndex].addInventoryValue("Reroll Amplifier I", 1);
                 }
                 else {
                     out.println("That's not a valid choice!");
                 }
             }
-            arr[i].addMaxMana(5);
+            arr[playerIndex].addMaxMana(5);
         }
     }
+
+    public static void isDead(int i) {
+        if (arr[i].getHP()<=0) {
+            out.println(arr[i].getName()+" has lost a life!");
+            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" has lost a life");
+            arr[i].setHP(arr[i].getMaxHP()+0.0);
+            arr[i].addLives(-1);
+            if (arr[i].getLives()==0) {
+                out.println(arr[i].getName()+" has been sent to the gulag");
+                addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" has been sent to the gulag");
+                arr[i] = new playerData(arr[i].getName(), lockoutTypes.length);
+                arr[i].setAlive(false);
+                for (Map.Entry<String,Double> map:arr[i].getLockoutProgress().entrySet()) {
+                    map.setValue(0.0);
+                }
+                if (!arr[i].isAlive()) playersAlive--;
+                if (playersAlive==1) {
+                    out.println("THE GAME HAS ENDED!");
+                    for (int k=0; k<playerCount; k++) {
+                        if (arr[k].isAlive()) {
+                            out.println("THE WINNER IS: "+arr[k].getName());
+                            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[k].getName()+" HAS WON THE GAME");
+                            break;
+                        }
+                    }
+                    endGame();
+                }
+            }
+        }
+    }
+
     public static void lockoutGen() {
         for (int i=0; i<playerCount; i++) {
             for (int j=0; j<lockoutTypes.length; j++) {
@@ -1882,19 +1944,28 @@ public class BalancedGame {
         else if (x==8) {
             out.print("Player name: ");
             int i = findPlayer(br.readLine());
-            int[] startingAP = {15,15,20,15,10,25,50,60,20};
+            int[] startingAP = {15,15,20,15,10,20,50,60,20,30,20,20,150,35,40};
             String[] modifierNames = {"Reflexless","Easy Target","Magic Doubter","Colin Luck","Out of Shape",
-            "Slow Learner","Glass Cannon","UHC","Decaying Heart"};
+            "Slow Learner","Glass Cannon","UHC","Decaying Heart","Amateur Wizard","\"The Normal One\"","Bullseyen't",
+            "Dumb and Weak","Brittle Bones","Good Luck","April Sun","Confusion"};
             out.println("Available Modifiers: ");
             out.println("1: Reflexless (+15 AP, take DOUBLE damage from MELEE WEAPONS)");
             out.println("2: Easy Target (+15 AP, take DOUBLE damage from RANGED WEAPONS)");
             out.println("3: Magic Doubter (+20 AP, take DOUBLE damage from SPELLS)");
             out.println("4: Colin Luck (+15 AP, ALL rolls are ONLY common or unique)");
             out.println("5: Out of Shape (+10 AP, crossing bridges takes TWO stamina)");
-            out.println("6: Slow Learner (+25 AP, gain HALF the XP as you usually would)");
+            out.println("6: Slow Learner (+20 AP, gain HALF the XP as you usually would)");
             out.println("7: Glass Cannon (+50 AP, take DOUBLE damage from ALL SOURCES)");
             out.println("8: UHC (+60 AP, start the game with ONLY 1 LIFE, NO HEALTH REGEN)");
             out.println("9: Decaying Heart (+20 AP, your health decreases by 1% after each turn)");
+            out.println("10: Amateur Wizard (+30 AP, spells cost DOUBLE mana)");
+            out.println("11: \"The Normal One\" (+15 AP, gain no elemental damage buffs of ANY SOURCE)");
+            out.println("12: Bullseyen't (+30 AP, Spells and Ranged Weapons have a 25% chance to MISS)");
+            out.println("13: Dumb and Weak (+20 AP, NO EFFECT from Strength and Intelligence)");
+            out.println("14: Brittle Bones (+20 AP, Any player that does a Critical Hit on you will deal 5x damage, instead of the normal 2x)");
+            out.println("15: Good Luck (+150 AP, The AP you get is all you will get)");
+            out.println("16: April Sun (+35 AP, deal 0.5x all damage)");
+            out.println("17: Confusion (+40 AP, you have a 10% chance to hit yourself in confusion)");
             int modifierChoice = Integer.parseInt(br.readLine());
             if (modifierChoice>=1 && modifierChoice<=modifierNames.length) {
                 arr[i].addAP(startingAP[modifierChoice-1]);
