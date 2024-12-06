@@ -1522,11 +1522,11 @@ public class BalancedGame {
                 case "Air": elementNum = 4; break;
             }
             if (optionType>=1 && optionType<=5) {
-                arr[i].getSpell(optionType-1).addDmgs(elementNum, amount*tierDamage[tier-1]);
+                arr[i].getSpell(optionType-1).addDmgs(elementNum+1, amount*tierDamage[tier-1]);
                 out.println("You increased the damage on your spell!");
             }
             else if (optionType>=6 && optionType<=7) {
-                arr[i].getWeapon(optionType-6).addDmgs(elementNum, amount*tierDamage[tier-1]);
+                arr[i].getWeapon(optionType-6).addDmgs(elementNum+1, amount*tierDamage[tier-1]);
                 out.println("You increased the damage on your weapon!");
             }
             else if (optionType>=8 && optionType<=11) {
