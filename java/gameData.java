@@ -15,7 +15,8 @@ public class gameData {
     ArrayList<event> lst;
     ArrayList<event> curevent;
     lockoutGoal[] goals;
-    ArrayList<tuple>[] bridges;
+    island[] islandResources;
+    ArrayList<bridge>[] bridges;
     ArrayList<String> eventLog;
     int playersAlive;
     potion[] potionShop;
@@ -45,6 +46,10 @@ public class gameData {
         lst = new ArrayList<>();
         curevent = new ArrayList<>();
         goals = new lockoutGoal[s];
+        islandResources = new island[26];
+        for (int i=0; i<26; i++) {
+            islandResources[i] = new island();
+        }
         bridges = new ArrayList[26];
         for (int i=0; i<26; i++) {
             bridges[i] = new ArrayList<>();

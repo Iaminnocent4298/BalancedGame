@@ -233,7 +233,7 @@ function draw(force) {
   const tollBridges = [];
   for (const island of islands) {
     const connected = [];
-    for (const { first: otherId, second: cost } of data.bridges[island.id]) {
+    for (const { endingIsland: otherId, travelCost: cost } of data.bridges[island.id]) {
       if (cost == -1) continue;
       const other = islands[otherId - 1];
       connected.push(other);
