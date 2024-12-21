@@ -41,7 +41,7 @@ public class playerData {
         maxmana = 100;
         mana = maxmana;
         manaregen = 1;
-        maxstamina = 25;
+        maxstamina = 10;
         stamina = maxstamina;
         staminaregen = 1;
         neutraldmg = 0;

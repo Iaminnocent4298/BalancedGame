@@ -9,20 +9,6 @@ import com.google.gson.GsonBuilder;
 import java.nio.file.*;
 
 import static java.lang.System.out;
-class tuple {
-    /**
-     * The other vertex of the bridge
-     */
-    int first;
-    /**
-     * The cost to cross the bridge
-     */
-    int second;
-    /**
-     * The amount of turns left before collapse
-     */
-    int third;
-}
 public class BalancedGame {
     static int turn;
     static int subturn;
@@ -39,7 +25,8 @@ public class BalancedGame {
     static int temperature;
     static event temp = new event();
     static event disaster = new event();
-    static ArrayList<tuple>[] bridges;
+    static island[] islandResources = new island[26];
+    static ArrayList<bridge>[] bridges;
     static ArrayList<String> eventLog = new ArrayList<>();
     static int playersAlive;
     static int potionnum = 35; //lvls 0-12
@@ -142,7 +129,7 @@ public class BalancedGame {
      */
     public static void output() throws IOException {
         gameData game = new gameData();
-        game.version = "2.9.1";
+        game.version = "2.9.1-hf1";
         game.turn = turn;
         game.subturn = subturn;
         game.islandLim = islandLim;
@@ -294,8 +281,45 @@ public class BalancedGame {
             }
             output();
         }
-        //END OF TURN SHENANIGANS
         subturn++;
+        /**
+         * MIDDLE OF TURN SHENANIGANS
+         */
+        //Decreasing timer for temporary bridges
+        for (int i=0; i<26; i++) {
+            for (int j=0; j<bridges[i].size(); j++) {
+                if (bridges[i].get(j).getTurnsUntilCollapse()!=-1) {
+                    bridges[i].get(j).decreaseCollapseTimer();
+                    if (bridges[i].get(j).getTurnsUntilCollapse()==0) {
+                        bridges[i].remove(j);
+                    }
+                }
+            }
+        }
+        //Modifying potion durations
+        Set<peffect> curEffects = new HashSet<>();
+        for (peffect p:potionEffects) {
+            if (subturn==p.getSubturnUsed()) {
+                p.lowerTurn();
+                if (p.getTurns()==0) {
+                    curEffects.add(p);
+                    int i = findPlayer(p.getName());
+                    switch(p.getType()) {
+                        case "Health Regen": arr[i].setHPRegen(arr[i].getHPRegen()-p.getValue()); break;
+                        case "Mana Regen": arr[i].setMR(arr[i].getMR()-p.getValue()); break;
+                        case "Strength": arr[i].setElement(0, 0, arr[i].getElement(0,0)-p.getValue()); break;
+                        case "Dexterity": arr[i].setElement(0, 1, arr[i].getElement(0,1)-p.getValue()); break;
+                        case "Intelligence": arr[i].setElement(0, 2, arr[i].getElement(0,2)-p.getValue()); break;
+                        case "Defence": arr[i].setElement(0, 3, arr[i].getElement(0,3)-p.getValue()); break;
+                        case "Agility": arr[i].setElement(0, 4, arr[i].getElement(0,4)-p.getValue()); break;
+                    }
+                }
+            }
+        }
+        for (peffect p:curEffects) {
+            potionEffects.remove(p);
+        }
+        //END OF TURN SHENANIGANS
         if (subturn>playerCount) {
             subturn = 1;
             turn++;
@@ -313,26 +337,6 @@ public class BalancedGame {
                 arr[i].setMana((int) Math.round(Math.min(arr[i].getMana()+arr[i].getMR()*manamult,arr[i].getMaxMana())));
                 arr[i].setStamina(Math.min(arr[i].getMaxStamina(),arr[i].getStamina()+arr[i].getStaminaRegen()));
                 completeLockout(i);
-            }
-            Set<peffect> curEffects = new HashSet<>();
-            for (peffect p:potionEffects) {
-                p.lowerTurn();
-                if (p.getTurns()==0) {
-                    curEffects.add(p);
-                    int i = findPlayer(p.getName());
-                    switch(p.getType()) {
-                        case "Health Regen": arr[i].setHPRegen(arr[i].getHPRegen()-p.getValue()); break;
-                        case "Mana Regen": arr[i].setMR(arr[i].getMR()-p.getValue()); break;
-                        case "Strength": arr[i].setElement(0, 0, arr[i].getElement(0,0)-p.getValue()); break;
-                        case "Dexterity": arr[i].setElement(0, 1, arr[i].getElement(0,1)-p.getValue()); break;
-                        case "Intelligence": arr[i].setElement(0, 2, arr[i].getElement(0,2)-p.getValue()); break;
-                        case "Defence": arr[i].setElement(0, 3, arr[i].getElement(0,3)-p.getValue()); break;
-                        case "Agility": arr[i].setElement(0, 4, arr[i].getElement(0,4)-p.getValue()); break;
-                    }
-                }
-            }
-            for (peffect p:curEffects) {
-                potionEffects.remove(p);
             }
             int index = 0;
             while (index<lst.size()) {
@@ -357,17 +361,6 @@ public class BalancedGame {
             if (turn%3==1) seasonGen();
             tempGen();
             disasterGen();
-            //Decreasing timer for temporary bridges
-            for (int i=0; i<26; i++) {
-                for (int j=0; j<bridges[i].size(); j++) {
-                    if (bridges[i].get(j).third!=-1) {
-                        bridges[i].get(j).third--;
-                        if (bridges[i].get(j).third==0) {
-                            bridges[i].remove(j);
-                        }
-                    }
-                }
-            }
         }
         output();
     }
@@ -404,7 +397,6 @@ public class BalancedGame {
             case "health": case "hp": arr[subturn-1].addMaxHP(50*amount); break;
             case "health regen": case "hp regen": arr[subturn-1].addHPRegen(2*amount); break;
             case "mana regen": arr[subturn-1].addMR(amount); break;
-            case "stamina": arr[subturn-1].addMaxStamina(5*amount); break;
             case "neutral damage": case "neutral": arr[subturn-1].addND(amount); break;
             case "strength": case "str": arr[subturn-1].addElement(0, 0, amount); break;
             case "dexterity": case "dex": arr[subturn-1].addElement(0, 1, amount); break;
@@ -500,7 +492,7 @@ public class BalancedGame {
             String[] elementDamageBuffs = {"Neutral Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage"};
             for (int j=1; j<6; j++) {
                 weaponDamages[j] = (weaponDamages[j])*(1+arr[attackerIndex].getElement(0, j-1)/100)*(1+attackerStrength/100.0)*critDamage
-                *((1+eventChecker(elementDamageBuffs[j-1])/100.0)+eventMultiplier);
+                *((1+eventChecker(elementDamageBuffs[j])/100.0)+eventMultiplier);
                 if (arr[attackerIndex].getModifier().equals("April Sun")) {
                     weaponDamages[j]*=0.5;
                 }
@@ -692,7 +684,7 @@ public class BalancedGame {
             String[] elementDamageBuffs = {"Neutral Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage"};
             for (int j=1; j<6; j++) {
                 spellDamages[j] = (spellDamages[j])*(1+arr[attackerIndex].getElement(0, j-1)/100)*(1+attackerIntelligence/100.0)*critDamage
-                *((1+eventChecker(elementDamageBuffs[j-1])/100.0)+eventMultiplier);
+                *((1+eventChecker(elementDamageBuffs[j])/100.0)+eventMultiplier);
                 if (arr[attackerIndex].getModifier().equals("April Sun")) {
                     spellDamages[j]*=0.5;
                 }
@@ -844,7 +836,7 @@ public class BalancedGame {
         int num = Integer.parseInt(br.readLine());
         if (num>11 || num<1) return;
         if (num>=8 && num<=11) {
-            int[] armourCosts = {6,12,9,6};
+            int[] armourCosts = {8,16,12,8};
             int APCost = 0;
             if (arr[i].getArmour(num-8)==null) {
                 out.println("You are rolling your armour piece!");
@@ -1109,6 +1101,7 @@ public class BalancedGame {
         else if (elementCount<=60) elementCount = 3;
         else if (elementCount<=80) elementCount = 4;
         else elementCount = 5;
+        out.println("Number of Elements: "+elementCount);
 
         // The number of elements with negative defence values
         int negativeElements = (int) (Math.random()*(elementCount-1))+1;
@@ -1151,13 +1144,6 @@ public class BalancedGame {
             rerollCost = arr[playerNum].getArmour(armourType).getRerollCost();
         }
         arr[playerNum].setArmour(armourType, new armour(maxHealthBuff, elementalDefence, name, rarityName[rarityTier], rerollCost));
-        //DEBUGGING
-        out.println("Max Health Buff: "+maxHealthBuff);
-        out.println("Defences:");
-        String[] defType = {"Earth","Thunder","Water","Fire","Air"};
-        for (int i=0; i<5; i++) {
-            out.println(defType[i]+": "+elementalDefence[i]);
-        }
         arr[playerNum].addMaxHP(maxHealthBuff);
         for (int i=0; i<5; i++) {
             arr[playerNum].addElement(1, i, elementalDefence[i]);
@@ -1240,7 +1226,7 @@ public class BalancedGame {
             return;
         }
         out.println("Consumed potion!");
-        peffect p = new peffect(arr[i].getName(),arr[i].getPB().get(num).getType(),arr[i].getPB().get(num).getValue(),arr[i].getPB().get(num).getTurns());
+        peffect p = new peffect(arr[i].getName(),arr[i].getPB().get(num).getType(),arr[i].getPB().get(num).getValue(),arr[i].getPB().get(num).getTurns(),subturn);
         switch(p.getType()) {
             case "Health Regen": arr[i].setHPRegen(arr[i].getHPRegen()+p.getValue()); break;
             case "Mana Regen": arr[i].setMR(arr[i].getMR()+p.getValue()); break;
@@ -1271,94 +1257,91 @@ public class BalancedGame {
      * @param i The index of the current player
      * @throws IOException
      */
-    public static void traverse(int i) throws IOException {
-        out.println("You are on island "+arr[i].getLocation());
-        int dest = 0;
-        while (dest!=100) {
+    public static void traverse(int playerIndex) throws IOException {
+        out.println("You are on island "+arr[playerIndex].getLocation());
+        int chosenDestination = 0;
+        while (true) {
             out.println("Possible locations to travel to:");
-            for (tuple p:bridges[arr[i].getLocation()]) {
-                if (p.second>=0) {
-                    out.print(p.first+" ");
-                    if (p.second==0) out.println("(Free)");
-                    else out.println("(Toll - "+p.second+" AP)");
+            for (bridge p:bridges[arr[playerIndex].getLocation()]) {
+                if (p.getTravelCost()>=0) {
+                    out.print(p.getEndingIsland()+" ");
+                    if (p.getTravelCost()==0) out.println("(Free)");
+                    else out.println("(Toll - "+p.getTravelCost()+" AP)");
                 }
             }
             out.println("Destination? -1 to exit: ");
-            dest = Integer.parseInt(br.readLine());
-            if (dest==-1) break;
-            if (dest==arr[i].getLocation()) {
+            chosenDestination = Integer.parseInt(br.readLine());
+            if (chosenDestination==-1) break;
+            if (chosenDestination==arr[playerIndex].getLocation()) {
                 out.println("You are already on this island!");
             }
             else {
-                boolean exists = false;
-                tuple bridge = new tuple();
-                for (tuple b:bridges[arr[i].getLocation()]) {
-                    if (b.first==dest && b.second!=-1) {
-                        bridge = b;
-                        exists = true;
+                boolean bridgeExists = false;
+                bridge bridgeToTraverse = new bridge(0,0,0,0);
+                for (bridge b:bridges[arr[playerIndex].getLocation()]) {
+                    if (b.getEndingIsland()==chosenDestination && b.getTravelCost()!=-1) {
+                        bridgeToTraverse = b;
+                        bridgeExists = true;
                         break;
                     }
                 }
-                if (!exists) {
+                if (!bridgeExists) {
                     out.println("There is no bridge connecting directly to it!");
                 }
                 else {
-                    if (arr[i].getAP()<bridge.second) {
+                    if (arr[playerIndex].getAP()<bridgeToTraverse.getTravelCost()) {
                         out.println("You're too poor to travel");
                     }
-                    else if (arr[i].getStamina()==0 || (arr[i].getStamina()<=1 && arr[i].getModifier().equals("Out of Shape"))) {
+                    else if (arr[playerIndex].getStamina()==0 
+                    || (arr[playerIndex].getStamina()<=1 && arr[playerIndex].getModifier().equals("Out of Shape"))) {
                         out.println("You're too tired to travel!");
                     }
                     else {
-                        arr[i].setAP(arr[i].getAP()-bridge.second);
-                        out.println("Travelled to island "+bridge.first);
-                        arr[i].setLocation(bridge.first);
-                        arr[i].addStamina((arr[i].getModifier().equals("Out of Shape")) ? -2 : -1);
+                        arr[playerIndex].setAP(arr[playerIndex].getAP()-bridgeToTraverse.getTravelCost());
+                        out.println("Travelled to island "+bridgeToTraverse.getEndingIsland());
+                        arr[playerIndex].setLocation(bridgeToTraverse.getEndingIsland());
+                        arr[playerIndex].addStamina((arr[playerIndex].getModifier().equals("Out of Shape")) ? -2 : -1);
                     }
                 }
             }
         }
     }
-    public static void build(int i) throws IOException {
-        int choice = 0;
+
+    /**
+     * Menu to build islands and bridges
+     * @param playerIndex The index of the player
+     * @throws IOException
+     */
+    public static void build(int playerIndex) throws IOException {
+        int inputChoice = 0;
         out.println("What would you like to build?");
         out.println("Press 1 for island");
         out.println("Press 2 for bridge");
         out.println("Other to exit");
-        choice = Integer.parseInt(br.readLine());
-        if (choice==1) {
-            out.print("Would you like to build an island? (y/n) ");
-            char ans = br.readLine().charAt(0);
-            if (ans=='n') return;
-            if (arr[i].getAP()<3) {
+        inputChoice = Integer.parseInt(br.readLine());
+        if (inputChoice==1) {
+            out.print("Confirm: (y/n) ");
+            char confirmationChoice = br.readLine().charAt(0);
+            if (confirmationChoice=='n') return;
+            if (arr[playerIndex].getAP()<3) {
                 out.println("You do not have enough AP!");
             }
             else {
-                arr[i].setAP(arr[i].getAP()-3);
+                arr[playerIndex].setAP(arr[playerIndex].getAP()-3);
                 out.println("A new island has been built!");
-                addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" built a new island");
+                addToEventLog("Turn "+turn+"-"+subturn+": "+arr[playerIndex].getName()+" built a new island");
             }
         }
-        else if (choice==2) {
-            int one = 0, two = 0;
+        else if (inputChoice==2) {
+            int startingIsland = 0, endingIsland = 0;
             out.print("Enter the two numbers (or -1 to quit): ");
             StringTokenizer st = new StringTokenizer(br.readLine());
             while (st.hasMoreTokens()) {
-                one = Integer.parseInt(st.nextToken());
-                if (one==-1) return;
-                two = Integer.parseInt(st.nextToken());
+                startingIsland = Integer.parseInt(st.nextToken());
+                if (startingIsland==-1) return;
+                endingIsland = Integer.parseInt(st.nextToken());
             }
-            int smol = 0;
-            int big = 0;
-            if (one<two) {
-                smol = one;
-                big = two;
-            }
-            else {
-                smol = two;
-                big = one;
-            }
-            out.println("You are currently building a bridge connecting islands "+smol+" and "+big);
+            out.println("You are currently building a bridge connecting islands "+startingIsland+" and "+endingIsland);
             out.println("Your options are:");
             out.println("1: Free (4 AP)");
             out.println("2: Toll (8 AP)");
@@ -1373,98 +1356,96 @@ public class BalancedGame {
                 int num = Integer.parseInt(br.readLine());
                 cost = num;
             }
-            if (cost>arr[i].getAP()) {
+            if (cost>arr[playerIndex].getAP()) {
                 out.println("Insufficient AP!");
             }
             else {
-                arr[i].setAP(arr[i].getAP()-cost);
-                out.println("Bridge connecting islands "+smol+" and "+big+" has been connected!");
+                arr[playerIndex].setAP(arr[playerIndex].getAP()-cost);
+                out.println("Bridge connecting islands "+startingIsland+" and "+endingIsland+" has been connected!");
                 if (option==3) {
                     out.println("This bridge will last for "+cost+" turns before collapsing");
-                    addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" built a temporary bridge from "+smol+" to "+big);
+                    addToEventLog("Turn "+turn+"-"+subturn+": "+arr[playerIndex].getName()+" built a temporary bridge from "+startingIsland+" to "+endingIsland);
                 }
                 else if (option==2) {
-                    addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" built a toll bridge from "+smol+" to "+big);
+                    addToEventLog("Turn "+turn+"-"+subturn+": "+arr[playerIndex].getName()+" built a toll bridge from "+startingIsland+" to "+endingIsland);
                 }
                 else if (option==1) {
-                    addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" built a bridge from "+smol+" to "+big);
+                    addToEventLog("Turn "+turn+"-"+subturn+": "+arr[playerIndex].getName()+" built a bridge from "+startingIsland+" to "+endingIsland);
                 }
-                tuple a = new tuple();
-                a.first = big;
-                a.second = (cost==8) ? (int) Math.ceil(bfs(smol, big)/2.0) : 0;
-                a.third = (option==3) ? cost : -1;
-                tuple b = new tuple();
-                b.first = smol;
-                b.second = a.second;
-                b.third = a.third;
-                bridges[smol].add(a);
-                bridges[big].add(b);
+                bridges[startingIsland].add(new bridge(endingIsland,(cost==8) ? (int) Math.ceil(bfs(startingIsland, endingIsland)/2.0) : 0,(option==3) ? cost : -1,subturn));
+                bridges[endingIsland].add(new bridge(startingIsland,(cost==8) ? (int) Math.ceil(bfs(startingIsland, endingIsland)/2.0) : 0,(option==3) ? cost : -1,subturn));
             }
         }
     }
-    public static void destroy(int i) throws IOException {
+
+    /**
+     * Menu to burn a bridge
+     * @param playerIndex The index of the player
+     * @throws IOException
+     */
+    public static void destroy(int playerIndex) throws IOException {
         out.println("You are burning a bridge!");
-        int destroycost = 6;
-        out.println("This will cost "+destroycost+" AP");
-        int one = 0, two = 0;
-        out.print("Enter the two numbers (or -1 to quit): ");
+        int destroyCost = 6;
+        out.println("This will cost "+destroyCost+" AP");
+        int startingIsland = 0, endingIsland = 0;
+        out.print("Enter the endingIsland numbers (or -1 to quit): ");
         StringTokenizer st = new StringTokenizer(br.readLine());
         while (st.hasMoreTokens()) {
-            one = Integer.parseInt(st.nextToken());
-            if (one==-1) return;
-            if (one<=0 || one>islandsBuilt) {
-                out.println("That bridge is illegal since island "+one+" does not exist yet");
+            startingIsland = Integer.parseInt(st.nextToken());
+            if (startingIsland==-1) return;
+            if (startingIsland<=0 || startingIsland>islandsBuilt) {
+                out.println("Error: Island "+startingIsland+" does not exist");
             }
-            two = Integer.parseInt(st.nextToken());
-            boolean connected = false;
-            for (tuple p:bridges[one]) {
-                if (p.first==two && p.second!=-1) {
-                    connected = true;
+            endingIsland = Integer.parseInt(st.nextToken());
+            boolean bridgeExists = false;
+            for (bridge p:bridges[startingIsland]) {
+                if (p.getEndingIsland()==endingIsland && p.getTravelCost()!=-1) {
+                    bridgeExists = true;
                     break;
                 }
             }
-            if (two<=0 || two>islandsBuilt) {
-                out.println("That bridge is illegal since island "+two+" does not exist yet");
+            if (endingIsland<=0 || endingIsland>islandsBuilt) {
+                out.println("Error: Island "+endingIsland+" does not exist");
             }
-            else if (two==one) {
+            else if (endingIsland==startingIsland) {
                 out.println("You cannot built a bridge to itself!");
             }
-            else if (!connected) {
+            else if (!bridgeExists) {
                 out.println("There is no bridge connecting these two islands!");
             }
         }
-        out.println("You will be burning the bridge between islands "+one+" and "+two);
-        out.println("Cost is: "+destroycost+" AP!");
-        for (int j=0; j<bridges[one].size(); j++) {
-            if (bridges[one].get(j).first==two) {
-                if (bridges[one].get(j).third!=-1) {
-                    out.println("Since this bridge is temporary, the cost is reduced to "+bridges[one].get(j).third+" AP");
-                    destroycost = bridges[one].get(j).third;
+        out.println("You will be burning the bridge between islands "+startingIsland+" and "+endingIsland);
+        out.println("Cost is: "+destroyCost+" AP!");
+        for (int j=0; j<bridges[startingIsland].size(); j++) {
+            if (bridges[startingIsland].get(j).getEndingIsland()==endingIsland) {
+                if (bridges[startingIsland].get(j).getTurnsUntilCollapse()!=-1) {
+                    out.println("Since this bridge is temporary, the cost is reduced to "+bridges[startingIsland].get(j).getTurnsUntilCollapse()+" AP");
+                    destroyCost = bridges[startingIsland].get(j).getTurnsUntilCollapse();
                 }
             }
         }
         out.print("Confirm to burn (y/n): ");
         char s = br.readLine().charAt(0);
         if (s=='y') {
-            if (arr[i].getAP()<destroycost) {
+            if (arr[playerIndex].getAP()<destroyCost) {
                 out.println("You do not have enough AP to burn a bridge!");
                 return;
             }
-            arr[i].setAP(arr[i].getAP()-destroycost);
-            for (int j=0; j<bridges[one].size(); j++) {
-                if (bridges[one].get(j).first==two) {
-                    bridges[one].remove(j);
+            arr[playerIndex].setAP(arr[playerIndex].getAP()-destroyCost);
+            for (int j=0; j<bridges[startingIsland].size(); j++) {
+                if (bridges[startingIsland].get(j).getEndingIsland()==endingIsland) {
+                    bridges[startingIsland].remove(j);
                     break;
                 }
             }
-            for (int j=0; j<bridges[two].size(); j++) {
-                if (bridges[two].get(j).first==one) {
-                    bridges[two].remove(j);
+            for (int j=0; j<bridges[endingIsland].size(); j++) {
+                if (bridges[endingIsland].get(j).getEndingIsland()==startingIsland) {
+                    bridges[endingIsland].remove(j);
                     break;
                 }
             }
-            out.println("Burned bridge connecting islands "+one+" and "+two);
-            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" burned a bridge from "+one+" to "+two);
+            out.println("Burned bridge connecting islands "+startingIsland+" and "+endingIsland);
+            addToEventLog("Turn "+turn+"-"+subturn+": "+arr[playerIndex].getName()+" burned a bridge from "+startingIsland+" to "+endingIsland);
         }
     }
     public static int bfs(int start, int end) {
@@ -1477,9 +1458,9 @@ public class BalancedGame {
         dist[start] = 0;
         while (!q.isEmpty()) {
             int v = q.poll();
-            for (tuple u:bridges[v]) {
-                if (dist[u.first]==-1) {
-                    dist[u.first] = dist[v]+1;
+            for (bridge u:bridges[v]) {
+                if (dist[u.getEndingIsland()]==-1) {
+                    dist[u.getEndingIsland()] = dist[v]+1;
                 }
             }
         }
@@ -1812,6 +1793,7 @@ public class BalancedGame {
                 }
             }
             arr[playerIndex].addMaxMana(5);
+            arr[playerIndex].addStamina(1);
         }
     }
 
@@ -1873,11 +1855,12 @@ public class BalancedGame {
             }
         }
     }
-    public static void completeLockout(int i) {
+    public static void completeLockout(int playerIndex) {
         for (int j=0; j<goals.length; j++) {
-            if (arr[i].getLockoutProgressValue(goals[j].getType())>=goals[j].getValue() && !goals[j].getDone()) {
-                System.out.println(arr[i].getName()+" completed goal "+(j+1));
-                arr[i].addAP(goals[j].getAPR());
+            if (arr[playerIndex].getLockoutProgressValue(goals[j].getType())>=goals[j].getValue() && !goals[j].getDone()) {
+                System.out.println(arr[playerIndex].getName()+" completed goal "+(j+1));
+                addToEventLog("Turn "+turn+"-"+subturn+": "+arr[playerIndex].getName()+" completed lockout goal "+(j+1));
+                arr[playerIndex].addAP(goals[j].getAPR());
                 goals[j].setDone(true);
             }
         }
@@ -1944,7 +1927,7 @@ public class BalancedGame {
         else if (x==8) {
             out.print("Player name: ");
             int i = findPlayer(br.readLine());
-            int[] startingAP = {15,15,20,15,10,20,50,60,20,30,20,20,150,35,40};
+            int[] startingAP = {15,15,20,15,10,20,50,60,20,30,15,20,20,150,35,40};
             String[] modifierNames = {"Reflexless","Easy Target","Magic Doubter","Colin Luck","Out of Shape",
             "Slow Learner","Glass Cannon","UHC","Decaying Heart","Amateur Wizard","\"The Normal One\"","Bullseyen't",
             "Dumb and Weak","Brittle Bones","Good Luck","April Sun","Confusion"};
@@ -1953,7 +1936,7 @@ public class BalancedGame {
             out.println("2: Easy Target (+15 AP, take DOUBLE damage from RANGED WEAPONS)");
             out.println("3: Magic Doubter (+20 AP, take DOUBLE damage from SPELLS)");
             out.println("4: Colin Luck (+15 AP, ALL rolls are ONLY common or unique)");
-            out.println("5: Out of Shape (+10 AP, crossing bridges takes TWO stamina)");
+            out.println("5: Out of Shape (+10 AP, crossing bridges takes 2x stamina)");
             out.println("6: Slow Learner (+20 AP, gain HALF the XP as you usually would)");
             out.println("7: Glass Cannon (+50 AP, take DOUBLE damage from ALL SOURCES)");
             out.println("8: UHC (+60 AP, start the game with ONLY 1 LIFE, NO HEALTH REGEN)");

@@ -1,20 +1,23 @@
 public class peffect {
-    private String name;
-    private String type;
-    private int value;
-    private int turns;
-    public peffect(String n, String t, int v, int duration) {
-        name = n;
-        type = t;
-        value = v;
-        turns = duration;
+    private String playerName;
+    private String potionType;
+    private int effectValue;
+    private int duration;
+    private int subturnUsed;
+    public peffect(String playerName, String potionType, int effectValue, int duration, int subturnUsed) {
+        this.playerName = playerName;
+        this.potionType = potionType;
+        this.effectValue = effectValue;
+        this.duration = duration;
+        this.subturnUsed = subturnUsed;
     }
     //GETTERS
-    public String getName() {return name;}
-    public String getType() {return type;}
-    public int getValue() {return value;}
-    public int getTurns() {return turns;}
+    public String getName() {return playerName;}
+    public String getType() {return potionType;}
+    public int getValue() {return effectValue;}
+    public int getTurns() {return duration;}
+    public int getSubturnUsed() {return subturnUsed;}
     //SETTERS
     //MUTATORS
-    public void lowerTurn() {turns--;}
+    public void lowerTurn() {duration--;}
 }
