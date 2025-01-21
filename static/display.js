@@ -894,7 +894,7 @@ export function updateGameDisplay(received, overwriteAll) {
     (player, i) => {
       const arr = [];
       for (const effect of data.potionEffects) {
-        if (effect.name !== player.name) continue;
+        if (effect.playerName !== player.name) continue;
 
         const [symbol, className] = {
           "Health Regen": ["❣", "heal"],
@@ -904,11 +904,11 @@ export function updateGameDisplay(received, overwriteAll) {
           Intelligence: ["❉", "water"],
           Defence: ["✹", "fire"],
           Agility: ["❋", "air"],
-        }[effect.type];
+        }[effect.potionType];
 
         arr.push([
-          classSpan(`+${symbol} ${effect.value} `, className),
-          classSpan(`(${effect.turns} ⇆)`, "lvl"),
+          classSpan(`+${symbol} ${effect.effectValue} `, className),
+          classSpan(`(${effect.duration} ⇆)`, "lvl"),
         ]);
       }
       if (arr.length)
@@ -1078,10 +1078,10 @@ export function updateGameDisplay(received, overwriteAll) {
   for (let armourId = 0; armourId < data.arr[0].armour.length; armourId++) {
     row(
       [
-        [classDiv("Helmet", "primary"), classDiv("6 AP", "secondary")],
-        [classDiv("Chestplate", "primary"), classDiv("12 AP", "secondary")],
-        [classDiv("Pants", "primary"), classDiv("9 AP", "secondary")],
-        [classDiv("Boots", "primary"), classDiv("6 AP", "secondary")],
+        [classDiv("Helmet", "primary"), classDiv("8 AP", "secondary")],
+        [classDiv("Chestplate", "primary"), classDiv("16 AP", "secondary")],
+        [classDiv("Pants", "primary"), classDiv("12 AP", "secondary")],
+        [classDiv("Boots", "primary"), classDiv("8 AP", "secondary")],
       ][armourId],
       (_, i) => armour(data.arr[i].armour[armourId]),
     );
