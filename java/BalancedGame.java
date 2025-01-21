@@ -1096,6 +1096,12 @@ public class BalancedGame {
         int maxHealthBuff = (int) (healthScore*armourTypeBuff[armourType]*25);
         int elementalDefenceBuff = (int) (elementalDefenceScore*armourTypeBuff[armourType]*5);
         int elementCount = (int) (Math.random()*100)+1;
+        if (elementCount<=20) elementCount = 1;
+        else if (elementCount<=40) elementCount = 2;
+        else if (elementCount<=60) elementCount = 3;
+        else if (elementCount<=80) elementCount = 4;
+        else elementCount = 5;
+        //out.println("Number of Elements: "+elementCount);
 
         // The number of elements with negative defence values
         int negativeElements = (int) (Math.random()*(elementCount-1))+1;
