@@ -143,18 +143,18 @@ def game_data_with_id(game_id):
 def set_game_data(game_id):
     if game_id not in interface.data.game_data:
         return not_found()
-    
+
     file = request.files["file"]
     import json
     try:
         data = json.load(file)
     except:
         return "invalid json file >:( (amazing error page right)", 400
-    
+
     info("Setting data of %s to uploaded file" % game_id)
 
     interface.data.set_data(game_id, data)
-    
+
     return redirect_for("game", game_id=game_id)
 
 @app.route("/api/changelog", methods=["GET"])
@@ -169,9 +169,14 @@ def giveap():
 def send_communication_data(text):
     if text is None:
         return
-    
+
     if interface.process is None:
-        emit("error", { "code": "process_not_started" })
+        sock.emit("term_data", {
+            "stdout": "",
+            "stderr": "",
+            "closed": interface.process is None,
+        })
+        return
 
     def func():
         stdout, stderr = interface.communicate(text)
@@ -180,7 +185,7 @@ def send_communication_data(text):
             "stderr": stderr,
             "closed": interface.process is None,
         })
-    
+
     Thread(target=func).start()
 
 @sock.on("term_start")
@@ -198,6 +203,20 @@ def start_process():
 
     Thread(target=func).start()
 
+@sock.on("term_stop")
+@sock_auth_required
+def stop_process():
+    if not interface.process:
+        emit("error", { "code": "process_already_stopped" })
+        return
+
+    info("Stopping process")
+
+    def func():
+        interface.stop_process()
+        send_communication_data("")
+
+    Thread(target=func).start()
 @sock.on("term_last")
 @sock_auth_required
 def send_last():
@@ -205,7 +224,7 @@ def send_last():
         return {
             "closed": True,
         }
-    
+
     last = []
     cur_fd = None
     cur_list = []

@@ -53,27 +53,28 @@ def stop_process():
     with mutex:
         if process is None:
             raise RuntimeError("tried to stop nonexistent process")
-        
+
         process.send_signal(signal.SIGINT)
         try:
-            process.wait(timeout=5)
+            process.wait(timeout=1)
         except TimeoutExpired:
-            warn("Process took >5s to exit, killing")
+            warn("Process took >1s to exit, killing")
             process.kill()
 
         process = None
         stdout_fd = None
         stderr_fd = None
 
-        for pty in ptys:
-            for fd in pty:
-                os.close(fd)
+        if ptys:
+            for pty in ptys:
+                for fd in pty:
+                    os.close(fd)
 
         text_queue.clear()
 
-        if compile_queued:
-            compile_queued = False
-            compile()
+        # if compile_queued:
+        #     compile_queued = False
+        #     compile()
 
 def communicate(s, wait=4, timeout=0.05):
     global process
@@ -103,9 +104,9 @@ def communicate(s, wait=4, timeout=0.05):
                     except BlockingIOError:
                         pass
                     time.sleep(0.05)
-        
+
         time.sleep(timeout)
-        
+
         try:
             while True:
                 stdouts.append(str(os.read(stdout_fd, 4096), "utf-8"))
@@ -116,7 +117,7 @@ def communicate(s, wait=4, timeout=0.05):
                 stderrs.append(str(os.read(stderr_fd, 4096), "utf-8"))
         except BlockingIOError:
             pass
-        
+
         stdout = "".join(stdouts)
         stderr = "".join(stderrs)
 
@@ -132,10 +133,10 @@ def communicate(s, wait=4, timeout=0.05):
             err_split = stderr.split("\n")
             for i, line in enumerate(err_split):
                 text_queue.append((2, lineify(line, i == len(err_split) - 1)))
-        
+
         while len(text_queue) > TEXT_QUEUE_LINES:
             text_queue.popleft()
-        
+
         if process.returncode is not None:
             if process.returncode != 0:
                 warn(f"Process exited abnormally after communication with exit code {process.returncode}")
@@ -160,7 +161,7 @@ def communicate(s, wait=4, timeout=0.05):
 #             error("Java compilation failed!")
 #             error(err.stderr)
 #             raise err
-        
+
 # @util.debounce(0.1)
 # def queue_compilation():
 #     global compile_queued
@@ -172,7 +173,7 @@ def communicate(s, wait=4, timeout=0.05):
 
 def init():
     global observer
-    
+
     data.init()
 
     # if not IS_RASPI:

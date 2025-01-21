@@ -7,6 +7,7 @@ const terminalTextContainer = document.getElementById(
 );
 const terminalEl = document.getElementById("terminal-text");
 const terminalStartButton = document.getElementById("terminal-start");
+const terminalStopButton = document.getElementById("terminal-stop");
 
 let closed = false;
 
@@ -89,11 +90,11 @@ function updateTerminal(data) {
     const el = document.createElement("div");
     el.textContent = `--- Program stopped ---`;
     el.className = "inactive";
-    terminalEl.appendChild(el);
-    return;
+    termina;
+  } else {
+    terminalStopButton.disabled = false;
+    moveInputToLast();
   }
-
-  moveInputToLast();
 }
 
 function setLast() {
@@ -151,6 +152,12 @@ window.addEventListener("load", () => {
 
     socket.emit("term_start");
     terminalStartButton.disabled = true;
+  });
+  terminalStopButton.addEventListener("click", () => {
+    if (closed) return;
+
+    socket.emit("term_stop");
+    terminalStopButton.disabled = true;
   });
 
   window.socket = socket = io(window.location.origin, {
@@ -210,7 +217,6 @@ function setClosed(newClosed) {
   } else {
     document.body.classList.remove("closed");
 
-    console.log(fileUploadButtonEl);
     fileUploadButtonEl.classList.add("inactive");
     fileUploadButtonEl.setAttribute("disabled", "");
     fileUploadButtonEl.value = "Program is running";
