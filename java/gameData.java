@@ -11,6 +11,7 @@ public class gameData {
     event disaster;
     int temperature;
     event temp;
+    event tide;
     playerData[] arr;
     ArrayList<event> lst;
     ArrayList<event> curevent;
@@ -28,11 +29,10 @@ public class gameData {
      * @param vers The version number.
      * @param s The number of lockout goals
      * @param names The names of the p players.
-     * @param lt The number of lockout types there are.
      * @param ps The potion shop.
      */
     @SuppressWarnings("unchecked")
-    public gameData(int p, String vers, int s, String[] names, int lt, potion[] ps) {
+    public gameData(int p, String vers, int s, String[] names, potion[] ps) {
         version = vers;
         turn = 0;
         subturn = p;
@@ -42,6 +42,7 @@ public class gameData {
         weather = new event();
         season = new event();
         disaster = new event();
+        tide = new event();
         arr = new playerData[p];
         lst = new ArrayList<>();
         curevent = new ArrayList<>();
@@ -59,7 +60,7 @@ public class gameData {
         potionShop = ps;
         potionEffects = new ArrayList<>();
         for (int i=0; i<p; i++) {
-            arr[i] = new playerData(names[i], lt);
+            arr[i] = new playerData(names[i]);
             arr[i].setAlive(true);
         }
     }

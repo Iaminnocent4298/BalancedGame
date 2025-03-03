@@ -128,6 +128,20 @@ function getWeather(data) {
   }[intensity + " " + type];
 }
 
+function getTide(data) {
+  if (!data) return data;
+
+  const { intensity, type } = data.tide;
+
+  return {
+    "5 Strength": "🌊 Strong Tide",
+    "5 Dexterity": "🌊 Sparkling Tide",
+    "5 Intelligence": "🌊 Clever Tide",
+    "5 Defence": "🌊 Sheilding Tide",
+    "5 Agility": "🌊 Swift Tide",
+  }[intensity + " " + type];
+}
+
 function temperatureIndicator(temp) {
   if (temp >= 31) return "fire";
   else if (temp >= 21) return "neutral";
@@ -1065,7 +1079,7 @@ export function updateGameDisplay(received, overwriteAll) {
     row(
       [
         [classDiv("Melee Weapon", "primary"), classDiv("12 AP", "secondary")],
-        [classDiv("Ranged Weapon", "primary"), classDiv("17 AP", "secondary")],
+        [classDiv("Ranged Weapon", "primary"), classDiv("12 AP", "secondary")],
       ][weaponId],
       (_, i) => weapon(data.arr[i].weapons[weaponId]),
     );

@@ -1,6 +1,6 @@
 const PI = Math.PI;
 const TAU = PI * 2;
-const FONT = "Patrick Hand";
+const FONT = "Space Grotesk";
 
 let data = null;
 export function updateData(newData) {

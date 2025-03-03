@@ -25,9 +25,8 @@ public class playerData {
     /**
      * The constructor for player data
      * @param n The name of the player
-     * @param lt The number of lockout types
      */
-    public playerData(String n, int lt) {
+    public playerData(String n) {
         isAlive = true;
         lives = 2;
         name = n;

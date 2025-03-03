@@ -24,6 +24,7 @@ public class BalancedGame {
     static event season = new event();
     static int temperature;
     static event temp = new event();
+    static event tide = new event();
     static event disaster = new event();
     static island[] islandResources = new island[26];
     static ArrayList<bridge>[] bridges;
@@ -32,11 +33,13 @@ public class BalancedGame {
     static int potionnum = 35; //lvls 0-12
     static potion[] potionShop;
     static ArrayList<peffect> potionEffects = new ArrayList<>();
+    static String[] arrowTypes = {"Normal Arrow","Earth-Infused Arrow","Thunder-Infused Arrow","Water-Infused Arrow","Fire-Infused Arrow",
+    "Air-Infused Arrow","Rainbow Arrow"};
     static String[] eventTypes = {"Spell Damage","Neutral Damage","Melee Damage","Ranged Damage","Weapon Damage","Health Regen","Mana Regen","Spell Cost",
-    "All Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage"};
+    "All Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage","Strength","Dexterity","Intelligence","Defence","Agility"};
     static String[] lockoutTypes = {"Neutral Damage","Earth Damage","Thunder Damage","Water Damage","Fire Damage","Air Damage","Heal","Mana","Spell Damage","Melee Damage","Ranged Damage"};
-    static int[] weapondps = {15,20,30,45,65,90}; //base
-    static int[] spelldps = {25,30,40,55,75,100}; //base spell 1
+    static int[] weapondps = {20,25,35,50,70,95}; //base
+    static int[] spelldps = {30,35,45,60,80,105}; //base spell 1
     /**
      * The total "score" of each rarity of armour
      */
@@ -109,6 +112,7 @@ public class BalancedGame {
         temperature = game.temperature;
         disaster = game.disaster;
         temp = game.temp;
+        tide = game.tide;
         islandsBuilt = game.islandsBuilt;
         lockoutReset = game.lockoutReset;
         curevent = game.curevent;
@@ -129,7 +133,7 @@ public class BalancedGame {
      */
     public static void output() throws IOException {
         gameData game = new gameData();
-        game.version = "2.9.1-hf2";
+        game.version = "2.9.2";
         game.turn = turn;
         game.subturn = subturn;
         game.islandLim = islandLim;
@@ -138,6 +142,7 @@ public class BalancedGame {
         game.temperature = temperature;
         game.disaster = disaster;
         game.temp = temp;
+        game.tide = tide;
         game.islandsBuilt = islandsBuilt;
         game.lockoutReset = lockoutReset;
         game.curevent = curevent;
@@ -166,6 +171,7 @@ public class BalancedGame {
             out.println("2: Weapon/Spell Menu");
             out.println("3: Other Menus");
             out.println("4: Gifting");
+            out.println("5: Item Shop");
             out.println("100: Dev Modify");
             out.println("0: Pause and save current turn");
             out.println("-1: End turn");
@@ -276,6 +282,9 @@ public class BalancedGame {
                 int i = findPlayer(name);
                 gift(i);
             }
+            else if (choice==5) {
+                itemShop(subturn-1);
+            }
             else if (choice==100) {
                 devMode();
             }
@@ -338,6 +347,7 @@ public class BalancedGame {
                 arr[i].setStamina(Math.min(arr[i].getMaxStamina(),arr[i].getStamina()+arr[i].getStaminaRegen()));
                 completeLockout(i);
             }
+
             int index = 0;
             while (index<lst.size()) {
                 if (lst.get(index).getEnd()<turn) {
@@ -352,7 +362,7 @@ public class BalancedGame {
                 }
                 else index++;
             }
-            eventMaker();
+            eventGen();
             if (turn==lockoutReset) {
                 lockoutGen();
                 lockoutReset+=10;
@@ -361,6 +371,7 @@ public class BalancedGame {
             if (turn%3==1) seasonGen();
             tempGen();
             disasterGen();
+            tideGen();
         }
         output();
     }
@@ -421,14 +432,52 @@ public class BalancedGame {
             out.println("You do not own a bow!");
             return;
         }
+        boolean hasArrow = false;
+        String arrowType = "";
+        if (!isMelee) {
+            for (int i=0; i<arrowTypes.length; i++) {
+                if (arr[attackerIndex].getInventoryValue(arrowTypes[i])>0) {
+                    hasArrow = true;
+                    break;
+                }
+            }
+            if (!hasArrow) {
+                out.println("You have no arrows!");
+                return;
+            }
+            else {
+                while (true) {
+                    out.println("Choose an arrow type:");
+                    for (int i=0; i<arrowTypes.length; i++) {
+                        if (arr[attackerIndex].getInventoryValue(arrowTypes[i])>0) {
+                            out.println((i+1)+": "+arrowTypes[i]);
+                        }
+                    }
+                    int arrowChoice = Integer.parseInt(br.readLine());
+                    if (arrowChoice<1 || arrowChoice>arrowTypes.length) {
+                        out.println("Invalid choice!");
+                    }
+                    else {
+                        if (arr[attackerIndex].getInventoryValue(arrowTypes[arrowChoice-1])==0) {
+                            out.println("You do not have any of this arrow type!");
+                        }
+                        else {
+                            arrowType = arrowTypes[arrowChoice-1];
+                            arr[attackerIndex].addInventoryValue(arrowType, -1);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
         out.println("Attacking "+arr[targetIndex].getName());
-        double attackerStrength = Math.min(effectiveness(arr[attackerIndex].getElement(0, 0)),99);
+        double attackerStrength = Math.min(effectiveness(arr[attackerIndex].getElement(0, 0)+eventChecker("Strength")),99);
         if (arr[attackerIndex].getModifier().equals("Dumb and Weak")) {
             attackerStrength = 0;
         }
-        double attackerDexterity = Math.min(effectiveness(arr[attackerIndex].getElement(0, 1)),99);
-        double defenderDefence = Math.min(effectiveness(arr[targetIndex].getElement(0, 3)),99);
-        double defenderAgility = Math.min(effectiveness(arr[targetIndex].getElement(0, 4)),99);
+        double attackerDexterity = Math.min(effectiveness(arr[attackerIndex].getElement(0, 1)+eventChecker("Dexterity")),99);
+        double defenderDefence = Math.min(effectiveness(arr[targetIndex].getElement(0, 3)+eventChecker("Defence"))*0.75,99);
+        double defenderAgility = Math.min(effectiveness(arr[targetIndex].getElement(0, 4)+eventChecker("Agility")),99);
         double eventMultiplier = (eventChecker("All Damage")+eventChecker("Weapon Damage"))/100.0;
         if (isMelee) {
             eventMultiplier+=eventChecker("Melee Damage")/100.0;
@@ -436,10 +485,6 @@ public class BalancedGame {
         else {
             eventMultiplier+=eventChecker("Ranged Damage")/100.0;
         }
-        attackerStrength*=(1+eventChecker("Strength")/100.0);
-        attackerDexterity*=(1+eventChecker("Dexterity")/100.0);
-        defenderDefence*=(1+eventChecker("Defence")/100.0)*0.75;
-        defenderAgility*=(1+eventChecker("Agility")/100.0);
         attackerStrength = Math.max(-100,attackerStrength-defenderDefence);
 
         if (arr[attackerIndex].getModifier().equals("Bullseyen't") && !isMelee) {
@@ -465,12 +510,32 @@ public class BalancedGame {
         }
         else if (!isMelee && arr[attackerIndex].getWeapon(1)!=null) {
             weaponDamages = arr[attackerIndex].getWeapon(1).rollDmg();
+            if (arrowType.equals("Earth-Infused Arrow")) {
+                weaponDamages[1]+=5;
+            }
+            else if (arrowType.equals("Thunder-Infused Arrow")) {
+                weaponDamages[2]+=5;
+            }
+            else if (arrowType.equals("Water-Infused Arrow")) {
+                weaponDamages[3]+=5;
+            }
+            else if (arrowType.equals("Fire-Infused Arrow")) {
+                weaponDamages[4]+=5;
+            }
+            else if (arrowType.equals("Air-Infused Arrow")) {
+                weaponDamages[5]+=5;
+            }
+            else if (arrowType.equals("Rainbow Arrow")) {
+                for (int i=1; i<6; i++) {
+                    weaponDamages[i]+=5;
+                }
+            }
         }
         //DEFENCES
         int[] temp = arr[targetIndex].getElements()[1];
         double[] defenderDefences = new double[5];
         for (int j=0; j<5; j++) {
-            defenderDefences[j] = temp[j];
+            defenderDefences[j] = temp[j]*0.75;
         }
         double critDamage = 1;
         double critRoll = Math.random()*100;
@@ -589,14 +654,14 @@ public class BalancedGame {
      */
     public static void spellCalc(int targetIndex, int spellNum) throws Exception {
         int attackerIndex = subturn-1;
-        double attackerIntelligence = arr[attackerIndex].getElement(0, 2)*1.5;
+        double attackerIntelligence = Math.min(effectiveness(arr[attackerIndex].getElement(0, 2)+eventChecker("Intelligence"))*1.5,99);
         if (arr[attackerIndex].getModifier().equals("Dumb and Weak")) {
             attackerIntelligence = 0;
         }
-        double attackerDexterity = Math.min(effectiveness(arr[attackerIndex].getElement(0, 1)),99);
+        double attackerDexterity = Math.min(effectiveness(arr[attackerIndex].getElement(0, 1)+eventChecker("Dexterity")),99);
         double defenderDefence = 0;
         double defenderAgility = 0;
-        if (spellNum!=4) defenderDefence = Math.min(effectiveness(arr[targetIndex].getElement(0, 3)),99);
+        if (spellNum!=4) defenderDefence = Math.min(effectiveness(arr[targetIndex].getElement(0, 3)+eventChecker("Agility")),99);
         else {
             int count = 0;
             for (int k=0; k<playerCount; k++) {
@@ -606,7 +671,7 @@ public class BalancedGame {
                 }
             }
             if (count>0) defenderDefence/=count;
-            defenderDefence = Math.min(effectiveness((int) defenderDefence),99);
+            defenderDefence = Math.min(effectiveness((int) defenderDefence+eventChecker("Defence"))*0.75,99);
         }
         double manaCost = arr[attackerIndex].getSpell(spellNum).getMC();
         //ATTACKS
@@ -615,7 +680,7 @@ public class BalancedGame {
         double[] defenderDefences = {0,0,0,0,0};
         if (spellNum!=4) {
             for (int k=0; k<5; k++) {
-                defenderDefences[k] = arr[targetIndex].getElement(1, k);
+                defenderDefences[k] = arr[targetIndex].getElement(1, k)*0.75;
             }
         }
         else {
@@ -624,7 +689,7 @@ public class BalancedGame {
                 if (arr[k].getLocation()==targetIndex && arr[k].isAlive()) {
                     count++;
                     for (int l=0; l<5; l++) {
-                        defenderDefences[l] = arr[k].getElement(1, l);
+                        defenderDefences[l] += arr[k].getElement(1, l)*0.75;
                     }
                 }
             }
@@ -635,9 +700,6 @@ public class BalancedGame {
             }
         }
         //CALCULATIONS
-        attackerIntelligence*=(1+eventChecker("Intelligence")/100.0);
-        attackerDexterity*=(1+eventChecker("Dexterity")/100.0);
-        defenderDefence*=(1+eventChecker("Defence")/100.0);
 
         if (arr[attackerIndex].getModifier().equals("Bullseyen't")) {
             int missRoll = (int) (Math.random()*100)+1;
@@ -838,7 +900,7 @@ public class BalancedGame {
         if (num>=8 && num<=11) {
             int[] armourCosts = {8,16,12,8};
             int APCost = 0;
-            if (arr[i].getArmour(num-8)==null) {
+            if (arr[i].getArmour(num-8).getRerollCost()==0) {
                 out.println("You are rolling your armour piece!");
                 APCost = armourCosts[num-8];
             }
@@ -895,7 +957,7 @@ public class BalancedGame {
                 }
                 else {
                     out.println("You are rolling your ranged weapon!");
-                    cost = 17;
+                    cost = 12;
                 }
             }
             else {
@@ -1618,14 +1680,40 @@ public class BalancedGame {
     }
 
     /**
+     * Item shop menu
+     * @param playerIndex The index of the player
+     * @throws IOException
+     */
+    public static void itemShop(int playerIndex) throws IOException {
+        out.println("Welcome to the Item Shop!");
+        out.println("Unfortunately we only have arrows for sale at the moment");
+        out.println("What type of arrow would you like?");
+        int[] arrowCost = {40,20,20,20,20,20,10}; //Arrows per AP
+        for (int i=0; i<arrowTypes.length; i++) {
+            out.println((i+1)+": "+arrowTypes[i]+" - Cost: 1 AP for "+arrowCost[i]);
+        }
+        int choice = Integer.parseInt(br.readLine());
+        if (choice>=1 && choice<=arrowTypes.length) {
+            out.print("How many bundles of arrows would you like to purchase? ");
+            int bundleCount = Integer.parseInt(br.readLine());
+            if (arr[playerIndex].getAP()<bundleCount) {
+                out.println("You do not have enough AP to purchase this item!");
+            }
+            else {
+                arr[playerIndex].addAP(-bundleCount);
+                arr[playerIndex].addInventoryValue(arrowTypes[choice-1], bundleCount*arrowCost[choice-1]);
+                out.println("Purchased "+bundleCount*arrowCost[choice-1]+" "+arrowTypes[choice-1]);
+            }
+        }
+    }
+
+    /**
      * Creates and adds game events to the "lst" arraylist
      */
-    public static void eventMaker() {
-        int type = (int) (Math.random()*2)+1;
+    public static void eventGen() {
         int multiplier = ((int) (Math.random()*4)+1)*25;
         int dmg = (int) (Math.random()*eventTypes.length);
         if (eventTypes[dmg].equals("Spell Cost")) {multiplier = ((int) (Math.random()*3)+1)*25;}
-        if (type!=1) multiplier*=-1;
         int length = (int) (Math.random()*4)+2;
         event e = new event(multiplier,eventTypes[dmg],turn,turn+length-1);
         lst.add(e);
@@ -1750,6 +1838,24 @@ public class BalancedGame {
             disaster = null;
         }
     }
+
+    public static void tideGen() {
+        event e = new event();
+        int rand = (int) (Math.random()*3)+1;
+        if (rand==1) {
+            String[] types = {"Strength","Dexterity","Intelligence","Defence","Agility"};
+            e.setType(types[(int) (Math.random()*5)]);
+            e.setIntensity(5);
+            e.setBegin(turn);
+            e.setEnd(turn+1);
+            lst.add(e);
+            tide = e;
+        }
+        else {
+            tide = null;
+        }
+    }
+
     public static void levelUp(int playerIndex) throws IOException {
         while (arr[playerIndex].getLXP()>=arr[playerIndex].getNL()) {
             out.println(arr[playerIndex].getName()+" has levelled up!");
@@ -1806,7 +1912,7 @@ public class BalancedGame {
             if (arr[i].getLives()==0) {
                 out.println(arr[i].getName()+" has been sent to the gulag");
                 addToEventLog("Turn "+turn+"-"+subturn+": "+arr[i].getName()+" has been sent to the gulag");
-                arr[i] = new playerData(arr[i].getName(), lockoutTypes.length);
+                arr[i] = new playerData(arr[i].getName());
                 arr[i].setAlive(false);
                 for (Map.Entry<String,Double> map:arr[i].getLockoutProgress().entrySet()) {
                     map.setValue(0.0);
@@ -2005,7 +2111,7 @@ public class BalancedGame {
         eventLog.clear();
         playersAlive = playerCount;
         for (int k=0; k<playerCount; k++) {
-            arr[k] = new playerData(arr[k].getName(), lockoutTypes.length);
+            arr[k] = new playerData(arr[k].getName());
             for (int i=0; i<lockoutTypes.length; i++) {
                 arr[k].setLockoutProgressValue(lockoutTypes[i], 0);
             }
