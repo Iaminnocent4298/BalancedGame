@@ -424,6 +424,7 @@ export function updateGameDisplay(received, overwriteAll) {
 
   let season = getSeason(data);
   let weather = getWeather(data);
+  let tide = getTide(data);
 
   let yearEl = document.createElement("div");
   yearEl.className = "secondary";
@@ -436,6 +437,10 @@ export function updateGameDisplay(received, overwriteAll) {
 
   let weatherEl = document.createElement("div");
   weatherEl.className = "secondary";
+
+  let tideEl = document.createElement("div");
+  tideEl.className = "tertiary";
+  tideEl.append("Tide: " + tide);
 
   const temperature = data.temperature;
   weatherEl.append(
@@ -508,6 +513,7 @@ export function updateGameDisplay(received, overwriteAll) {
             formatBuff({ intensity: data.temperature, type: "All Damage" }),
           temperatureIndicator(data.temperature),
         ),
+        tideEl,
       ]),
       classDiv("Current Events:", "secondary"),
       list(
