@@ -2,11 +2,11 @@
 "Balanced Game" - made by Iaminnocent4298, web server made by Creative0708
 Version 2.9 - En Garde!
 */
-import java.util.*;
-import java.io.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 
 import static java.lang.System.out;
 public class BalancedGame {
@@ -54,7 +54,6 @@ public class BalancedGame {
             out.println("2: Main Game B");
             out.println("3: RTP Cup");
             out.println("4: RTP Second Chance");
-            out.println("Other to quit");
             ans = Integer.parseInt(br.readLine());
             playerCount = 6;
             switch(ans) {
