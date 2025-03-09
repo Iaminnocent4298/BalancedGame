@@ -129,7 +129,7 @@ function getWeather(data) {
 }
 
 function getTide(data) {
-  if (!data) return data;
+  if (!data?.tide) return data?.tide;
 
   const { intensity, type } = data.tide;
 
@@ -440,7 +440,7 @@ export function updateGameDisplay(received, overwriteAll) {
 
   let tideEl = document.createElement("div");
   tideEl.className = "tertiary";
-  tideEl.append("Tide: " + tide);
+  tideEl.append("Tide: ", tide ? tide : classSpan("None", "inactive"));
 
   const temperature = data.temperature;
   weatherEl.append(
