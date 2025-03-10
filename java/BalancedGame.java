@@ -133,7 +133,7 @@ public class BalancedGame {
      */
     public static void output() throws IOException {
         gameData game = new gameData();
-        game.version = "2.9.2";
+        game.version = "2.9.2-hf1";
         game.turn = turn;
         game.subturn = subturn;
         game.islandLim = islandLim;
@@ -900,7 +900,7 @@ public class BalancedGame {
         if (num>=8 && num<=11) {
             int[] armourCosts = {8,16,12,8};
             int APCost = 0;
-            if (arr[i].getArmour(num-8).getRerollCost()==0) {
+            if (arr[i].getArmour(num-8)==null) {
                 out.println("You are rolling your armour piece!");
                 APCost = armourCosts[num-8];
             }
